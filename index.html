@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mappa Meteo Genova</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.6.1/justgage.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+    }
+    #menu {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    #map {
+      height: 100vh;
+      width: 100%;
+    }
+    .circle-label {
+      color: white;
+      border-radius: 50%;
+      font-weight: 500;
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Inter", sans-serif;
+      width: 25px;
+      height: 25px;
+    }
+    .circle-label2 {
+      color: white;
+      border-radius: 50%;
+      font-weight: 0;
+      font-size: 0px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Inter", sans-serif;
+      width: 0px;
+      height: 0px;
+    }
+  </style>
+</head>
+<body>
+  <div id="menu">
+    <label for="tempSelect"><b>Dati:</b></label>
+    <select id="tempSelect">
+      <option value="current">Temperatura</option>
+      <option value="max">T Max</option>
+      <option value="min">T Min</option>
+      <option value="dewpt">Dewpoint</option>
+      <option value="dewpMax">Dp Max</option>
+      <option value="dewpMin">Dp Min</option>
+      <option value="Heat">Heat Index</option>
+      <option value="HtMax">Ht Max</option>
+      <option value="HtMin">Ht Min</option>
+      <option value="hum">Umidità</option>
+      <option value="humMax">UR Max</option>
+      <option value="humMin">UR Min</option>
+      <option value="rainDay">Pioggia 24h</option>
+      <option value="rainRate">Rain Rate</option>
+    </select>
+  </div>
+
+  <div id="map"></div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script>
+    // ----- Configurazione Mappa -----
+    const map = L.map('map').setView([44.423, 8.972], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // ----- API Key -----
+    const apiKey = 'e1f10a1e78da46f5b10a1e78da96f525';
+
+    // ----- Lista Stazioni -----
+    const stations = {
+  IACQUI19: { api: "IACQUI19" },
+  IALASS4: { api: "IALASS4" },
+  IALBEN12: { api: "IALBEN12" },
+  IALBEN13: { api: "IALBEN13" },
+  IALBIS15: { api: "IALBIS15" },
+  IALBIS17: { api: "IALBIS17" },
+  IALESS19: { api: "IALESS19" },
+  IALESS20: { api: "IALESS20" },
+  IALESS22: { api: "IALESS22" },
+  IALLUV5: { api: "IALLUV5" },
+  IALTAR9: { api: "IALTAR9" },
+  IANDOR36: { api: "IANDOR36" },
+  IANDOR38: { api: "IANDOR38" },
+  IANDOR45: { api: "IANDOR45" },
+  IARCOL18: { api: "IARCOL18" },
+  IASTI37: { api: "IASTI37" },
+  IASTI39: { api: "IASTI39" },
+  IASTI54: { api: "IASTI54" },
+  IBAGNA27: { api: "IBAGNA27" },
+  IBALDI160: { api: "IBALDI160" },
+  IBARGAGL5: { api: "IBARGAGL5" },
+  IBEINE9: { api: "IBEINE9" },
+  IBOGLI8: { api: "IBOGLI8" },
+  IBONAS9: { api: "IBONAS9" },
+  IBORGH21: { api: "IBORGH21" },
+  IBOVES17: { api: "IBOVES17" },
+  IBOVES27: { api: "IBOVES27" },
+  IBOVES31: { api: "IBOVES31" },
+  IBOZZO4: { api: "IBOZZO4" },
+  IBRALL2: { api: "IBRALL2" },
+  IBRIGA11: { api: "IBRIGA11" },
+  IBRIGA19: { api: "IBRIGA19" },
+  IBRUGN23: { api: "IBRUGN23" },
+  IBUSAL1: { api: "IBUSAL1" },
+  IBUSAL3: { api: "IBUSAL3" },
+  IBUTTI12: { api: "IBUTTI12" },
+  ICAIRO36: { api: "ICAIRO36" },
+  ICAIROMO3: { api: "ICAIROMO3" },
+  ICAMER8: { api: "ICAMER8" },
+  ICAMPO219: { api: "ICAMPO219" },
+  ICAMPOMO4: { api: "ICAMPOMO4" },
+  ICAPANNO16: { api: "ICAPANNO16" },
+  ICASSA19: { api: "ICASSA19" },
+  ICASTE229: { api: "ICASTE229" },
+  ICASTE241: { api: "ICASTE241" },
+  ICASTE932: { api: "ICASTE932" },
+  ICALIC1_: { api: "ICALIC1" },
+  ICALIC3: { api: "ICALIC3" },
+  ICALIZ13: { api: "ICALIZ13" },
+  ICALOS1: { api: "ICALOS1" },
+  ICAMOG7: { api: "ICAMOG7" },
+  ICAMPO57: { api: "ICAMPO57" },
+  ICARAS4: { api: "ICARAS4" },
+  ICARBO36: { api: "ICARBO36" },
+  ICARRA91: { api: "ICARRA91" },
+  ICARRO37: { api: "ICARRO37" },
+  ICASAL53: { api: "ICASAL53" },
+  ICASAL85: { api: "ICASAL85" },
+  ICASAR73: { api: "ICASAR73" },
+  ICASEL6: { api: "ICASEL6" },
+  ICASSI26: { api: "ICASSI26" },
+  ICASTE241: { api: "ICASTE241" },
+  ICASTE1086: { api: "ICASTE1086" },
+  ICASTI67: { api: "ICASTI67" },
+  ICENGI4: { api: "ICENGI4" },
+  ICENTA4: { api: "ICENTA4" },
+  ICERAN6: { api: "ICERAN6" },
+  ICERES22: { api: "ICERES22" },
+  ICERIA1: { api: "ICERIA1" },
+  ICESSO17: { api: "ICESSO17" },
+  ICEVA7: { api: "ICEVA7" },
+  ICHIAV4: { api: "ICHIAV4" },
+  ICHIAV7: { api: "ICHIAV7" },
+  ICHIAV12: { api: "ICHIAV12" },
+  ICHIUS13: { api: "ICHIUS13" },
+  ICHIUS15: { api: "ICHIUS15" },
+  ICICAG1: { api: "ICICAG1" },
+  ICOGOL47: { api: "ICOGOL47" },
+  ICOGOL52: { api: "ICOGOL52" },
+  ICORTE57: { api: "ICORTE57" },
+  ICREMO15: { api: "ICREMO15" },
+  ICROCE7: { api: "ICROCE7" },
+  IDAVAG2: { api: "IDAVAG2" },
+  IDOLCE9: { api: "IDOLCE9" },
+  IDOGLI1: { api: "IDOGLI1" },
+  IDERNI2: { api: "IDERNI2" },
+  IDUSIN1: { api: "IDUSIN1" },
+  IFABBR5: { api: "IFABBR5" },
+  IFARIG1: { api: "IFARIG1" },
+  IFERRIER5: { api: "IFERRIER5" },
+  IFILIG4: { api: "IFILIG4" },
+  IFINAL12: { api: "IFINAL12" },
+  IFORTE14: { api: "IFORTE14" },
+  IFOSSA15: { api: "IFOSSA15" },
+  IFOSSANO8: { api: "IFOSSANO8" },
+  IGAMAL1: { api: "IGAMAL1" },
+  IGARES3: { api: "IGARES3" },
+  IGAVI6: { api: "IGAVI6" },
+  IGAVI7: { api: "IGAVI7" },
+  IGENOA58: { api: "IGENOA58" },
+  IGENOA3078: { api: "IGENOA2728" },
+  IGENOA2767: { api: "IGENOA2767" },
+  IGENOA2775: { api: "IGENOA2775" },
+  IGENOA2800: { api: "IGENOA2800" },
+  IGENOA2819: { api: "IGENOA2819" },
+  IGENOA2833_: { api: "IGENOA2833" },
+  IGENOA2841: { api: "IGENOA2841" },
+  IGENOA2843: { api: "IGENOA2843" },
+  IGENOA2846: { api: "IGENOA2846" },
+  IGENOA2857: { api: "IGENOA2857" },
+  IGENOA2865: { api: "IGENOA2865" },
+  IGENOA2881: { api: "IGENOA2881" },
+  IGENOA2887: { api: "IGENOA2887" },
+  IGENOA2895: { api: "IGENOA2895" },
+  IGENOA2933: { api: "IGENOA2933" },
+  IGENOA2959: { api: "IGENOA2959" },
+  IGENOA2962: { api: "IGENOA2962" },
+  IGENOA2970: { api: "IGENOA2970" },
+  IGENOA2971: { api: "IGENOA2971" },
+  IGENOA2980: { api: "IGENOA2980" },
+  IGENOA2983: { api: "IGENOA2983" },
+  IGENOA2984: { api: "IGENOA2984" },
+  IGENOA2987: { api: "IGENOA2987" },
+  IGENOA2991: { api: "IGENOA2991" },
+  IGENOA2997: { api: "IGENOA2997" },
+  IGENOA3005: { api: "IGENOA3005" },
+  IGENOA3007: { api: "IGENOA3007" },
+  IGENOA3015: { api: "IGENOA3015" },
+  IGENOA3019: { api: "IGENOA3019" },
+  IGENOA3021: { api: "IGENOA3021" },
+  IGENOA3032: { api: "IGENOA3032" },
+  IGENOA3035: { api: "IGENOA3035" },
+  IGENOA3052: { api: "IGENOA3052" },
+  IGENOA3058: { api: "IGENOA3058" },
+  IGENOA3069: { api: "IGENOA3069" },
+  IGENOA3085: { api: "IGENOA3085" },
+  IGENOA3104: { api: "IGENOA3104" },
+  IGENOVAA2: { api: "IGENOVAA2" },
+  IGROND1: { api: "IGROND1" },
+  IISOLA59: { api: "IISOLA59" },
+  IISOLDA1: { api: "IISOLDA1" },
+  ILAIGU19: { api: "ILAIGU19" },
+  ILERIC8: { api: "ILERIC8" },
+  ILEQUI3: { api: "ILEQUI3" },
+  ILEVAN16: { api: "ILEVAN16" },
+  ILIGURIA2: { api: "ILIGURIA2" },
+  ILIGURIA20: { api: "ILIGURIA20" },
+  ILIGURIA51: { api: "ILIGURIA51" },
+  ILIGURIA88: { api: "ILIGURIA88" },
+  ILIGURIA123: { api: "ILIGURIA123" },
+  ILIGURIA175: { api: "ILIGURIA175" },
+  ILIGURIA181: { api: "ILIGURIA181" },
+  ILIGURIA186: { api: "ILIGURIA186" },
+  ILIMON9: { api: "ILIMON9" },
+  ILIMON17: { api: "ILIMON17" },
+  ILIMON19: { api: "ILIMON19" },
+  ILOMBARD405: { api: "ILOMBARD405" },
+  ILGFORNA4: { api: "ILGFORNA4" },
+  ILUCCA69: { api: "ILUCCA69" },
+  ILUCIN14: { api: "ILUCIN14" },
+  IMACCA6: { api: "IMACCA6" },
+  IMALLA14: { api: "IMALLA14" },
+  IMASON4: { api: "IMASON4" },
+  IMASON6: { api: "IMASON6" },
+  IMASSA43: { api: "IMASSA43" },
+  IMEDE8: { api: "IMEDE8" },
+  IMELE15: { api: "IMELE15" },
+  IMELE16_: { api: "IMELE16" },
+  IMENDA13: { api: "IMENDA13" },
+  IMENDA14: { api: "IMENDA14" },
+  IMERAN2: { api: "IMERAN2" },
+  IMIGNA23: { api: "IMIGNA23" },
+  IMILLE3: { api: "IMILLE3" },
+  IMOCON1: { api: "IMOCON1" },
+  IMOLAR2: { api: "IMOLAR2" },
+  IMONEG33: { api: "IMONEG33" },
+  IMONGI4: { api: "IMONGI4" },
+  IMONTA172: { api: "IMONTA172" },
+  IMONTE1010: { api: "IMONTE1010" },
+  IMONTO93: { api: "IMONTO93" },
+  IMORSA15: { api: "IMORSA15" },
+  IMONTO47: { api: "IMONTO47" },
+  IMURAZ6: { api: "IMURAZ6" },
+  IMURIALD2: { api: "IMURIALD2" },
+  INEIRO1: { api: "INEIRO1" },
+  INEIRO2: { api: "INEIRO2" },
+  INOVIL12: { api: "INOVIL12" },
+  INOVIL17: { api: "INOVIL17" },
+  INOVIL34: { api: "INOVIL34" },
+  INOVILIG13: { api: "INOVILIG13" },
+  IORMEA3: { api: "IORMEA3" },
+  IORMEA11: { api: "IORMEA11" },
+  IOTTON1: { api: "IOTTON1" },
+  IOTTON2: { api: "IOTTON2" },
+  IORTOV1: { api: "IORTOV1" },
+  IORSAR1: { api: "IORSAR1" },
+  IOVADA9: { api: "IOVADA9" },
+  IOVADA12: { api: "IOVADA12" },
+  IPAVIA9: { api: "IPAVIA9" },
+  IPAVIA24: { api: "IPAVIA24" },
+  IPAVIA42: { api: "IPAVIA42" },
+  IPEVER4: { api: "IPEVER4" },
+  IPIEA6: { api: "IPIEA6" },
+  IPIEMONT238: { api: "IPIEMONT238" },
+  IPIETR8: { api: "IPIETR8" },
+  IPIEVE47: { api: "IPIEVE47" },
+  IPOIRI2: { api: "IPOIRI2" },
+  IPONZO6: { api: "IPONZO6" },
+  IPONZO9: { api: "IPONZO9" },
+  IPMVILLA8: { api: "IPMVILLA8" },
+  IPRASC3: { api: "IPRASC3" },
+  IRAPAL8: { api: "IRAPAL8" },
+  IRAPAL15: { api: "IRAPAL15" },
+  IRAPAL29: { api: "IRAPAL29" },
+  IRAPAL33: { api: "IRAPAL33" },
+  IRIALT2: { api: "IRIALT2" },
+  IRICCD2: { api: "IRICCD2" },
+  IRIVAP3: { api: "IRIVAP3" },
+  IROATT2: { api: "IROATT2" },
+  IROCCA35: { api: "IROCCA35" },
+  IROCCA37: { api: "IROCCA37" },
+  IROCCA49: { api: "IROCCA49" },
+  IROCCA172: { api: "IROCCA172" },
+  IRONCO16: { api: "IRONCO16" },
+  IRONCO23: { api: "IRONCO23" },
+  IRONCO30: { api: "IRONCO30" },
+  IROSSI9: { api: "IROSSI9" },
+  IROVEG2: { api: "IROVEG2" },
+  ISANBE44: { api: "ISANBE44" },
+  ISANCR61: { api: "ISANCR61" },
+  ISANDA4: { api: "ISANDA4" },
+  ISANDA45: { api: "ISANDA45" },
+  ISANFR79: { api: "ISANFR79" },
+  ISANGI194: { api: "ISANGI194" },
+  ISANMA94: { api: "ISANMA94" },
+  ISANPA4: { api: "ISANPA4" },
+  ISANRE10: { api: "ISANRE10" },
+  ISANRE25: { api: "ISANRE25" },
+  ISANRE52: { api: "ISANRE52" },
+  ISANTA737: { api: "ISANTA737" },
+  ISANTA1095: { api: "ISANTA1095" },
+  ISANTA1316: { api: "ISANTA1316" },
+  ISANTA1419: { api: "ISANTA1419" },
+  ISANTA1669: { api: "ISANTA1669" },
+  ISANTO233: { api: "ISANTO233" },
+  ISANTO347: { api: "ISANTO347" },
+  ISANTO411: { api: "ISANTO411" },
+  ISARZA7: { api: "ISARZA7" },
+  ISARZA25: { api: "ISARZA25" },
+  ISAVIG25: { api: "ISAVIG25" },
+  ISAVIG93: { api: "ISAVIG93" },
+  ISAVON38: { api: "ISAVON38" },
+  ISAVONA11: { api: "ISAVONA11" },
+  ISAVONAL1: { api: "ISAVONAL1" },
+  ISESSA22: { api: "ISESSA22" },
+  ISESTR23: { api: "ISESTR23" },
+  ISESTR28: { api: "ISESTR28" },
+  ISESTR36: { api: "ISESTR36" },
+  ISERRA21: { api: "ISERRA21" },
+  ISERRA22: { api: "ISERRA22" },
+  ISERRA75: { api: "ISERRA75" },
+  ISERRA86: { api: "ISERRA86" },
+  ISILVA16: { api: "ISILVA16" },
+  ISORI12: { api: "ISORI12" },
+  ISPINE11: { api: "ISPINE11" },
+  ISPIGN2: { api: "ISPIGN2" },
+  ISPOTO4: { api: "ISPOTO4" },
+  ISTAZZAN2: { api: "ISTAZZAN2" },
+  ISTAZZ9: { api: "ISTAZZ9" },
+  ISTELL21: { api: "ISTELL21" },
+  ITASSA1: { api: "ITASSA1" },
+  ITESTI1: { api: "ITESTI1" },
+  ITOSCANA56: { api: "ITOSCANA56" },
+  ITOSCANA135: { api: "ITOSCANA135" },
+  ITORRE444: { api: "ITORRE444" },
+  ITORRI4: { api: "ITORRI4" },
+  ITORRI20: { api: "ITORRI20" },
+  ITORRI54: { api: "ITORRI54" },
+  ITORTO104: { api: "ITORTO104" },
+  ITRIBO2: { api: "ITRIBO2" },
+  IURBE3: { api: "IURBE3" },
+  IURBE10: { api: "IURBE10" },
+  IVADOL4: { api: "IVADOL4" },
+  IVALBR3: { api: "IVALBR3" },
+  IVALBR4: { api: "IVALBR4" },
+  IVALDI75: { api: "IVALDI75" },
+  IVALLE94: { api: "IVALLE94" },
+  IVARAZ2: { api: "IVARAZ2" },
+  IVARAZ6: { api: "IVARAZ6" },
+  IVARAZ9: { api: "IVARAZ9" },
+  IVARZI7: { api: "IVARZI7" },
+  IVENTI16: { api: "IVENTI16" },
+  IVERNA8: { api: "IVERNA8" },
+  IVERRU5: { api: "IVERRU5" },
+  IVEZZI1_: { api: "IVEZZI1" },
+  IVIARE23: { api: "IVIARE23" },
+  IVILLA764: { api: "IVILLA764" },
+  IVILLA1125: { api: "IVILLA1125" },
+  IVILLA1686: { api: "IVILLA1686" },
+  IVILLA1819: { api: "IVILLA1819" },
+  IVOGHE6: { api: "IVOGHE6" },
+  IVOLTA3: { api: "IVOLTA3" },
+  IVOLTA7: { api: "IVOLTA7" },
+  IZIGNA2: { api: "IZIGNA2" }
+
+};
+const stationsLimet = {
+  Molassana: {
+    link: "molassana-alta", // parte variabile della URL
+    link2: "terzereti",
+    lat: 44.461,            // latitudine
+    lon: 8.987              // longitudine
+  },
+  WTC: {
+    link: "wtc", // parte variabile della URL
+    link2: "meteo-wtc",
+    lat: 44.408,            // latitudine
+    lon: 8.901              // longitudine
+  },
+  Sampierdarena: {
+    link: "sampierdarena", // parte variabile della URL
+    link2: "meteo-sampierdarena",
+    lat: 44.416,            // latitudine
+    lon: 8.886              // longitudine
+  },
+  Parazzuolo: {
+    link: "parazzuolo", // parte variabile della URL
+    link2: "meteo-parazzuolo",
+    lat: 44.478,            // latitudine
+    lon: 9.325             // longitudine
+    
+  },
+  Montoggio: {
+    link: "montoggio", // parte variabile della URL
+    link2: "meteo-montoggio",
+    lat: 44.517,            // latitudine
+    lon: 9.050             // longitudine
+    
+  },
+  SanRocco: {
+    link: "sanrocco", // parte variabile della URL
+    link2: "meteo-sanrocco",
+    lat: 44.334,            // latitudine
+    lon: 9.161             // longitudine
+    
+  },
+  SantAlberto: {
+    link: "salberto", // parte variabile della URL
+    link2: "meteo-salberto",
+    lat: 44.444,            // latitudine
+    lon: 9.103             // longitudine
+    
+  },
+  LagoLame: {
+    link: "lame", // parte variabile della URL
+    link2: "meteo-lame",
+    lat: 44.503,            // latitudine
+    lon: 9.408             // longitudine
+    
+  },
+  Rezzoaglio: {
+    link: "rezzoaglio", // parte variabile della URL
+    link2: "meteo-rezzoaglio",
+    lat: 44.525,            // latitudine
+    lon: 9.385             // longitudine
+    
+  },
+  RezzoaglioCerisola: {
+    link: "rezzoaglio-cerisola", // parte variabile della URL
+    link2: "meteo-rezzoaglio-cerisola",
+    lat: 44.515,            // latitudine
+    lon: 9.408             // longitudine
+    
+  },
+  PuntaChiappa: {
+    link: "batterie-pchiappa", // parte variabile della URL
+    link2: "meteo-batterie-pchiappa",
+    lat: 44.322,            // latitudine
+    lon: 9.152             // longitudine
+    
+  },
+  Ventarola: {
+    link: "ventarola", // parte variabile della URL
+    link2: "meteo-ventarola",
+    lat: 44.555,            // latitudine
+    lon: 9.305             // longitudine
+    
+  },
+};
+
+const stations1 = {
+  Favale: {
+    link: "https://retelimet.centrometeoligure.it/stazioni/meteo-favale/data/wd/file/customclientraw.txt",
+    lat: 44.453,
+    lon: 9.260
+  },
+  // aggiungi qui altre stazioni Cumulus MX, ognuna con link/lat/lon
+};
+const stations2 = {
+  PoggioRovegno: {
+    link: "https://www.turbolic.altervista.org/meteopoggio/cumulus/index.htm",
+    lat: 44.570,
+    lon: 9.279
+  },
+  // aggiungi qui altre stazioni Cumulus MX, ognuna con link/lat/lon
+};
+
+    const markers = {};
+    let latestData = {};
+
+// ----- Colori Umidità -----
+function getColorHum(hum) {
+  if (hum >= 90.0) return "#0114F0"; 
+  if (hum >= 80.0) return "#0060F0"; 
+  if (hum >= 70.0) return "#00BDEF"; 
+  if (hum >= 60.0) return "#21C2C5"; 
+  if (hum >= 50.0) return "#21C573"; 
+  if (hum >= 40.0) return "#3AA300"; 
+  if (hum >= 30.0) return "#F0B800"; 
+  if (hum >= 20.0) return "#F0CB00";
+  if (hum >= 10.0) return "#F07D00";
+  return "#F01E00"; 
+}
+
+// ----- Colori Pioggia -----
+function getColorRain(rain) {
+  if (rain >= 150.0) return "#843BEB"; 
+  if (rain >= 100.0) return "#FF69B4";
+  if (rain >= 50.0) return "#0038F0";
+  if (rain >= 30.0) return "#4682B4"; 
+  if (rain >= 20.0) return "#87CEEB";
+  if (rain >= 10.0) return "#3AA300";
+  if (rain >= 5.0) return "#006400";
+  if (rain >= 0.2) return "#F09F00";
+  return "#808080"; 
+}
+
+// ----- Colori Temperatura -----
+function getColorTemp(temp) {
+  if (temp >= 38.0) return "#843BEB";
+  if (temp >= 35.0) return "#FF69B4";
+  if (temp >= 30.0) return "#8B0000";
+  if (temp >= 25.0) return "#FF0000";
+  if (temp >= 20.0) return "#E67D00";
+  if (temp >= 15.0) return "#E6B800";
+  if (temp >= 11.0) return "#3AA300";
+  if (temp >= 5.0) return "#006400";
+  if (temp >= 0.0) return "#87CEEB";
+  if (temp >= -5.0) return "#4682B4";
+  if (temp >= -10.0) return "#0000FF";
+  return "#191970";
+}
+
+    // ----- Creazione Marker -----
+    function createMarker(id) {
+      const icon = L.divIcon({
+        className: '',
+        html: '<div class="circle-label2" style="background-color:#808080; border:0px solid white;"></div>',
+        iconSize: [0, 0],
+        iconAnchor: [0, 0]
+      });
+    
+
+      const marker = L.marker([44.423, 8.972], { icon }).addTo(map);
+      marker.bindPopup(`<b>Stazione:</b> ${id}<br>⚠️ Offline`);
+      markers[id] = marker;
+    }
+    
+    function createMarker(id) {
+  const icon = L.divIcon({
+    className: '',
+    html: '<div class="circle-label2" style="background-color:#808080; border:0px solid white;"></div>',
+    iconSize: [0, 0],
+    iconAnchor: [0, 0]
+  });
+
+  const isLimet = !!stationsLimet[id];
+  const startLat = 44.466;
+  const startLon = 8.984;
+
+  const marker = L.marker([startLat, startLon], { icon }).addTo(map);
+  marker.bindPopup(`<b>Stazione:</b> ${id}<br>⚠️ Offline`);
+  markers[id] = marker;
+}
+// ----- Aggiorna Marker -----
+function updateMarker(id) {
+  const type = document.getElementById("tempSelect").value;
+  const data = latestData[id];
+  if (!data) return;
+
+  let value, color;
+
+  if (type === "hum") {
+    value = data.hum;
+    color = value != null ? getColorHum(value) : "#808080";
+  } else if (type === "humMax") {
+    value = data.humHigh;
+    color = value != null ? getColorHum(value) : "#808080";
+  } else if (type === "humMin") {
+    value = data.humLow;
+    color = value != null ? getColorHum(value) : "#808080";
+  } else if (type === "rainDay") {
+    value = data.rainDaily;
+    color = value != null ? getColorRain(value) : "#808080";
+  }
+    else if (type === "rainRate") {
+    value = data.rainRate;
+    color = value != null ? getColorRain(value) : "#808080";
+  } else {
+    // tutte le altre opzioni (temperatura/dewpoint/heat)
+    if (type === "current") value = data.temp;
+    if (type === "max") value = data.tempHigh;
+    if (type === "min") value = data.tempLow;
+    if (type === "dewpt") value = data.dewp;
+    if (type === "dewpMax") value = data.dewpHigh;
+    if (type === "dewpMin") value = data.dewpLow;
+    if (type === "Heat") value = data.heat;
+    if (type === "HtMax") value = data.heatHigh;
+    if (type === "HtMin") value = data.heatLow;
+
+    color = value != null ? getColorTemp(value) : "#808080";
+  }
+
+  // Se il valore è null, mostra pallino grigio senza numero
+  const displayValue = value != null ? value.toFixed(1) : "";
+
+  const icon = L.divIcon({
+    className: '',
+    html: `<div class="circle-label" style="background-color:${color}; border:2px solid white;">${displayValue}</div>`,
+    iconSize: [32,32],
+    iconAnchor: [16,16]
+  });
+
+  markers[id].setIcon(icon);
+  markers[id].setLatLng([data.lat, data.lon]);
+
+  // Contenuto del popup dinamico
+  let popupContent = `<b>Stazione:</b> ${id}<br>`;
+  if (type.startsWith("hum")) {
+    popupContent += `💧 Umidità Attuale: ${data.hum != null ? data.hum.toFixed(1) : "N/A"}%<br>`;
+    popupContent += `🔺 Max: ${data.humHigh != null ? data.humHigh.toFixed(1) : "N/A"}%<br>`;
+    popupContent += `🔻 Min: ${data.humLow != null ? data.humLow.toFixed(1) : "N/A"}%`;
+  } else if (type.startsWith("rain")) {
+    popupContent += `🌧️ Pioggia Giornaliera: ${data.rainDaily != null ? data.rainDaily.toFixed(1) : "N/A"} mm<br>`;
+    popupContent += `💦 Intensità: ${data.rainRate != null ? data.rainRate.toFixed(1) : "N/A"} mm/h`;
+  } else if (type.startsWith("dewpt")) {
+    popupContent += `💧 Dewpoint attuale: ${data.dewp != null ? data.dewp.toFixed(1) : "N/A"}°C<br>`;
+    popupContent += `🔺 Max: ${data.dewpHigh != null ? data.dewpHigh.toFixed(1) : "N/A"}°C<br>`;
+    popupContent += `🔻 Min: ${data.dewpLow != null ? data.dewpLow.toFixed(1) : "N/A"}°C`;
+  } else if (type.startsWith("Heat")) {
+    popupContent += `🌡️ Heat Index attuale: ${data.heat != null ? data.heat.toFixed(1) : "N/A"}°C<br>`;
+    popupContent += `🔺 Max: ${data.heatHigh != null ? data.heatHigh.toFixed(1) : "N/A"}°C<br>`;
+    popupContent += `🔻 Min: ${data.heatLow != null ? data.heatLow.toFixed(1) : "N/A"}°C`;
+  } else {
+    // temperatura normale
+    popupContent += `🌡️ Attuale: ${data.temp != null ? data.temp.toFixed(1) : "N/A"}°C<br>`;
+    popupContent += `🔺 Massima: ${data.tempHigh != null ? data.tempHigh.toFixed(1) : "N/A"}°C<br>`;
+    popupContent += `🔻 Minima: ${data.tempLow != null ? data.tempLow.toFixed(1) : "N/A"}°C`;
+  }
+
+  markers[id].setPopupContent(popupContent);
+}
+
+async function fetchLimet(id) {
+  const st = stationsLimet[id];
+
+  try {
+    const response = await fetch(
+      "https://api.allorigins.win/get?url=" +
+      encodeURIComponent(`https://retelimet.centrometeoligure.it/stazioni/${st.link2}/web/home.php?station=${st.link}`) +
+      "&timestamp=" + Date.now()
+    );
+
+    const data = await response.json();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(data.contents, "text/html");
+
+    const tempTxt = doc.querySelector("#temp")?.textContent?.trim();
+    const temp = tempTxt ? parseFloat(tempTxt.replace(",", ".")) : null;
+
+    const tempMaxTxt = doc.querySelector("#temp_max")?.textContent?.trim();
+    const tempHigh = tempMaxTxt ? parseFloat(tempMaxTxt.replace(",", ".")) : null;
+
+    const tempMinTxt = doc.querySelector("#temp_min")?.textContent?.trim();
+    const tempLow = tempMinTxt ? parseFloat(tempMinTxt.replace(",", ".")) : null;
+
+    const scrittineSpans = Array.from(doc.querySelectorAll("span.scrittine"));
+
+for (let span of scrittineSpans) {
+  if (span.textContent.includes("Dew Point")) {
+    const valoriSpan = span.parentElement.querySelector("span.valori strong");
+    if (valoriSpan) {
+      dewp = parseFloat(valoriSpan.textContent.replace(",", "."));
+    }
+    break;
+  }
+}
+
+    let rainDaily = null;
+
+// seleziona tutti gli span.temp
+const tempSpans = Array.from(doc.querySelectorAll("span.temp"));
+
+for (let span of tempSpans) {
+  // verifica se il parent contiene "Pioggia giorno"
+  if (span.parentElement.textContent.includes("Pioggia giorno")) {
+    const strong = span.querySelector("strong");
+    if (strong) {
+      rainDaily = parseFloat(strong.textContent.replace(",", "."));
+    }
+    break;
+  }
+}
+
+latestData[id] = {
+      temp, tempHigh, tempLow, dewp, rainDaily,
+      lat: st.lat, lon: st.lon
+    };
+    updateMarker(id);
+
+  } catch (err) {
+    console.error(`Errore fetch LIMET ${id}:`, err);
+  }
+}
+
+
+    // ----- Fetch dati temperatura -----
+    async function fetchPws(id) {
+      try {
+        const urlCurrent = `https://api.weather.com/v2/pws/observations/current?apiKey=${apiKey}&stationId=${stations[id].api}&numericPrecision=decimal&format=json&units=m`;
+        const resCurrent = await fetch(urlCurrent);
+        const dataCurrent = await resCurrent.json();
+
+        const temp = dataCurrent.observations[0].metric.temp;
+        const dewp = dataCurrent.observations [0].metric.dewpt;
+        const heat = dataCurrent.observations [0].metric.heatIndex;
+        const hum = dataCurrent.observations [0].humidity;
+        const rainDaily = dataCurrent.observations [0].metric.precipTotal;
+        const rainRate = dataCurrent.observations [0].metric.precipRate;
+        const lat = dataCurrent.observations[0].lat;
+        const lon = dataCurrent.observations[0].lon;
+
+        const urlDaily = `https://api.weather.com/v2/pws/dailysummary/1day?apiKey=${apiKey}&stationId=${stations[id].api}&numericPrecision=decimal&format=json&units=m`;
+        const resDaily = await fetch(urlDaily);
+        const dataDaily = await resDaily.json();
+
+        const summary = dataDaily.summaries && dataDaily.summaries.length > 0 ? dataDaily.summaries[0].metric : null;
+        const tempHigh = summary ? summary.tempHigh : null;
+        const tempLow = summary ? summary.tempLow : null;
+        const dewpHigh = summary ? summary.dewptHigh : null;
+        const dewpLow = summary ? summary.dewptLow : null;
+        const heatHigh = summary ? summary.heatindexHigh : null;
+        const heatLow = summary ? summary.heatindexLow : null;
+        const humHigh = summary ? dataDaily.summaries[0].humidityHigh : null;
+        const humLow = summary ? dataDaily.summaries[0].humidityLow : null;
+
+        latestData[id] = { temp, tempHigh, tempLow, dewp, dewpHigh, dewpLow, heat, heatHigh, heatLow, hum, humHigh, humLow, rainDaily, rainRate, lat, lon };
+        updateMarker(id);
+
+      } catch(err) {
+        console.error(`Errore fetch dati ${id}:`, err);
+      }
+    }
+
+
+    async function fetchStations1(id) {
+  const st = stations1[id];
+  if (!st) return;
+
+  try {
+    // Evita CORS e cache
+    const url = "https://api.allorigins.win/get?url=" +
+      encodeURIComponent(st.link) +
+      "&timestamp=" + Date.now();
+
+    const resp = await fetch(url);
+    const wrapped = await resp.json();
+
+    // Il contenuto è una stringa JSON nel campo "contents"
+    const raw = JSON.parse(wrapped.contents);
+
+    // Parse numerico sicuro (alcuni campi hanno spazi/virgole)
+    const toNum = v => v == null ? null : parseFloat(String(v).replace(",", ".").trim());
+
+    const temp      = toNum(raw.temp);
+    const tempHigh  = toNum(raw.tempTH);
+    const tempLow   = toNum(raw.tempTL);
+
+    const dewp      = toNum(raw.dew);
+    const dewpHigh  = toNum(raw.dewpointTH);
+    const dewpLow   = toNum(raw.dewpointTL);
+
+    const heat      = toNum(raw.heatindex);
+    const heatHigh  = toNum(raw.heatindexTH);
+    const heatLow   = raw.wchillTL != null ? toNum(raw.wchillTL) : null; // non esiste heatLow nel JSON
+
+    const hum       = toNum(raw.hum);
+    const humHigh   = toNum(raw.humTH);
+    const humLow    = toNum(raw.humTL);
+
+    const rainDaily = toNum(raw.rfall);
+    const rainRate  = toNum(raw.rrate);
+
+    latestData[id] = {
+      temp, tempHigh, tempLow,
+      dewp, dewpHigh, dewpLow,
+      heat, heatHigh, heatLow,
+      hum, humHigh, humLow,
+      rainDaily, rainRate,
+      lat: st.lat, lon: st.lon
+    };
+
+    updateMarker(id);
+  } catch (err) {
+    console.error(`Errore fetch stations1 ${id}:`, err);
+  }
+}
+async function fetchStations2(id) {
+  const st = stations2[id];
+  if (!st) return;
+
+  try {
+    // Evita CORS e cache
+    const url = "https://api.allorigins.win/get?url=" +
+      encodeURIComponent(st.link) +
+      "&timestamp=" + Date.now();
+
+    const resp = await fetch(url);
+    const wrapped = await resp.json();
+
+    // Parse HTML
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(wrapped.contents, "text/html");
+
+    // Funzione helper per trovare valore in base all'etichetta
+    function getValue(label) {
+      const row = [...doc.querySelectorAll("tr")].find(tr =>
+        tr.textContent.includes(label)
+      );
+      if (!row) return null;
+      const tds = [...row.querySelectorAll("td")].map(td => td.textContent.trim());
+      if (!tds[1]) return null;
+      return parseFloat(tds[1].replace(",", ".").replace(/[^\d.-]/g, ""));
+    }
+
+    // Estrazione valori
+    const temp      = getValue("Temperatura");
+    const hum       = getValue("umidita");
+    const dewp      = getValue("Punto di rugiada");
+    const heat      = getValue("Indice di calore") || getValue("Temperatura percepita");
+    const rainRate  = getValue("Intensita");
+    const rainDaily = getValue("Pioggia");
+
+    latestData[id] = {
+      temp,
+      hum,
+      dewp,
+      heat,
+      rainRate,
+      rainDaily,
+      lat: st.lat,
+      lon: st.lon
+    };
+
+    updateMarker(id);
+
+  } catch (err) {
+    console.error(`Errore fetch stations2 ${id}:`, err);
+  }
+}
+
+
+
+// ----- Inizializza Marker Wunderground -----
+Object.keys(stations).forEach(id => createMarker(id));
+Object.keys(stations1).forEach(id => createMarker(id));
+Object.keys(stations2).forEach(id => createMarker(id));
+Object.keys(stationsLimet).forEach(id => createMarker(id));
+
+Object.keys(stations).forEach(id => fetchPws(id));
+Object.keys(stations1).forEach(id => fetchStations1(id));
+Object.keys(stations2).forEach(id => fetchStations2(id));
+Object.keys(stationsLimet).forEach(id => fetchLimet(id));
+
+    // Aggiornamento ogni 10 secondi
+    setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 35000);
+setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 35000);
+setInterval(() => { Object.keys(stations2).forEach(id => fetchStations2(id)); }, 35000);
+setInterval(() => { Object.keys(stationsLimet).forEach(id => fetchLimet(id)); }, 5000);
+    // Cambia tipo di temperatura
+    document.getElementById("tempSelect").addEventListener("change", () => {
+  Object.keys(stations).forEach(id => updateMarker(id));
+  Object.keys(stationsLimet).forEach(id => updateMarker(id));
+  Object.keys(stations1).forEach(id => updateMarker(id));
+  Object.keys(stations2).forEach(id => updateMarker(id));  // <— aggiunto
+    });
+  </script>
+</body>
+</html>
