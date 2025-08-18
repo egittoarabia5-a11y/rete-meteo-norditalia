@@ -578,7 +578,7 @@ function createMarker(id, lat = 44.423, lon = 8.972) {
   markers[id] = marker;
 }
 
-// Aggiorna dimensione marker al resize
+// Aggiorna dimensione marker al resizer
 window.addEventListener("resize", () => {
   Object.keys(markers).forEach(id => {
     const m = markers[id];
