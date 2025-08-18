@@ -544,37 +544,49 @@ function getColorTemp(temp) {
   return "#191970";
 }
 
-    // ----- Creazione Marker -----
-    function createMarker(id) {
-      const icon = L.divIcon({
-        className: '',
-        html: '<div class="circle-label2" style="background-color:#808080; border:0px solid white;"></div>',
-        iconSize: [0, 0],
-        iconAnchor: [0, 0]
-      });
-    
+// ----- Creazione Marker Responsivo -----
+function createMarker(id, lat = 44.423, lon = 8.972) {
+  // Se è il marker principale (44.423, 8.972) lo rendiamo invisibile
+  const isMainMarker = lat === 44.423 && lon === 8.972;
 
-      const marker = L.marker([44.423, 8.972], { icon }).addTo(map);
-      marker.bindPopup(`<b>Stazione:</b> ${id}<br>⚠️ Offline`);
-      markers[id] = marker;
-    }
-    
-    function createMarker(id) {
+  // Calcola dimensione proporzionale solo se non è principale
+  const baseSize = 40;
+  const scale = Math.min(window.innerWidth / 1200, 1);
+  const size = isMainMarker ? 0 : baseSize * scale;
+
   const icon = L.divIcon({
     className: '',
-    html: '<div class="circle-label2" style="background-color:#808080; border:0px solid white;"></div>',
-    iconSize: [0, 0],
-    iconAnchor: [0, 0]
+    html: `<div class="circle-label2" 
+                 style="
+                   width: ${size}px; 
+                   height: ${size}px; 
+                   line-height: ${size}px; 
+                   border-radius: 50%; 
+                   background-color: #808080; 
+                   text-align:center;
+                   color:white;
+                   font-weight:bold;
+                 ">
+           ${isMainMarker ? '' : id}
+           </div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2]
   });
 
-  const isLimet = !!stationsLimet[id];
-  const startLat = 44.466;
-  const startLon = 8.984;
-
-  const marker = L.marker([startLat, startLon], { icon }).addTo(map);
+  const marker = L.marker([lat, lon], { icon }).addTo(map);
   marker.bindPopup(`<b>Stazione:</b> ${id}<br>⚠️ Offline`);
   markers[id] = marker;
 }
+
+// Aggiorna dimensione marker al resize
+window.addEventListener("resize", () => {
+  Object.keys(markers).forEach(id => {
+    const m = markers[id];
+    const latlng = m.getLatLng();
+    map.removeLayer(m);
+    createMarker(id, latlng.lat, latlng.lng);
+  });
+});
 // ----- Aggiorna Marker -----
 function updateMarker(id) {
   const type = document.getElementById("tempSelect").value;
