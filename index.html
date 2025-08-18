@@ -546,12 +546,13 @@ function getColorTemp(temp) {
 
 // ----- Creazione Marker Responsivo -----
 function createMarker(id, lat = 44.423, lon = 8.972) {
-  // Se è il marker principale (44.423, 8.972) lo rendiamo invisibile
   const isMainMarker = lat === 44.423 && lon === 8.972;
 
-  // Calcola dimensione proporzionale solo se non è principale
+  // Dimensione base dei cerchi
   const baseSize = 40;
-  const scale = Math.min(window.innerWidth / 1200, 1);
+
+  // Scala in base alla larghezza dello schermo, minimo 20px
+  const scale = Math.max(window.innerWidth / 1200, 0.5);
   const size = isMainMarker ? 0 : baseSize * scale;
 
   const icon = L.divIcon({
@@ -566,7 +567,7 @@ function createMarker(id, lat = 44.423, lon = 8.972) {
                    text-align:center;
                    color:white;
                    font-weight:bold;
-                 ">
+                   ">
            ${isMainMarker ? '' : id}
            </div>`,
     iconSize: [size, size],
