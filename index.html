@@ -73,6 +73,10 @@
       <option value="humMin">UR Min</option>
       <option value="rainDay">Pioggia 24h</option>
       <option value="rainRate">Rain Rate</option>
+      <option value="wind">Vento</option>
+      <option value="windGust">Raffica</option>
+      <option value="windGustMax">Raffica Max</option>
+
     </select>
   </div>
 
@@ -91,6 +95,49 @@
     const apiKey = 'e1f10a1e78da46f5b10a1e78da96f525';
 
     // ----- Lista Stazioni -----
+    const stationsBest = {
+      
+  IGENOA58: { api: "IGENOA58" },
+  IGENOA3078: { api: "IGENOA2728" },
+  IGENOA2767: { api: "IGENOA2767" },
+  IGENOA2775: { api: "IGENOA2775" },
+  IGENOA2800: { api: "IGENOA2800" },
+  IGENOA2819: { api: "IGENOA2819" },
+  IGENOA2833_: { api: "IGENOA2833" },
+  IGENOA2841: { api: "IGENOA2841" },
+  IGENOA2843: { api: "IGENOA2843" },
+  IGENOA2846: { api: "IGENOA2846" },
+  IGENOA2857: { api: "IGENOA2857" },
+  IGENOA2865: { api: "IGENOA2865" },
+  IGENOA2881: { api: "IGENOA2881" },
+  IGENOA2887: { api: "IGENOA2887" },
+  IGENOA2895: { api: "IGENOA2895" },
+  IGENOA2933: { api: "IGENOA2933" },
+  IGENOA2959: { api: "IGENOA2959" },
+  IGENOA2962: { api: "IGENOA2962" },
+  IGENOA2970: { api: "IGENOA2970" },
+  IGENOA2971: { api: "IGENOA2971" },
+  IGENOA2980: { api: "IGENOA2980" },
+  IGENOA2983: { api: "IGENOA2983" },
+  IGENOA2984: { api: "IGENOA2984" },
+  IGENOA2987: { api: "IGENOA2987" },
+  IGENOA2991: { api: "IGENOA2991" },
+  IGENOA2997: { api: "IGENOA2997" },
+  IGENOA3005: { api: "IGENOA3005" },
+  IGENOA3007: { api: "IGENOA3007" },
+  IGENOA3015: { api: "IGENOA3015" },
+  IGENOA3019: { api: "IGENOA3019" },
+  IGENOA3021: { api: "IGENOA3021" },
+  IGENOA3032: { api: "IGENOA3032" },
+  IGENOA3035: { api: "IGENOA3035" },
+  IGENOA3052: { api: "IGENOA3052" },
+  IGENOA3058: { api: "IGENOA3058" },
+  IGENOA3069: { api: "IGENOA3069" },
+  IGENOA3085: { api: "IGENOA3085" },
+  IGENOA3104: { api: "IGENOA3104" },
+  IGENOVAA2: { api: "IGENOVAA2" }
+};
+
     const stations = {
   IACQUI19: { api: "IACQUI19" },
   IALASS4: { api: "IALASS4" },
@@ -613,8 +660,16 @@ function updateMarker(id) {
   } else if (type === "rainDay") {
     value = data.rainDaily;
     color = value != null ? getColorRain(value) : "#808080";
-  }
-    else if (type === "rainRate") {
+  } else if (type === "wind") {
+    value = data.wind;
+    color = value != null ? getColorRain(value) : "#808080";
+  } else if (type === "windGust") {
+    value = data.windGust;
+    color = value != null ? getColorRain(value) : "#808080";
+  } else if (type === "windGustMax") {
+    value = data.windGustHigh;
+    color = value != null ? getColorRain(value) : "#808080";
+  } else if (type === "rainRate") {
     value = data.rainRate;
     color = value != null ? getColorRain(value) : "#808080";
   } else {
@@ -658,6 +713,10 @@ function updateMarker(id) {
     popupContent += `💧 Dewpoint attuale: ${data.dewp != null ? data.dewp.toFixed(1) : "N/A"}°C<br>`;
     popupContent += `🔺 Max: ${data.dewpHigh != null ? data.dewpHigh.toFixed(1) : "N/A"}°C<br>`;
     popupContent += `🔻 Min: ${data.dewpLow != null ? data.dewpLow.toFixed(1) : "N/A"}°C`;
+  } else if (type.startsWith("wind")) {
+    popupContent += `Vento attuale: ${data.wind != null ? data.wind.toFixed(1) : "N/A"}km/h<br>`;
+    popupContent += `Raffica: ${data.windGust != null ? data.windGust.toFixed(1) : "N/A"}km/h<br>`;
+    popupContent += `🔺 Raffica Massima: ${data.windGustHigh != null ? data.windGustHigh.toFixed(1) : "N/A"}km/h`;
   } else if (type.startsWith("Heat")) {
     popupContent += `🌡️ Heat Index attuale: ${data.heat != null ? data.heat.toFixed(1) : "N/A"}°C<br>`;
     popupContent += `🔺 Max: ${data.heatHigh != null ? data.heatHigh.toFixed(1) : "N/A"}°C<br>`;
@@ -750,6 +809,8 @@ latestData[id] = {
         const rainRate = dataCurrent.observations [0].metric.precipRate;
         const lat = dataCurrent.observations[0].lat;
         const lon = dataCurrent.observations[0].lon;
+        const wind = dataCurrent.observations[0].metric.windSpeed;
+        const windGust = dataCurrent.observations[0].metric.windGust;
 
         const urlDaily = `https://api.weather.com/v2/pws/dailysummary/1day?apiKey=${apiKey}&stationId=${stations[id].api}&numericPrecision=decimal&format=json&units=m`;
         const resDaily = await fetch(urlDaily);
@@ -764,8 +825,9 @@ latestData[id] = {
         const heatLow = summary ? summary.heatindexLow : null;
         const humHigh = summary ? dataDaily.summaries[0].humidityHigh : null;
         const humLow = summary ? dataDaily.summaries[0].humidityLow : null;
+        const windGustHigh = summary ? summary.windgustHigh : null;
 
-        latestData[id] = { temp, tempHigh, tempLow, dewp, dewpHigh, dewpLow, heat, heatHigh, heatLow, hum, humHigh, humLow, rainDaily, rainRate, lat, lon };
+        latestData[id] = { temp, tempHigh, tempLow, dewp, dewpHigh, dewpLow, heat, heatHigh, heatLow, hum, humHigh, humLow, rainDaily, rainRate, wind, windGust, windGustHigh, lat, lon };
         updateMarker(id);
 
       } catch(err) {
@@ -887,17 +949,22 @@ Object.keys(stations).forEach(id => createMarker(id));
 Object.keys(stations1).forEach(id => createMarker(id));
 Object.keys(stations2).forEach(id => createMarker(id));
 Object.keys(stationsLimet).forEach(id => createMarker(id));
+Object.keys(stationsBest).forEach(id => createMarker(id));
 
 Object.keys(stations).forEach(id => fetchPws(id));
 Object.keys(stations1).forEach(id => fetchStations1(id));
 Object.keys(stations2).forEach(id => fetchStations2(id));
 Object.keys(stationsLimet).forEach(id => fetchLimet(id));
+Object.keys(stationsBest).forEach(id => fetchPws(id));
 
     // Aggiornamento ogni 10 secondi
-    setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 35000);
+    setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 60000);
 setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 35000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations2(id)); }, 35000);
 setInterval(() => { Object.keys(stationsLimet).forEach(id => fetchLimet(id)); }, 5000);
+setInterval(() => {
+  Object.keys(stationsBest).forEach(id => fetchPws(id));
+}, 5000); // 10 secondi
     // Cambia tipo di temperatura
     document.getElementById("tempSelect").addEventListener("change", () => {
   Object.keys(stations).forEach(id => updateMarker(id));
