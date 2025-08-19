@@ -222,6 +222,7 @@
   ICHIUS13: { api: "ICHIUS13" },
   ICHIUS15: { api: "ICHIUS15" },
   ICICAG1: { api: "ICICAG1" },
+  ICOGOL7: { api: "ICOGOL7" },
   ICOGOL47: { api: "ICOGOL47" },
   ICOGOL52: { api: "ICOGOL52" },
   ICORTE57: { api: "ICORTE57" },
@@ -461,6 +462,13 @@ const stationsLimet = {
     lat: 44.461,            // latitudine
     lon: 8.987              // longitudine
   },
+  Arenzano: {
+    link: "arenzano-porto", // parte variabile della URL
+    link2: "terzereti",
+    lat: 44.400,            // latitudine
+    lon: 8.687            // longitudine
+  },
+  
   WTC: {
     link: "wtc", // parte variabile della URL
     link2: "meteo-wtc",
@@ -544,6 +552,16 @@ const stations1 = {
     lat: 44.453,
     lon: 9.260
   },
+  
+  // aggiungi qui altre stazioni Cumulus MX, ognuna con link/lat/lon
+};
+const stations3 = {
+  Cogoleto: {
+    link: "https://meteocogoleto.altervista.org/cumulus/websitedata.json?_=1755609287452",
+    lat: 44.390,
+    lon: 8.646
+  },
+  
   // aggiungi qui altre stazioni Cumulus MX, ognuna con link/lat/lon
 };
 const stations2 = {
@@ -950,26 +968,81 @@ async function fetchStations2(id) {
     console.error(`Errore fetch stations2 ${id}:`, err);
   }
 }
+async function fetchStations3(id) {
+  const st = stations1[id];
+  if (!st) return;
 
+  // Crea il marker se non esiste
+  if (!markers[id] && st.lat != null && st.lon != null) {
+    createMarker(id, st.lat, st.lon);
+  }
+
+  try {
+    const url = "https://api.allorigins.win/get?url=" +
+      encodeURIComponent(st.link) +
+      "&timestamp=" + Date.now();
+
+    const resp = await fetch(url);
+    const wrapped = await resp.json();
+
+    const raw = JSON.parse(wrapped.contents);
+
+    const toNum = v => v == null ? null : parseFloat(String(v).replace(",", ".").trim());
+
+    const temp      = toNum(raw.temp);
+    const tempHigh  = toNum(raw.temp_max);
+    const tempLow   = toNum(raw.temp_min);
+
+    const dewp      = toNum(raw.dew_point);
+    const heat      = toNum(raw.heat_index);
+
+    const hum       = toNum(raw.hum);
+
+    const rainDaily = toNum(raw.rain);
+    const rainRate  = toNum(raw.rain_rate);
+
+    const wind      = toNum(raw.wind_avg);
+    const windGust  = toNum(raw.wind_gust);
+    const windGustHigh = toNum(raw.wind_gust_max);
+
+    latestData[id] = {
+      temp, tempHigh, tempLow,
+      dewp, dewpHigh: null, dewpLow: null,
+      heat, heatHigh: null, heatLow: null,
+      hum, humHigh: null, humLow: null,
+      rainDaily, rainRate,
+      wind, windGust, windGustHigh,
+      lat: st.lat, lon: st.lon
+    };
+
+    updateMarker(id);
+
+  } catch (err) {
+    console.error(`Errore fetch stations3 ${id}:`, err);
+  }
+}
 
 
 // ----- Inizializza Marker Wunderground -----
 Object.keys(stations).forEach(id => createMarker(id));
 Object.keys(stations1).forEach(id => createMarker(id));
 Object.keys(stations2).forEach(id => createMarker(id));
+Object.keys(stations3).forEach(id => createMarker(id));
 Object.keys(stationsLimet).forEach(id => createMarker(id));
 Object.keys(stationsBest).forEach(id => createMarker(id));
 
 Object.keys(stations).forEach(id => fetchPws(id));
 Object.keys(stations1).forEach(id => fetchStations1(id));
 Object.keys(stations2).forEach(id => fetchStations2(id));
+Object.keys(stations3).forEach(id => fetchStations3(id));
 Object.keys(stationsLimet).forEach(id => fetchLimet(id));
 Object.keys(stationsBest).forEach(id => fetchPws(id));
 
     // Aggiornamento ogni 10 secondi
     setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 60000);
-setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 35000);
-setInterval(() => { Object.keys(stations2).forEach(id => fetchStations2(id)); }, 35000);
+setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 15000);
+setInterval(() => { Object.keys(stations2).forEach(id => fetchStations2(id)); }, 135000);
+setInterval(() => { Object.keys(stations2).forEach(id => fetchStations3(id)); }, 15000);
 setInterval(() => { Object.keys(stationsLimet).forEach(id => fetchLimet(id)); }, 5000);
 setInterval(() => {
   Object.keys(stationsBest).forEach(id => fetchPws(id));
@@ -980,6 +1053,7 @@ setInterval(() => {
   Object.keys(stationsLimet).forEach(id => updateMarker(id));
   Object.keys(stations1).forEach(id => updateMarker(id));
   Object.keys(stations2).forEach(id => updateMarker(id));
+  Object.keys(stations3).forEach(id => updateMarker(id));
   Object.keys(stationsBest).forEach(id => updateMarker(id));
     });
   </script>
