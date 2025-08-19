@@ -408,6 +408,7 @@
   ISPOTO4: { api: "ISPOTO4" },
   ISTAZZAN2: { api: "ISTAZZAN2" },
   ISTAZZ9: { api: "ISTAZZ9" },
+  ISTAZZ13: { api: "ISTAZZ13" },
   ISTELL21: { api: "ISTELL21" },
   ITASSA1: { api: "ITASSA1" },
   ITESTI1: { api: "ITESTI1" },
@@ -607,15 +608,15 @@ function createMarker(id, lat = 44.423, lon = 8.972) {
     className: '',
     html: `<div class="circle-label2"
                  style="
-                   width: ${size}px;
-                   height: ${size}px;
+                   width: 0px;
+                   height: 0px;
                    line-height: ${size}px;
                    border-radius: 50%;
                    background-color: #808080;
                    text-align: center;
                    color: white;
                    font-weight: bold;
-                   font-size: ${fontSize}px;
+                   font-size: 0px;
                  ">
            ${isMainMarker ? '' : id}
            </div>`,
@@ -970,7 +971,8 @@ setInterval(() => {
   Object.keys(stations).forEach(id => updateMarker(id));
   Object.keys(stationsLimet).forEach(id => updateMarker(id));
   Object.keys(stations1).forEach(id => updateMarker(id));
-  Object.keys(stations2).forEach(id => updateMarker(id));  // <— aggiunto
+  Object.keys(stations2).forEach(id => updateMarker(id));
+  Object.keys(stationsBest).forEach(id => updateMarker(id));
     });
   </script>
 </body>
