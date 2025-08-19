@@ -462,6 +462,12 @@ const stationsLimet = {
     lat: 44.461,            // latitudine
     lon: 8.987              // longitudine
   },
+  Fabbriche: {
+    link: "fabbriche-brusinetti", // parte variabile della URL
+    link2: "meteo-fabbriche-brusinetti",
+    lat: 44.446,            // latitudine
+    lon: 8.714              // longitudine
+  },
   Arenzano: {
     link: "arenzano-porto", // parte variabile della URL
     link2: "terzereti",
@@ -760,6 +766,7 @@ function updateMarker(id) {
 
 async function fetchLimet(id) {
   const st = stationsLimet[id];
+  if (!st) return;
 
   try {
     const response = await fetch(
@@ -781,44 +788,55 @@ async function fetchLimet(id) {
     const tempMinTxt = doc.querySelector("#temp_min")?.textContent?.trim();
     const tempLow = tempMinTxt ? parseFloat(tempMinTxt.replace(",", ".")) : null;
 
+    // Dew Point
+    let dewp = null;
     const scrittineSpans = Array.from(doc.querySelectorAll("span.scrittine"));
-
-for (let span of scrittineSpans) {
-  if (span.textContent.includes("Dew Point")) {
-    const valoriSpan = span.parentElement.querySelector("span.valori strong");
-    if (valoriSpan) {
-      dewp = parseFloat(valoriSpan.textContent.replace(",", "."));
+    for (let span of scrittineSpans) {
+      if (span.textContent.includes("Dew Point")) {
+        const valoriSpan = span.parentElement.querySelector("span.valori strong");
+        if (valoriSpan) dewp = parseFloat(valoriSpan.textContent.replace(",", "."));
+        break;
+      }
     }
-    break;
-  }
-}
 
+    // Rain Daily
     let rainDaily = null;
+    const tempSpans = Array.from(doc.querySelectorAll("span.temp"));
+    for (let span of tempSpans) {
+      if (span.parentElement.textContent.includes("Pioggia giorno")) {
+        const strong = span.querySelector("strong");
+        if (strong) rainDaily = parseFloat(strong.textContent.replace(",", "."));
+        break;
+      }
+    }
 
-// seleziona tutti gli span.temp
-const tempSpans = Array.from(doc.querySelectorAll("span.temp"));
-
-for (let span of tempSpans) {
-  // verifica se il parent contiene "Pioggia giorno"
-  if (span.parentElement.textContent.includes("Pioggia giorno")) {
-    const strong = span.querySelector("strong");
-    if (strong) {
-      rainDaily = parseFloat(strong.textContent.replace(",", "."));
+    let rainRate = null;
+const scrittineSpan = Array.from(doc.querySelectorAll("span.scrittine"));
+for (let span of scrittineSpan) {
+  if (span.textContent.trim().startsWith("Intensità")) {
+    // Prendi il prossimo span con classe 'valori2' nel parent
+    const parentDiv = span.parentElement;
+    if (parentDiv) {
+      const valori2 = parentDiv.querySelector("span.valori2 strong");
+      if (valori2) {
+        rainRate = parseFloat(valori2.textContent.replace(",", "."));
+      }
     }
     break;
   }
 }
-
-latestData[id] = {
-      temp, tempHigh, tempLow, dewp, rainDaily,
+    latestData[id] = {
+      temp, tempHigh, tempLow, dewp, rainDaily, rainRate,
       lat: st.lat, lon: st.lon
     };
+
     updateMarker(id);
 
   } catch (err) {
     console.error(`Errore fetch LIMET ${id}:`, err);
   }
 }
+
 
 
     // ----- Fetch dati temperatura -----
