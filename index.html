@@ -130,7 +130,6 @@
   IGENOA2997: { api: "IGENOA2997" },
   IGENOA3005: { api: "IGENOA3005" },
   IGENOA3007: { api: "IGENOA3007" },
-  IGENOA3015: { api: "IGENOA3015" },
   IGENOA3019: { api: "IGENOA3019" },
   IGENOA3021: { api: "IGENOA3021" },
   IGENOA3032: { api: "IGENOA3032" },
@@ -144,6 +143,11 @@
   IGENOA3027: { api: "IGENOA3027" },
   ILIGURIA67: { api: "ILIGURIA67" },
   IGENOA3104: { api: "IGENOA3104" },
+  IGENOA2831: { api: "IGENOA2831" },
+  IGENOA3041: { api: "IGENOA3041" },
+  IGENOA2960: { api: "IGENOA2960" },
+  IGENOA2969: { api: "IGENOA2969" },
+  IGENOA3077: { api: "IGENOA3077" },
   IGENOVAA2: { api: "IGENOVAA2" }
 };
 
@@ -230,6 +234,7 @@
   ICHERA3: { api: "ICHERA3" },
   ICHERA4: { api: "ICHERA4" },
   ICHERA5: { api: "ICHERA5" },
+  ICHIAV1: { api: "ICHIAV1" },
   ICHIAV4: { api: "ICHIAV4" },
   ICHIAV7: { api: "ICHIAV7" },
   ICHIAV12: { api: "ICHIAV12" },
@@ -277,7 +282,9 @@
   IGENOA2895: { api: "IGENOA2895" },
   IGENOA2933: { api: "IGENOA2933" },
   IGENOA2959: { api: "IGENOA2959" },
+  IGENOA2960: { api: "IGENOA2960" },
   IGENOA2962: { api: "IGENOA2962" },
+  IGENOA2969: { api: "IGENOA2969" },
   IGENOA2970: { api: "IGENOA2970" },
   IGENOA2971: { api: "IGENOA2971" },
   IGENOA2980: { api: "IGENOA2980" },
@@ -288,7 +295,6 @@
   IGENOA2997: { api: "IGENOA2997" },
   IGENOA3005: { api: "IGENOA3005" },
   IGENOA3007: { api: "IGENOA3007" },
-  IGENOA3015: { api: "IGENOA3015" },
   IGENOA3019: { api: "IGENOA3019" },
   IGENOA3021: { api: "IGENOA3021" },
   IGENOA3032: { api: "IGENOA3032" },
@@ -296,8 +302,11 @@
   IGENOA3052: { api: "IGENOA3052" },
   IGENOA3058: { api: "IGENOA3058" },
   IGENOA3069: { api: "IGENOA3069" },
+  IGENOA3077: { api: "IGENOA3077" },
   IGENOA3085: { api: "IGENOA3085" },
   IGENOA3104: { api: "IGENOA3104" },
+  IGENOA2831: { api: "IGENOA2831" },
+  IGENOA3041: { api: "IGENOA3041" },
   IGENOVAA2: { api: "IGENOVAA2" },
   IGROND1: { api: "IGROND1" },
   IISOLA59: { api: "IISOLA59" },
@@ -378,6 +387,7 @@
   IPRASC3: { api: "IPRASC3" },
   IRAPAL8: { api: "IRAPAL8" },
   IRAPAL15: { api: "IRAPAL15" },
+  IRAPAL26: { api: "IRAPAL26" },
   IRAPAL29: { api: "IRAPAL29" },
   IRAPAL33: { api: "IRAPAL33" },
   IRIALT2: { api: "IRIALT2" },
@@ -486,7 +496,17 @@
   IGENOA2763: { api: "IGENOA2763" },
   IGENOA3027: { api: "IGENOA3027" },
   ILIGURIA67: { api: "ILIGURIA67" },
-  IZUCCA2: { api: "IZUCCA2" }
+  IZUCCA2: { api: "IZUCCA2" },
+  ICARRO18: { api: "ICARRO18" },
+  IBORGH19: { api: "IBORGH19" },
+  IRICCD1: { api: "IRICCD1" },
+  ILASPE54: { api: "ILASPE54" },
+  ILASPE46: { api: "ILASPE46" },
+  IPODEN7: { api: "IPODEN7" },
+  IBOLAN4: { api: "IBOLAN4" },
+  IAULLA13: { api: "IAULLA13" },
+  ISANTO122: { api: "ISANTO122" },
+  
 
 };
 const stationsLimet = {
@@ -514,6 +534,12 @@ const stationsLimet = {
     lat: 44.483,            // latitudine
     lon: 8.966             // longitudine
   },
+  Foce: {
+    link: "ldoria", // parte variabile della URL
+    link2: "meteo-ldoria",
+    lat: 44.401,            // latitudine
+    lon: 8.942            // longitudine
+  },
   Pontori: {
     link: "pontori", // parte variabile della URL
     link2: "meteo-pontori",
@@ -526,7 +552,6 @@ const stationsLimet = {
     lat: 44.400,            // latitudine
     lon: 8.687            // longitudine
   },
-  
   WTC: {
     link: "wtc", // parte variabile della URL
     link2: "meteo-wtc",
@@ -600,6 +625,97 @@ const stationsLimet = {
     link2: "meteo-ventarola",
     lat: 44.555,            // latitudine
     lon: 9.305             // longitudine
+    
+  },
+  ICBorzoli: {
+    link: "borzoli", // parte variabile della URL
+    link2: "meteo-borzoli",
+    lat: 44.429,            // latitudine
+    lon: 8.856             // longitudine
+    
+  },
+  SantEusebio: {
+    link: "eusebio", // parte variabile della URL
+    link2: "meteo-eusebio",
+    lat: 44.442,            // latitudine
+    lon: 8.991             // longitudine
+    
+  },
+  Fregarie: {
+    link: "fregarie-scolombano", // parte variabile della URL
+    link2: "meteo-fregarie-scolombano",
+    lat: 44.380,            // latitudine
+    lon: 9.305             // longitudine
+    
+  },
+  Zoagli: {
+    link: "zoagli-oliveto", // parte variabile della URL
+    link2: "meteo-zoagli-oliveto",
+    lat: 44.344,            // latitudine
+    lon: 9.275             // longitudine
+    
+  },
+  Moconesi: {
+    link: "moconesi", // parte variabile della URL
+    link2: "meteo-moconesi",
+    lat: 44.424,            // latitudine
+    lon: 9.190             // longitudine
+    
+  },
+  SantaMaria: {
+    link: "smaria", // parte variabile della URL
+    link2: "meteo-smaria",
+    lat: 44.358,            // latitudine
+    lon: 9.186             // longitudine
+    
+  },
+  Murlo: {
+    link: "murlo", // parte variabile della URL
+    link2: "meteo-murlo",
+    lat: 44.055,            // latitudine
+    lon: 9.956             // longitudine
+    
+  },
+  Urbe: {
+    link: "terzereti", // parte variabile della URL
+    link2: "meteo-urbe-monta",
+    lat: 44.489,            // latitudine
+    lon: 8.581             // longitudine
+    
+  },
+  UrbeSanPietro: {
+    link: "urbe", // parte variabile della URL
+    link2: "meteo-urbe",
+    lat: 44.486,            // latitudine
+    lon: 8.587             // longitudine
+    
+  },
+  Tiglieto: {
+    link: "tiglieto", // parte variabile della URL
+    link2: "meteo-tiglieto",
+    lat: 44.529,            // latitudine
+    lon: 8.626             // longitudine
+    
+  },
+  Giusvalla: {
+    link: "giusvalla", // parte variabile della URL
+    link2: "meteo-giusvalla",
+    lat: 44.448,            // latitudine
+    lon: 8.394             // longitudine
+    
+  },
+  Casanova: {
+    link: "casanova", // parte variabile della URL
+    link2: "meteo-casanova",
+    lat: 44.375,            // latitudine
+    lon: 8.574             // longitudine
+    
+  },
+  CelleLigure: {
+    link: "celle", // parte variabile della URL
+    link2: "meteo-celle",
+    lat: 44.343,            // latitudine
+    lon: 8.545             // longitudine
     
   },
 };
