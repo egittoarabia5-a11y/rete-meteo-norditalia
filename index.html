@@ -879,7 +879,15 @@ const stations2 = {
   },
   // aggiungi qui altre stazioni Cumulus MX, ognuna con link/lat/lon
 };
-
+const stationsDMA =  {
+  pontecurone: {lat: 44.941, lon: 8.918}, 
+  dusino: {lat: 44.922, lon: 7.974},
+  antola: {lat: 44.567, lon: 9.150},
+  mongiardino: {lat: 44.633, lon: 9.064},
+  rossiglione: {lat: 44.561, lon: 8.671},
+  grognardo: {lat: 44.629, lon: 8.485},
+  ovadaCoinova: {lat: 44.618, lon: 8.608},
+};
     const markers = {};
     let latestData = {};
 
@@ -1352,10 +1360,42 @@ async function fetchStations3(id) {
     console.error(`Errore fetch stations3 ${id}:`, err);
   }
 }
+async function fetchDMA(id) {
+  try {
+    const url = "https://script.google.com/macros/s/AKfycbyNgmMhhvfxCkY1e6cYtXcxue5Zb5xBzq0JWv_fDzac-sO6Jrv7w_9js7mmw5VAJfv7cA/exec";
+    const res = await fetch(url);
+    const data = await res.json();
+
+    // Prende la temperatura dal JSON usando il nome minuscolo
+    const key = id.toLowerCase();
+    if (data[key]) {
+      const temp = data[key].temp;
+      const dewp = data[key].dewp;
+      const heat = data[key].heat;
+      const hum = data[key].hum;
+      const wind = data[key].wind;
+      const windGust = data[key].gust;
+      const rainDaily = data[key].rain;
+      const rainRate = data[key].rainrate;
+      const lat = stationsDMA[key].lat;
+      const lon = stationsDMA[key].lon;
+
+      latestData[id] = { temp, dewp, heat, hum, wind, windGust, rainDaily, rainRate, lat, lon };
+      if (typeof updateMarker === "function") updateMarker(id);
+    } else {
+      console.warn(`Nessun dato trovato per la stazione: ${id}`);
+    }
+
+  } catch(err) {
+    console.error(`Errore fetch dati ${id}:`, err);
+  }
+}
+  
 
 
 // ----- Inizializza Marker Wunderground -----
 Object.keys(stations).forEach(id => createMarker(id));
+Object.keys(stationsDMA).forEach(id => createMarker(id));
 Object.keys(stations1).forEach(id => createMarker(id));
 Object.keys(stations2).forEach(id => createMarker(id));
 Object.keys(stations3).forEach(id => createMarker(id));
@@ -1363,6 +1403,7 @@ Object.keys(stationsLimet).forEach(id => createMarker(id));
 Object.keys(stationsBest).forEach(id => createMarker(id));
 
 Object.keys(stations).forEach(id => fetchPws(id));
+Object.keys(stationsDMA).forEach(id => fetchDMA(id));
 Object.keys(stations1).forEach(id => fetchStations1(id));
 Object.keys(stations2).forEach(id => fetchStations2(id));
 Object.keys(stations3).forEach(id => fetchStations3(id));
@@ -1370,17 +1411,18 @@ Object.keys(stationsLimet).forEach(id => fetchLimet(id));
 Object.keys(stationsBest).forEach(id => fetchPws(id));
 
     // Aggiornamento ogni 10 secondi
-    setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 60000);
+setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 60000);
+setInterval(() => { Object.keys(stationsDMA).forEach(id => fetchDMA(id)); }, 300000);
 setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 15000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations2(id)); }, 135000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations3(id)); }, 15000);
 setInterval(() => { Object.keys(stationsLimet).forEach(id => fetchLimet(id)); }, 5000);
-setInterval(() => {
-  Object.keys(stationsBest).forEach(id => fetchPws(id));
-}, 5000); // 10 secondi
+setInterval(() => {Object.keys(stationsBest).forEach(id => fetchPws(id));}, 5000);
+
     // Cambia tipo di temperatura
     document.getElementById("tempSelect").addEventListener("change", () => {
   Object.keys(stations).forEach(id => updateMarker(id));
+  Object.keys(stationsDMA).forEach(id => updateMarker(id));
   Object.keys(stationsLimet).forEach(id => updateMarker(id));
   Object.keys(stations1).forEach(id => updateMarker(id));
   Object.keys(stations2).forEach(id => updateMarker(id));
