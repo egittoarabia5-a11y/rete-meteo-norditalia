@@ -66,14 +66,15 @@
       <option value="dewpMax">Dp Max</option>
       <option value="dewpMin">Dp Min</option>
       <option value="Heat">Heat Index</option>
-      <option value="HtMax">Ht Max</option>
-      <option value="HtMin">Ht Min</option>
+      <option value="HeatMax">Ht Max</option>
+      <option value="HeatMin">Ht Min</option>
       <option value="hum">Umidità</option>
       <option value="humMax">UR Max</option>
       <option value="humMin">UR Min</option>
       <option value="rainDay">Pioggia 24h</option>
       <option value="rainRate">Rain Rate</option>
       <option value="wind">Vento</option>
+      <option value="winddirection">Direzione</option>
       <option value="windGust">Raffica</option>
       <option value="windGustMax">Raffica Max</option>
 
@@ -531,7 +532,6 @@
   IVIRLE1: { api: "IVIRLE1" },
   IGENOA3101: { api: "IGENOA3101" },
   IGENOA2763: { api: "IGENOA2763" },
-  IGENOA3027: { api: "IGENOA3027" },
   ILIGURIA67: { api: "ILIGURIA67" },
   IZUCCA2: { api: "IZUCCA2" },
   ICARRO18: { api: "ICARRO18" },
@@ -925,6 +925,10 @@ function getColorTemp(temp) {
   if (temp >= -10.0) return "#0000FF";
   return "#191970";
 }
+function getColorWindDir(wind) {
+  if (WindDir >= 0) return "#4682B4";
+  return "#191970";
+}
 
 // ----- Creazione Marker Responsivo -----
 function createMarker(id, lat = 44.423, lon = 8.972) {
@@ -975,95 +979,100 @@ window.addEventListener("resize", () => {
   });
 });
 // ----- Aggiorna Marker -----
+// Funzione helper per convertire gradi in direzione cardinale
+function degToDir(deg) {
+  if (deg === null || deg === undefined) return "N/D";
+  const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+  const index = Math.floor(((deg + 22.5) % 360) / 45);
+  return directions[index];
+}
+
 function updateMarker(id) {
   const type = document.getElementById("tempSelect").value;
   const data = latestData[id];
   if (!data) return;
 
-  let value, color;
+  let value = null;
+  let color = "#808080";
 
-  if (type === "hum") {
-    value = data.hum;
-    color = value != null ? getColorHum(value) : "#808080";
-  } else if (type === "humMax") {
-    value = data.humHigh;
-    color = value != null ? getColorHum(value) : "#808080";
-  } else if (type === "humMin") {
-    value = data.humLow;
-    color = value != null ? getColorHum(value) : "#808080";
-  } else if (type === "rainDay") {
-    value = data.rainDaily;
-    color = value != null ? getColorRain(value) : "#808080";
-  } else if (type === "wind") {
-    value = data.wind;
-    color = value != null ? getColorRain(value) : "#808080";
-  } else if (type === "windGust") {
-    value = data.windGust;
-    color = value != null ? getColorRain(value) : "#808080";
-  } else if (type === "windGustMax") {
-    value = data.windGustHigh;
-    color = value != null ? getColorRain(value) : "#808080";
-  } else if (type === "rainRate") {
-    value = data.rainRate;
-    color = value != null ? getColorRain(value) : "#808080";
+  // Valore e colore
+  if (type === "winddirection") {
+    value = data.windDir;
+    color = data.windGust != null ? getColorRain(data.windGust) : "#808080"; // colore in base alla raffica
   } else {
-    // tutte le altre opzioni (temperatura/dewpoint/heat)
-    if (type === "current") value = data.temp;
-    if (type === "max") value = data.tempHigh;
-    if (type === "min") value = data.tempLow;
-    if (type === "dewpt") value = data.dewp;
-    if (type === "dewpMax") value = data.dewpHigh;
-    if (type === "dewpMin") value = data.dewpLow;
-    if (type === "Heat") value = data.heat;
-    if (type === "HtMax") value = data.heatHigh;
-    if (type === "HtMin") value = data.heatLow;
-
-    color = value != null ? getColorTemp(value) : "#808080";
+    switch(type) {
+      case "current": value = data.temp; color = value != null ? getColorTemp(value) : "#808080"; break;
+      case "max": value = data.tempHigh; color = value != null ? getColorTemp(value) : "#808080"; break;
+      case "min": value = data.tempLow; color = value != null ? getColorTemp(value) : "#808080"; break;
+      case "dewpt": value = data.dewp; color = value != null ? getColorTemp(value) : "#808080"; break;
+      case "dewpMax": value = data.dewpHigh; color = value != null ? getColorTemp(value) : "#808080"; break;
+      case "dewpMin": value = data.dewpLow; color = value != null ? getColorTemp(value) : "#808080"; break;
+      case "Heat": value = data.heat; color = value != null ? getColorTemp(value) : "#808080"; break;
+      case "HeatMax": value = data.heatHigh; color = value != null ? getColorTemp(value) : "#808080"; break;
+      case "HeatMin": value = data.heatLow; color = value != null ? getColorTemp(value) : "#808080"; break;
+      case "hum": value = data.hum; color = value != null ? getColorHum(value) : "#808080"; break;
+      case "humMax": value = data.humHigh; color = value != null ? getColorHum(value) : "#808080"; break;
+      case "humMin": value = data.humLow; color = value != null ? getColorHum(value) : "#808080"; break;
+      case "rainDay": value = data.rainDaily; color = value != null ? getColorRain(value) : "#808080"; break;
+      case "rainRate": value = data.rainRate; color = value != null ? getColorRain(value) : "#808080"; break;
+      case "wind": value = data.wind; color = value != null ? getColorRain(value) : "#808080"; break;
+      case "windGust": value = data.windGust; color = value != null ? getColorRain(value) : "#808080"; break;
+      case "windGustMax": value = data.windGustHigh; color = value != null ? getColorRain(value) : "#808080"; break;
+      default: value = null; color = "#808080";
+    }
   }
 
-  // Se il valore è null, mostra pallino grigio senza numero
-  const displayValue = value != null ? value.toFixed(1) : "";
+  // Testo pallino
+  const displayValue = (value !== undefined && value !== null)
+    ? (type === "winddirection" ? degToDir(value) : value.toFixed(1))
+    : "N/D";
 
+  // Aggiorna icona
   const icon = L.divIcon({
     className: '',
     html: `<div class="circle-label" style="background-color:${color}; border:2px solid white;">${displayValue}</div>`,
-    iconSize: [32,32],
-    iconAnchor: [16,16]
+    iconSize: [32, 32],
+    iconAnchor: [16, 16]
   });
-
   markers[id].setIcon(icon);
-  markers[id].setLatLng([data.lat, data.lon]);
 
-  // Contenuto del popup dinamico
+  if (data.lat != null && data.lon != null) {
+    markers[id].setLatLng([data.lat, data.lon]);
+  }
+
+  // Popup contestuale
   let popupContent = `<b>Stazione:</b> ${id}<br>`;
-  if (type.startsWith("hum")) {
-    popupContent += `💧 Umidità Attuale: ${data.hum != null ? data.hum.toFixed(1) : "N/A"}%<br>`;
-    popupContent += `🔺 Max: ${data.humHigh != null ? data.humHigh.toFixed(1) : "N/A"}%<br>`;
-    popupContent += `🔻 Min: ${data.humLow != null ? data.humLow.toFixed(1) : "N/A"}%`;
-  } else if (type.startsWith("rain")) {
-    popupContent += `🌧️ Pioggia Giornaliera: ${data.rainDaily != null ? data.rainDaily.toFixed(1) : "N/A"} mm<br>`;
-    popupContent += `💦 Intensità: ${data.rainRate != null ? data.rainRate.toFixed(1) : "N/A"} mm/h`;
-  } else if (type.startsWith("dewpt")) {
-    popupContent += `💧 Dewpoint attuale: ${data.dewp != null ? data.dewp.toFixed(1) : "N/A"}°C<br>`;
-    popupContent += `🔺 Max: ${data.dewpHigh != null ? data.dewpHigh.toFixed(1) : "N/A"}°C<br>`;
-    popupContent += `🔻 Min: ${data.dewpLow != null ? data.dewpLow.toFixed(1) : "N/A"}°C`;
-  } else if (type.startsWith("wind")) {
-    popupContent += `Vento attuale: ${data.wind != null ? data.wind.toFixed(1) : "N/A"}km/h<br>`;
-    popupContent += `Raffica: ${data.windGust != null ? data.windGust.toFixed(1) : "N/A"}km/h<br>`;
-    popupContent += `🔺 Raffica Massima: ${data.windGustHigh != null ? data.windGustHigh.toFixed(1) : "N/A"}km/h`;
+  if (type.startsWith("current") || type.startsWith("max") || type.startsWith("min")) {
+    popupContent += `🌡️ Attuale: ${data.temp != null ? data.temp.toFixed(1) : "N/D"}°C<br>`;
+    popupContent += `🔺 Max: ${data.tempHigh != null ? data.tempHigh.toFixed(1) : "N/D"}°C<br>`;
+    popupContent += `🔻 Min: ${data.tempLow != null ? data.tempLow.toFixed(1) : "N/D"}°C<br>`;
+  } else if (type.startsWith("dew")) {
+    popupContent += `🌡️ Attuale: ${data.dewp != null ? data.dewp.toFixed(1) : "N/D"}°C<br>`;
+    popupContent += `🔺 Max: ${data.dewpHigh != null ? data.dewpHigh.toFixed(1) : "N/D"}°C<br>`;
+    popupContent += `🔻 Min: ${data.dewpLow != null ? data.dewpLow.toFixed(1) : "N/D"}°C<br>`;
   } else if (type.startsWith("Heat")) {
-    popupContent += `🌡️ Heat Index attuale: ${data.heat != null ? data.heat.toFixed(1) : "N/A"}°C<br>`;
-    popupContent += `🔺 Max: ${data.heatHigh != null ? data.heatHigh.toFixed(1) : "N/A"}°C<br>`;
-    popupContent += `🔻 Min: ${data.heatLow != null ? data.heatLow.toFixed(1) : "N/A"}°C`;
-  } else {
-    // temperatura normale
-    popupContent += `🌡️ Attuali: ${data.temp != null ? data.temp.toFixed(1) : "N/A"}°C<br>`;
-    popupContent += `🔺 Massima: ${data.tempHigh != null ? data.tempHigh.toFixed(1) : "N/A"}°C<br>`;
-    popupContent += `🔻 Minima: ${data.tempLow != null ? data.tempLow.toFixed(1) : "N/A"}°C`;
+    popupContent += `🌡️ Attuale: ${data.heat != null ? data.heat.toFixed(1) : "N/D"}°C<br>`;
+    popupContent += `🔺 Max: ${data.heatHigh != null ? data.heatHigh.toFixed(1) : "N/D"}°C<br>`;
+    popupContent += `🔻 Min: ${data.heatLow != null ? data.heatLow.toFixed(1) : "N/D"}°C<br>`;
+  } else if (type.startsWith("hum")) {
+    popupContent += `💧 Attuale: ${data.hum != null ? data.hum.toFixed(1) : "N/D"}%<br>`;
+    popupContent += `🔺 Max: ${data.humHigh != null ? data.humHigh.toFixed(1) : "N/D"}%<br>`;
+    popupContent += `🔻 Min: ${data.humLow != null ? data.humLow.toFixed(1) : "N/D"}%<br>`;
+  } else if (type.startsWith("rain")) {
+    popupContent += `🌧️ Pioggia giorno: ${data.rainDaily != null ? data.rainDaily.toFixed(1) : "N/D"} mm<br>`;
+    popupContent += `💦 Rain rate: ${data.rainRate != null ? data.rainRate.toFixed(1) : "N/D"} mm/h<br>`;
+  } else if (type.startsWith("wind")) {
+    popupContent += `💨 Velocità attuale: ${data.wind != null ? data.wind.toFixed(1) : "N/D"} km/h<br>`;
+    popupContent += `🌬️ Raffica: ${data.windGust != null ? data.windGust.toFixed(1) : "N/D"} km/h<br>`;
+    popupContent += `🧭 Direzione: ${data.windDir != null ? degToDir(data.windDir) : "N/D"}<br>`;
+    popupContent += `🔺 Raffica massima: ${data.windGustHigh != null ? data.windGustHigh.toFixed(1) : "N/D"} km/h<br>`;
   }
 
   markers[id].setPopupContent(popupContent);
 }
+
+
+
 
 async function fetchLimet(id) {
   const st = stationsLimet[id];
@@ -1157,6 +1166,9 @@ for (let span of scrittineSpan) {
         const lon = dataCurrent.observations[0].lon;
         const wind = dataCurrent.observations[0].metric.windSpeed;
         const windGust = dataCurrent.observations[0].metric.windGust;
+        const altitude = dataCurrent.observations[0].metric.elev;
+        const windDir = dataCurrent.observations[0].winddir;
+
 
         const urlDaily = `https://api.weather.com/v2/pws/dailysummary/1day?apiKey=${apiKey}&stationId=${stations[id].api}&numericPrecision=decimal&format=json&units=m`;
         const resDaily = await fetch(urlDaily);
@@ -1173,7 +1185,7 @@ for (let span of scrittineSpan) {
         const humLow = summary ? dataDaily.summaries[0].humidityLow : null;
         const windGustHigh = summary ? summary.windgustHigh : null;
 
-        latestData[id] = { temp, tempHigh, tempLow, dewp, dewpHigh, dewpLow, heat, heatHigh, heatLow, hum, humHigh, humLow, rainDaily, rainRate, wind, windGust, windGustHigh, lat, lon };
+        latestData[id] = { temp, tempHigh, tempLow, dewp, dewpHigh, dewpLow, heat, heatHigh, heatLow, hum, humHigh, humLow, rainDaily, rainRate, wind, windGust, windGustHigh, windDir, lat, lon, altitude };
         updateMarker(id);
 
       } catch(err) {
