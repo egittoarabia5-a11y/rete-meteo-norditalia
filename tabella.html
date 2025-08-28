@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Tabella Stazioni Meteo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { margin: 0; font-family: "Inter", sans-serif; padding: 20px; background: #f5f5f5; }
+    h1 { text-align: center; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #2563eb; color: white; }
+  </style>
+</head>
+<body>
+  <h1>Temperatura Stazione IGENOA2800</h1>
+
+  <table id="tempTable">
+    <thead>
+      <tr id="headerRow">
+        <th>Timestamp</th>
+        <th>IGENOA2800</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <a href="index.html" style="display:block; margin-top:20px; text-align:center; color:#2563eb;">← Torna alla mappa</a>
+
+  <script>
+    const apiKey = 'e1f10a1e78da46f5b10a1e78da96f525';
+    const stations = { "IGENOA2800": { api: "IGENOA2800" } };
+    const tbody = document.getElementById("tableBody");
+    const storageKey = "meteoData"; // chiave localStorage
+    const maxRows = 50;
+
+    // --- Funzione per arrotondare timestamp al decimo minuto ---
+    function getRoundedTimestamp() {
+      const now = new Date();
+      const minutes = Math.floor(now.getMinutes() / 10) * 10;
+      now.setMinutes(minutes);
+      now.setSeconds(0);
+      now.setMilliseconds(0);
+      return now.toISOString().replace("T", " ").slice(0,16);
+    }
+
+    // --- Carica dati da localStorage ---
+    function loadTable() {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      saved.forEach(entry => {
+        const tr = document.createElement("tr");
+        tr.dataset.ts = entry.timestamp;
+
+        const tdTime = document.createElement("td");
+        tdTime.textContent = entry.timestamp;
+        tr.appendChild(tdTime);
+
+        const tdTemp = document.createElement("td");
+        tdTemp.textContent = entry.temp + " °C";
+        tr.appendChild(tdTemp);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    // --- Salva una nuova riga in localStorage ---
+    function saveRow(timestamp, temp) {
+      let saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      saved.push({ timestamp, temp });
+      if (saved.length > maxRows) saved = saved.slice(saved.length - maxRows);
+      localStorage.setItem(storageKey, JSON.stringify(saved));
+    }
+
+    // --- Fetch dati stazione e crea nuova riga ---
+    async function fetchPws(id) {
+      const timestamp = getRoundedTimestamp();
+
+      // Controlla se esiste già una riga per questo timestamp
+      const saved = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      if (saved.some(entry => entry.timestamp === timestamp)) return; // non fare nulla
+
+      try {
+        const urlCurrent = `https://api.weather.com/v2/pws/observations/current?apiKey=${apiKey}&stationId=${stations[id].api}&numericPrecision=decimal&format=json&units=m`;
+        const resCurrent = await fetch(urlCurrent);
+        const dataCurrent = await resCurrent.json();
+        const temp = dataCurrent.observations[0].metric.temp;
+
+        // aggiungi riga in tabella
+        const tr = document.createElement("tr");
+        tr.dataset.ts = timestamp;
+
+        const tdTime = document.createElement("td");
+        tdTime.textContent = timestamp;
+        tr.appendChild(tdTime);
+
+        const tdTemp = document.createElement("td");
+        tdTemp.textContent = temp + " °C";
+        tr.appendChild(tdTemp);
+
+        tbody.appendChild(tr);
+
+        saveRow(timestamp, temp);
+
+      } catch(err) {
+        console.error("Errore fetch:", err);
+      }
+    }
+
+    // --- Inizializza tabella da localStorage ---
+    loadTable();
+
+    // --- Funzione per schedulare fetch ogni decimo minuto ---
+    function scheduleNextFetch() {
+      const now = new Date();
+      const minutes = now.getMinutes();
+      const msToNext10Min = (10 - (minutes % 10)) * 60 * 1000 - now.getSeconds()*1000 - now.getMilliseconds();
+
+      setTimeout(async () => {
+        await fetchPws("IGENOA2800");
+        scheduleNextFetch();
+      }, msToNext10Min);
+    }
+
+    // Primo fetch subito
+    fetchPws("IGENOA2800");
+    // Poi schedulazione automatica
+    scheduleNextFetch();
+  </script>
+</body>
+</html>

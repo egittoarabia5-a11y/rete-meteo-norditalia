@@ -8,6 +8,29 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.6.1/justgage.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- Pulsante per andare alla tabella -->
+<button id="btnTable" style="
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000;
+  background-color: #2563eb;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+">
+  Vai alla tabella
+</button>
+
+<script>
+  document.getElementById('btnTable').addEventListener('click', function() {
+    // Per ora apriamo una pagina vuota o placeholder
+    window.location.href = "tabella.html"; // crea tabella.html più avanti
+  });
+</script>
+
 
   <style>
     body {
@@ -988,14 +1011,6 @@
   ITURIN3266: { api: "ITURIN3266" },
   ITURIN3170: { api: "ITURIN3170" },
   ITURIN3276: { api: "ITURIN3276" },
-  
-
-  
-
-
-
-  
-
 };
 const stationsLimet = {
   Molassana: {
@@ -1827,7 +1842,7 @@ setInterval(() => { Object.keys(stationsDMA).forEach(id => fetchDMA(id)); }, 150
 setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 15000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations2(id)); }, 135000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations3(id)); }, 15000);
-setInterval(() => { Object.keys(stationsLimet).forEach(id => fetchLimet(id)); }, 5000);
+setInterval(() => { Object.keys(stationsLimet).forEach(id => fetchLimet(id)); }, 15000);
 setInterval(() => {Object.keys(stationsBest).forEach(id => fetchPws(id));}, 5000);
 
     // Cambia tipo di temperatura
