@@ -8,28 +8,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/justgage/1.6.1/justgage.min.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <!-- Pulsante per andare alla tabella -->
-<button id="btnTable" style="
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 1000;
-  background-color: #2563eb;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
-">
-  Vai alla tabella
-</button>
-
-<script>
-  document.getElementById('btnTable').addEventListener('click', function() {
-    // Per ora apriamo una pagina vuota o placeholder
-    window.location.href = "tabella.html"; // crea tabella.html più avanti
-  });
-</script>
+ 
 
 
   <style>
@@ -971,7 +950,6 @@
   INOVAR19: { api: "INOVAR19" },
   ITERDO1: { api: "ITERDO1" },
   IROBBI2: { api: "IROBBI2" },
-  IBORGO18: { api: "IBORGO18" },
   ICILAV1: { api: "ICILAV1" },
   IMORTA17: { api: "IMORTA17" },
   ICASTE892: { api: "ICASTE892" },
@@ -1105,7 +1083,8 @@
   IPONTE56: { api: "IPONTE56" },
   IPONTE101: { api: "IPONTE101" },
   IVERMI19: { api: "IVERMI19" },
-  
+  ISPIGN1: { api: "ISPIGN1" },
+
 };
 const stationsLimet = {
   Molassana: {
@@ -1409,8 +1388,520 @@ const stationsDMA =  {
   ovadaCoinova: {lat: 44.618, lon: 8.608},
   ovadaCoinova: {lat: 44.618, lon: 8.608},
 };
-    const markers = {};
-    let latestData = {};
+const stationsCML = {
+  andalo: { lat: null, lon: null },
+  aprica:   { lat: null, lon: null },
+  ardenno:  { lat: 46.169, lon: 9.652 },
+  bormio:   { lat: 46.468, lon: 10.368 },
+  bormio_cimino: { lat: 46.433, lon: 10.405 },
+  caiolo: { lat: 46.151, lon: 9.816 },
+  campotartano: { lat: 46.132, lon: 9.665 },
+  castione_andevenno: { lat: 46.171, lon: 9.802 },
+  castionetto: { lat: 46.175, lon: 10.005 },
+  cepina: { lat: 46.426, lon: 10.356 },
+  forcola: { lat: 46.157, lon: 9.662 },
+  fraciscio: { lat: 46.403, lon: 9.365 },
+  chiavenna: { lat: 46.319, lon: 9.399 },
+  civo: { lat: 46.153, lon: 9.559 },
+  lanzada: { lat: 46.268, lon: 9.872 },
+  livigno_carosello: { lat: 46.515, lon: 10.087 },
+  livigno_forcola: { lat: 46.442, lon: 10.057 },
+  madesimo: { lat: 46.436, lon: 9.359 },
+  montagna_valtellina: { lat: 46.176, lon: 9.904 },
+  novate_m: { lat: 46.219, lon: 9.449 },
+  oga: { lat: 46.462, lon: 10.346 },
+  pescegallo: { lat: 46.038, lon: 9.572 },
+  geisterspitze: { lat: 46.496, lon: 10.477 },
+  rasura: { lat: 46.100, lon: 9.553 },
+  sm_valmasino: { lat: 46.215, lon: 9.638 },
+  santacaterina: { lat: 46.411, lon: 10.495 },
+  somaggia:  { lat: 46.252, lon: 9.420 },
+  sondalo: { lat: 46.330, lon: 10.326 },
+  sondrio: { lat: 46.167, lon: 9.869 },
+  talamona: { lat: 46.137, lon: 9.610 },
+  tirano: { lat: 46.211, lon: 10.168 },
+  tirano_centralina: { lat: 46.221, lon: 10.184 },
+  tovo_sagata: { lat: 46.247, lon: 10.245 },
+  trivigno: { lat: 46.189, lon: 10.199 },
+  presure: { lat: 46.404, lon: 10.345 },
+  villatirano: { lat: 46.204, lon: 10.134 },
+  besnate: { lat: 45.698, lon: 8.767 },
+  buguggiate: { lat: 45.779, lon: 8.811 },
+  busto_arsizio: { lat: 45.613, lon: 8.852 },
+  biandronno: { lat: 45.818, lon: 8.710 },
+  brebbia: { lat: 45.827, lon: 8.648 },
+  cantello: { lat: 45.821, lon: 8.896 },
+  castronno: { lat: 45.745, lon: 8.815 },
+  gemonio: { lat: 45.877, lon: 8.675 },
+  portoceresio: { lat: 45.902, lon: 8.901 },
+  rasa_varese: { lat: 45.866, lon: 8.805 },
+  carnago: { lat: 45.721, lon: 8.835 },
+  vizzola: { lat: 45.628, lon: 8.689 },
+  cerro: { lat: 45.870, lon: 8.698 },
+  cimbro: { lat: 45.735, lon: 8.719 },
+  crosio: { lat: 45.762, lon: 8.766 },
+  cugliate: { lat: 45.943, lon: 8.820 },
+  crenna: { lat: 45.649, lon: 8.794 },
+  indunno: { lat: 45.844, lon: 8.836 },
+  jerago: { lat: 45.705, lon: 8.792 },
+  luvinate: { lat: 45.837, lon: 8.769 },
+  maccagno: { lat: 46.041, lon: 8.736 },
+  nizzolina: { lat: 45.625, lon: 8.915 },
+  ssalvatore: { lat: 45.787, lon: 8.900 },
+  sangiano: { lat: 45.872, lon: 8.631 },
+  samarate: { lat: 45.628, lon: 8.784 },
+  tradate: { lat: 45.709, lon: 8.908 },
+  tronzano: { lat: 46.091, lon: 8.736 },
+  uboldo: { lat: 45.613, lon: 9.001 },
+  va_ospedale: { lat: 45.808, lon: 8.840 },
+  vedano_olona: { lat: 45.776, lon: 8.889 },
+  venegono_pcastello: { lat: 45.749, lon: 8.907 },
+  albavilla: { lat: null, lon: null },
+albese: { lat: null, lon: null },
+albiolo: { lat: null, lon: null },
+alzate: { lat: null, lon: null },
+anzano_dp: { lat: null, lon: null },
+arosio: { lat: null, lon: null },
+bellagio_cernobbio: { lat: null, lon: null },
+figliaro: { lat: null, lon: null },
+bregnano: { lat: null, lon: null },
+brunate: { lat: null, lon: null },
+bulgarograsso: { lat: null, lon: null },
+cadorago: { lat: null, lon: null },
+cantu_amata: { lat: null, lon: null },
+cantu_porta: { lat: null, lon: null },
+cantu_pianella: { lat: null, lon: null },
+torno: { lat: null, lon: null },
+careggiola: { lat: null, lon: null },
+carimate: { lat: null, lon: null },
+carimate_vedroni: { lat: null, lon: null },
+casasco_intelvi: { lat: null, lon: null },
+caslino: { lat: null, lon: null },
+casnate: { lat: null, lon: null },
+co_sagnino: { lat: null, lon: null },
+co_trecallo: { lat: null, lon: null },
+cucciago: { lat: null, lon: null },
+fino_mornasco: { lat: null, lon: null },
+geralario: { lat: null, lon: null },
+gravedona: { lat: null, lon: null },
+guanzate: { lat: null, lon: null },
+loveno: { lat: null, lon: null },
+mariano: { lat: null, lon: null },
+merone: { lat: null, lon: null },
+monguzzo: { lat: null, lon: null },
+montorfano: { lat: null, lon: null },
+piandispagna: { lat: null, lon: null },
+porlezza: { lat: null, lon: null },
+cernobbio_rovenna: { lat: null, lon: null },
+cirimido: { lat: null, lon: null },
+sormano: { lat: null, lon: null },
+co_depuratore: { lat: null, lon: null },
+co_aeroclub: { lat: null, lon: null },
+co_breccia: { lat: null, lon: null },
+co_camerlata: { lat: null, lon: null },
+co_olimpino: { lat: null, lon: null },
+dongo: { lat: null, lon: null },
+erbacentro: { lat: null, lon: null },
+inverigo: { lat: null, lon: null },
+lenno: { lat: null, lon: null },
+lomazzo_nord: { lat: null, lon: null },
+moltrasio_lago: { lat: null, lon: null },
+mozzate: { lat: null, lon: null },
+olgiate: { lat: null, lon: null },
+ossuccio: { lat: null, lon: null },
+valmorea: { lat: null, lon: null },
+venianoparco: { lat: null, lon: null },
+minoprio: { lat: null, lon: null },
+verzago: { lat: null, lon: null },
+villaguardia: { lat: null, lon: null },
+abbadia: { lat: null, lon: null },
+alpe_giumello: { lat: null, lon: null },
+barzago: { lat: null, lon: null },
+barzio: { lat: null, lon: null },
+bonzeno: { lat: null, lon: null },
+bevera: { lat: null, lon: null },
+cernusco: { lat: null, lon: null },
+monticello_cn: { lat: null, lon: null },
+erve: { lat: null, lon: null },
+galbiate: { lat: null, lon: null },
+lecco_germanedo: { lat: null, lon: null },
+lecco_sgiovanni: { lat: null, lon: null },
+bellano_lezzeno: { lat: null, lon: null },
+maggio_casere: { lat: null, lon: null },
+cornizzolo: { lat: null, lon: null },
+dervio: { lat: null, lon: null },
+garlate: { lat: null, lon: null },
+lecco: { lat: null, lon: null },
+maggio: { lat: null, lon: null },
+mandello: { lat: null, lon: null },
+oggiono: { lat: null, lon: null },
+olginate: { lat: null, lon: null },
+olivetolario: { lat: null, lon: null },
+osnago: { lat: null, lon: null },
+perego: { lat: null, lon: null },
+perledo_cantone: { lat: null, lon: null },
+pianiresinelli: { lat: null, lon: null },
+orscellera: { lat: null, lon: null },
+premana: { lat: null, lon: null },
+rovagnate: { lat: null, lon: null },
+santamariasancina: { lat: null, lon: null },
+taceno: { lat: null, lon: null },
+valmadrera: { lat: null, lon: null },
+noceno: { lat: null, lon: null },
+vestreno: { lat: null, lon: null },
+alme: { lat: null, lon: null },
+alzano: { lat: null, lon: null },
+ambivere: { lat: null, lon: null },
+berbenno: { lat: null, lon: null },
+branzi: { lat: null, lon: null },
+brignano: { lat: null, lon: null },
+caprino: { lat: null, lon: null },
+colere_paese: { lat: null, lon: null },
+comun_nuovo: { lat: null, lon: null },
+costa_serina: { lat: null, lon: null },
+costavolpino: { lat: null, lon: null },
+dalmine: { lat: null, lon: null },
+filago: { lat: null, lon: null },
+fiobbio: { lat: null, lon: null },
+fontanella: { lat: null, lon: null },
+fonteno: { lat: null, lon: null },
+geromina: { lat: null, lon: null },
+gorno: { lat: null, lon: null },
+leffe: { lat: null, lon: null },
+rifugiocampel: { lat: null, lon: null },
+mapello_stadio: { lat: null, lon: null },
+cornagera: { lat: null, lon: null },
+montemisma: { lat: null, lon: null },
+monte_suchello: { lat: null, lon: null },
+mozzanica: { lat: null, lon: null },
+olmo: { lat: null, lon: null },
+paladina: { lat: null, lon: null },
+palazzago: { lat: null, lon: null },
+burligo: { lat: null, lon: null },
+peghera: { lat: null, lon: null },
+peia: { lat: null, lon: null },
+pontesp: { lat: null, lon: null },
+pontesp_3b: { lat: null, lon: null },
+pontida: { lat: null, lon: null },
+presezzo: { lat: null, lon: null },
+piandeltermen: { lat: null, lon: null },
+arera: { lat: null, lon: null },
+rif_passosanmarco: { lat: null, lon: null },
+roncola: { lat: null, lon: null },
+rota_imagna: { lat: null, lon: null },
+rifugio_parafulmine: { lat: null, lon: null },
+rota_boscospesso: { lat: null, lon: null },
+strozza: { lat: null, lon: null },
+valcanale: { lat: null, lon: null },
+zorzino: { lat: null, lon: null },
+schilpario: { lat: null, lon: null },
+poscante: { lat: null, lon: null },
+capovalle: { lat: null, lon: null },
+cenatesopra: { lat: null, lon: null },
+cene: { lat: null, lon: null },
+mapello: { lat: null, lon: null },
+mozzo: { lat: null, lon: null },
+pascoletto: { lat: null, lon: null },
+sarnico: { lat: null, lon: null },
+selvino: { lat: null, lon: null },
+serina: { lat: null, lon: null },
+rifugiovodala: { lat: null, lon: null },
+stezzano: { lat: null, lon: null },
+trevigliosud: { lat: null, lon: null },
+valbondione: { lat: null, lon: null },
+rifugiocuro: { lat: null, lon: null },
+valcava: { lat: null, lon: null },
+villadogna: { lat: null, lon: null },
+villadiserio: { lat: null, lon: null },
+zambla: { lat: null, lon: null },
+artogne: { lat: null, lon: null },
+bagnolomella: { lat: null, lon: null },
+bagolino: { lat: null, lon: null },
+bedizzole: { lat: null, lon: null },
+borno: { lat: null, lon: null },
+bresciachiesanuova: { lat: null, lon: null },
+capovalle_valsabbia: { lat: null, lon: null },
+castelmella: { lat: null, lon: null },
+castrezzato: { lat: null, lon: null },
+cedegolo: { lat: null, lon: null },
+centenaro: { lat: null, lon: null },
+clusane_iseo: { lat: null, lon: null },
+cizzago: { lat: null, lon: null },
+cazzago: { lat: null, lon: null },
+desenzano: { lat: null, lon: null },
+esine: { lat: null, lon: null },
+barbariga: { lat: null, lon: null },
+bione: { lat: null, lon: null },
+brandico: { lat: null, lon: null },
+bresciacastello: { lat: null, lon: null },
+bresciafornaci: { lat: null, lon: null },
+mompiano: { lat: null, lon: null },
+gavardo: { lat: null, lon: null },
+isorella: { lat: null, lon: null },
+limone_garda: { lat: null, lon: null },
+cimarest: { lat: null, lon: null },
+cortefranca: { lat: null, lon: null },
+magasa_denai: { lat: null, lon: null },
+nave: { lat: null, lon: null },
+ome: { lat: null, lon: null },
+cavallino_fobbia: { lat: null, lon: null },
+piamborno: { lat: null, lon: null },
+lumezzane: { lat: null, lon: null },
+noffo: { lat: null, lon: null },
+plan_montecampione: { lat: null, lon: null },
+pontedilegno: { lat: null, lon: null },
+prevalle: { lat: null, lon: null },
+edolo: { lat: null, lon: null },
+gussago: { lat: null, lon: null },
+leno: { lat: null, lon: null },
+mazzano: { lat: null, lon: null },
+montestino: { lat: null, lon: null },
+montecampione: { lat: null, lon: null },
+paderno_fc: { lat: null, lon: null },
+palazzolo: { lat: null, lon: null },
+sale_marasino: { lat: null, lon: null },
+sangervasio: { lat: null, lon: null },
+pozzolengo: { lat: null, lon: null },
+provaglio: { lat: null, lon: null },
+provezze: { lat: null, lon: null },
+roncadelle: { lat: null, lon: null },
+sabbio: { lat: null, lon: null },
+saviore: { lat: null, lon: null },
+sellero: { lat: null, lon: null },
+toscolano: { lat: null, lon: null },
+tremosine: { lat: null, lon: null },
+valliot: { lat: null, lon: null },
+vestone: { lat: null, lon: null },
+villapedergnano: { lat: null, lon: null },
+villanuova_test: { lat: null, lon: null },
+villanuova: { lat: null, lon: null },
+ala: { lat: null, lon: null },
+riva: { lat: null, lon: null },
+saone: { lat: null, lon: null },
+tonale: { lat: null, lon: null },
+dossobuono: { lat: null, lon: null },
+peschiera: { lat: null, lon: null },
+brugherio: { lat: null, lon: null },
+busnago: { lat: null, lon: null },
+ceriano_laghetto: { lat: null, lon: null },
+cesano_maderno: { lat: null, lon: null },
+lesmo: { lat: null, lon: null },
+monza: { lat: null, lon: null },
+monza_triante: { lat: null, lon: null },
+novamilanese: { lat: null, lon: null },
+seregno: { lat: null, lon: null },
+villasanta: { lat: null, lon: null },
+borgo_ticino: { lat: null, lon: null },
+borgomanero: { lat: null, lon: null },
+briona: { lat: null, lon: null },
+invorio: { lat: null, lon: null },
+meina: { lat: null, lon: null },
+novara: { lat: null, lon: null },
+soriso: { lat: null, lon: null },
+abbiategrasso: { lat: null, lon: null },
+albairate: { lat: null, lon: null },
+bollate: { lat: null, lon: null },
+buccinasco_robbiolo: { lat: null, lon: null },
+buccinasco_4m: { lat: null, lon: null },
+buccinasco_rb: { lat: null, lon: null },
+caleppio: { lat: null, lon: null },
+canegrate: { lat: null, lon: null },
+casarile: { lat: null, lon: null },
+cassano_adda: { lat: null, lon: null },
+castano: { lat: null, lon: null },
+cesate: { lat: null, lon: null },
+cinisello_bm: { lat: null, lon: null },
+cisliano: { lat: null, lon: null },
+corbetta: { lat: null, lon: null },
+corsico: { lat: null, lon: null },
+legnano_pc: { lat: null, lon: null },
+legnano_a8: { lat: null, lon: null },
+mi_quartoggiaro: { lat: null, lon: null },
+mi_selvanesco: { lat: null, lon: null },
+mediglia: { lat: null, lon: null },
+locate_triulzi: { lat: null, lon: null },
+magenta: { lat: null, lon: null },
+melegnano: { lat: null, lon: null },
+mi_boscoincitta: { lat: null, lon: null },
+mi_cadorna: { lat: null, lon: null },
+gaggiano: { lat: null, lon: null },
+inveruno: { lat: null, lon: null },
+legnano: { lat: null, lon: null },
+malvaglio: { lat: null, lon: null },
+marcallo: { lat: null, lon: null },
+mi_lambrate: { lat: null, lon: null },
+mi_parconord: { lat: null, lon: null },
+mi_genova: { lat: null, lon: null },
+mi_sanleonardo: { lat: null, lon: null },
+mi_arbe: { lat: null, lon: null },
+mi_sansiro: { lat: null, lon: null },
+nerviano: { lat: null, lon: null },
+nosate: { lat: null, lon: null },
+ossona: { lat: null, lon: null },
+pieve_emanuele: { lat: null, lon: null },
+rescaldina: { lat: null, lon: null },
+rho: { lat: null, lon: null },
+robecco: { lat: null, lon: null },
+rovagnasco: { lat: null, lon: null },
+roveda: { lat: null, lon: null },
+sedriano: { lat: null, lon: null },
+segrate_space: { lat: null, lon: null },
+settimo_mil: { lat: null, lon: null },
+trezzanorosa: { lat: null, lon: null },
+vignate: { lat: null, lon: null },
+vimodrone: { lat: null, lon: null },
+zibidosangiacomo: { lat: null, lon: null },
+cadilana: { lat: null, lon: null },
+casalpusterlengo: { lat: null, lon: null },
+codogno: { lat: null, lon: null },
+codogno_itas: { lat: null, lon: null },
+lodi: { lat: null, lon: null },
+maleo: { lat: null, lon: null },
+massalengo: { lat: null, lon: null },
+sanangelo_lodigiano: { lat: null, lon: null },
+cast_fogliani: { lat: null, lon: null },
+castelsangiovanni: { lat: null, lon: null },
+caorso: { lat: null, lon: null },
+gossolengo: { lat: null, lon: null },
+pianello_valtidone: { lat: null, lon: null },
+bobbio: { lat: null, lon: null },
+vigolzone: { lat: null, lon: null },
+zerba: { lat: null, lon: null },
+capergnanica: { lat: null, lon: null },
+casalmaggiore: { lat: null, lon: null },
+casalmorano: { lat: null, lon: null },
+castelleone: { lat: null, lon: null },
+credera: { lat: null, lon: null },
+crema: { lat: null, lon: null },
+cremona: { lat: null, lon: null },
+cremosano: { lat: null, lon: null },
+isola_pescaroli: { lat: null, lon: null },
+offanengo: { lat: null, lon: null },
+olmeneta: { lat: null, lon: null },
+ossolaro: { lat: null, lon: null },
+pignano: { lat: null, lon: null },
+passarera: { lat: null, lon: null },
+piadena: { lat: null, lon: null },
+sg_incroce: { lat: null, lon: null },
+solarolo: { lat: null, lon: null },
+soncino: { lat: null, lon: null },
+soresina: { lat: null, lon: null },
+trescore_cremasco: { lat: null, lon: null },
+trigolo: { lat: null, lon: null },
+asola: { lat: null, lon: null },
+canicossa: { lat: null, lon: null },
+castelgoffredo: { lat: null, lon: null },
+cesole: { lat: null, lon: null },
+cividale_mantovano: { lat: null, lon: null },
+gazoldo_ippoliti: { lat: null, lon: null },
+mantova: { lat: null, lon: null },
+pomponesco: { lat: null, lon: null },
+guidizzolo: { lat: null, lon: null },
+curtatone: { lat: null, lon: null },
+sangiorgiomn: { lat: null, lon: null },
+goito: { lat: null, lon: null },
+monzambano: { lat: null, lon: null },
+piubega: { lat: null, lon: null },
+poggiorusco: { lat: null, lon: null },
+porto_mn: { lat: null, lon: null },
+rivalta: { lat: null, lon: null },
+sanbenedettopo: { lat: null, lon: null },
+sermide: { lat: null, lon: null },
+suzzara: { lat: null, lon: null },
+villapoma: { lat: null, lon: null },
+broni: { lat: null, lon: null },
+broni_golgi: { lat: null, lon: null },
+gambirana: { lat: null, lon: null },
+carbonara_ticino: { lat: null, lon: null },
+cassolnovo: { lat: null, lon: null },
+dorno: { lat: null, lon: null },
+filighera: { lat: null, lon: null },
+mede_vvf: { lat: null, lon: null },
+mezzanino: { lat: null, lon: null },
+pv_sangiovannino: { lat: null, lon: null },
+piandelpoggio: { lat: null, lon: null },
+pietragavina: { lat: null, lon: null },
+retorbido: { lat: null, lon: null },
+fortunago: { lat: null, lon: null },
+gualdrasco: { lat: null, lon: null },
+canneto: { lat: null, lon: null },
+casorateprimo: { lat: null, lon: null },
+branduzzo: { lat: null, lon: null },
+cavamanara: { lat: null, lon: null },
+mortara_vvf: { lat: null, lon: null },
+zerbolo: { lat: null, lon: null },
+corteolona: { lat: null, lon: null },
+brallo: { lat: null, lon: null },
+magherno: { lat: null, lon: null },
+penice: { lat: null, lon: null },
+ottobiano: { lat: null, lon: null },
+pv_pelizza: { lat: null, lon: null },
+redavalle: { lat: null, lon: null },
+robbio: { lat: null, lon: null },
+sm_versa: { lat: null, lon: null },
+scaldasole: { lat: null, lon: null },
+spessa: { lat: null, lon: null },
+stefanago: { lat: null, lon: null },
+stradella: { lat: null, lon: null },
+tromello: { lat: null, lon: null },
+vallelomellina: { lat: null, lon: null },
+varzi: { lat: null, lon: null },
+vidigulfo: { lat: null, lon: null },
+vigevano: { lat: null, lon: null },
+voghera: { lat: null, lon: null },
+zinasco: { lat: null, lon: null },
+acqui_terme: { lat: null, lon: null },
+alessandria: { lat: null, lon: null },
+castelnuovo_s: { lat: null, lon: null },
+isolasantonio: { lat: null, lon: null },
+pontecurone: { lat: null, lon: null },
+valenza: { lat: null, lon: null },
+crodo: { lat: null, lon: null },
+domodossola: { lat: null, lon: null },
+varzo: { lat: null, lon: null },
+asigliano: { lat: null, lon: null },
+};
+const stationsMeteoTortona =  {
+  Tortona: {
+    link: "https://meteotortona.it/link/dettaglio_stazioni.php?stazione=tortona",
+    lat: 44.897,            // latitudine
+    lon: 8.863              // longitudine
+  }, 
+  Casale: {
+    link: "https://meteotortona.it/link/dettaglio_stazioni.php?stazione=casale",
+    lat: 45.137,            // latitudine
+    lon: 8.449              // longitudine
+  },
+  Pozzolo: {
+    link: "https://meteotortona.it/link/dettaglio_stazioni.php?stazione=pozzolo",
+    lat: 44.791,            // latitudine
+    lon: 8.784              // longitudine
+  },
+  CasaCabano: {
+    link: "https://meteotortona.it/link/dettaglio_stazioni.php?stazione=casacabano",
+    lat: 44.840,            // latitudine
+    lon: 9.250              // longitudine
+  },
+  AlberaLigure: {
+    link: "https://meteotortona.it/link/dettaglio_stazioni.php?stazione=albera",
+    lat: 44.7,            // latitudine
+    lon: 9.065              // longitudine
+  },
+  Daglio: {
+    link: "https://meteotortona.it/link/dettaglio_stazioni.php?stazione=daglio",
+    lat: 44.645,            // latitudine
+    lon: 9.149              // longitudine
+  },
+  Cosola: {
+    link: "https://meteotortona.it/link/dettaglio_stazioni.php?stazione=cosola",
+    lat: 44.669,            // latitudine
+    lon: 9.178              // longitudine
+  },
+}
+
+const markers = {};
+let latestData = {};
+
 
 // ----- Colori Umidità -----
 function getColorHum(hum) {
@@ -1723,6 +2214,99 @@ for (let span of scrittineSpan) {
     }
 
 
+
+
+    function fittizioAReale(xFittizio, yFittizio) {
+  const lon = parseFloat((8260 + xFittizio / 1.18) / 1000);
+  const lat = parseFloat((46730 - yFittizio / 1.72) / 1000);
+  return { lat, lon };
+}
+
+async function fetchCML() {
+  try {
+    const url = "https://corsproxy.io/?" + encodeURIComponent(
+      "http://www.centrometeolombardo.com/Moduli/refx.php?t=all&r=1756559495232"
+    );
+
+    const res = await fetch(url);
+    const text = await res.text();
+
+    const matchCoords = text.match(/var coords\s*=\s*(\[\[[\s\S]*?\]\]);/);
+    if (!matchCoords) throw new Error("Coords non trovati");
+    const coords = JSON.parse(matchCoords[1].replace(/'/g, '"'));
+
+    const matchData = text.match(/datostazione\s*=\s*(\[\[[\s\S]*?\]\]);/);
+    if (!matchData) throw new Error("Dati stazioni non trovati");
+    const datostazione = JSON.parse(matchData[1].replace(/'/g, '"'));
+
+    Object.keys(stationsCML).forEach(id => {
+      const idx = coords.findIndex(c => c[0].toLowerCase() === id.toLowerCase());
+      if (idx === -1) {
+        console.warn(`Stazione ${id} non trovata in coords`);
+        latestData[id] = {};
+        updateMarker(id);
+        return;
+      }
+
+      const stFittizio = coords[idx];
+      const { lat, lon } = fittizioAReale(parseFloat(stFittizio[3]), parseFloat(stFittizio[4]));
+      const row = datostazione[idx];
+
+      // Se il primo dato è 1, tutti i valori sono N/D e marker grigio
+      const isInactive = row[0] === '1';
+      latestData[id] = isInactive ? {
+        temp: null,
+        tempHigh: null,
+        tempLow: null,
+        dewp: null,
+        dewpHigh: null,
+        dewpLow: null,
+        hum: null,
+        humHigh: null,
+        humLow: null,
+        rainDaily: null,
+        rainRate: null,
+        wind: null,
+        windGust: null,
+        windGustHigh: null,
+        windDir: null,
+        lat,
+        lon,
+        isInactive: true
+      } : {
+        temp: row[4] ? parseFloat(row[4]) : null,
+        tempHigh: row[5] ? parseFloat(row[5]) : null,
+        tempLow: row[7] ? parseFloat(row[7]) : null,
+        dewp: row[15] ? parseFloat(row[15]) : null,
+        dewpHigh: row[16] ? parseFloat(row[16]) : null,
+        dewpLow: row[18] ? parseFloat(row[18]) : null,
+        hum: row[9] ? parseFloat(row[9]) : null,
+        humHigh: row[10] ? parseFloat(row[10]) : null,
+        humLow: row[12] ? parseFloat(row[12]) : null,
+        rainDaily: row[37] ? parseFloat(row[37]) : null,
+        rainRate: row[41] ? parseFloat(row[41]) : null,
+        wind: row[28] ? parseFloat(row[28]) : null,
+        windGust: row[25] ? parseFloat(row[25]) : null,
+        windGustHigh: row[26] ? parseFloat(row[26]) : null,
+        windDir: row[29] || null,
+        lat,
+        lon,
+        isInactive: false
+      };
+
+      updateMarker(id);
+    });
+
+  } catch (err) {
+    console.error("Errore fetch dati CML:", err);
+  }
+}
+
+
+
+
+
+
     async function fetchStations1(id) {
   const st = stations1[id];
   if (!st) return;
@@ -1911,11 +2495,117 @@ async function fetchDMA(id) {
     console.error(`Errore fetch dati ${id}:`, err);
   }
 }
-  
+
+// Funzione fetch singola
+async function fetchMeteoTortona(id) {
+  const st = stationsMeteoTortona[id];
+  try {
+    const url = "https://corsproxy.io/?" + encodeURIComponent(st.link);
+    const res = await fetch(url);
+    const text = await res.text();
+
+    // Temperatura
+    const tempMatch = text.match(/<div class='card-header text-center font-weight-bold'>Temperatura<\/div>[\s\S]*?<h1>([\d.]+) &deg;C<\/h1>/);
+    const temp = tempMatch ? parseFloat(tempMatch[1]) : null;
+
+    const tempHighMatch = text.match(/<img src='\/immagini\/stazioni_online\/rossa.png'[\s\S]*?>Max:[\s\S]*?<div class='col-5 text-center'>([\d.]+) &deg;C<\/div>/);
+    const tempHigh = tempHighMatch ? parseFloat(tempHighMatch[1]) : null;
+
+    const tempLowMatch = text.match(/<img src='\/immagini\/stazioni_online\/blu.png'[\s\S]*?>Min:[\s\S]*?<div class='col-5 text-center'>([\d.]+) &deg;C<\/div>/);
+    const tempLow = tempLowMatch ? parseFloat(tempLowMatch[1]) : null;
+
+    // Dew point
+    const dewpMatch = text.match(/<div class='card-header text-center font-weight-bold'>Dew Point<\/div>[\s\S]*?<h1>([\d.]+) &deg;C<\/h1>/);
+    const dewp = dewpMatch ? parseFloat(dewpMatch[1]) : null;
+
+    const dewpHighMatch = text.match(/<div class='col-5 text-center'>([\d.]+) &deg;C<\/div>\s*<div class='col-4 text-center'>Ore: [\d:]+<\/div>/g);
+    const dewpHigh = dewpHighMatch && dewpHighMatch[0] ? parseFloat(dewpHighMatch[0].match(/([\d.]+)/)[1]) : null;
+    const dewpLow = dewpHighMatch && dewpHighMatch[1] ? parseFloat(dewpHighMatch[1].match(/([\d.]+)/)[1]) : null;
+
+    // Umidità
+    const humMatch = text.match(/<div class='card-header text-center font-weight-bold'>Umidit &agrave;<\/div>[\s\S]*?<h1>([\d.]+) &#37;<\/h1>/);
+    const hum = humMatch ? parseFloat(humMatch[1]) : null;
+
+    const humMaxMatch = text.match(/<img src='\/immagini\/stazioni_online\/rossa.png'[\s\S]*?>Max:[\s\S]*?<div class='col-5 text-center'>([\d.]+) &#37;<\/div>/);
+    const humHigh = humMaxMatch ? parseFloat(humMaxMatch[1]) : null;
+
+    const humMinMatch = text.match(/<img src='\/immagini\/stazioni_online\/blu.png'[\s\S]*?>Min:[\s\S]*?<div class='col-5 text-center'>([\d.]+) &#37;<\/div>/);
+    const humLow = humMinMatch ? parseFloat(humMinMatch[1]) : null;
+
+    // Vento
+    const windMatch = text.match(/<div class='card-header text-center font-weight-bold'>Vento<\/div>[\s\S]*?<h1>([\d.]+) Km\/h ([NSEW]+)<\/h1>/);
+    const wind = windMatch ? parseFloat(windMatch[1]) : null;
+    const windDirRaw = windMatch ? windMatch[2] : null;
+
+    // Mappa direzione in gradi
+    const dirMap = { N:0, NE:45, E:90, SE:135, S:180, SW:225, W:270, NW:315 };
+    const windDir = windDirRaw && dirMap[windDirRaw.toUpperCase()] !== undefined ? dirMap[windDirRaw.toUpperCase()] : null;
+
+    const windGustMatch = text.match(/<img src='\/immagini\/stazioni_online\/rossa.png'[\s\S]*?>Max:[\s\S]*?<div class='col-5 text-center'>([\d.]+) Km\/h<\/div>/);
+    const windGustHigh = windGustMatch ? parseFloat(windGustMatch[1]) : null;
+
+    const windGust = windGustHigh; // Se non c'è altro dato disponibile
+
+    // Pioggia giornaliera
+    const rainMatch = text.match(/<div class='card-header text-center font-weight-bold'>Precipitazioni<\/div>[\s\S]*?<h1>([\d.]+) mm<\/h1>/);
+    const rainDaily = rainMatch ? parseFloat(rainMatch[1]) : null;
+
+    latestData[id] = {
+      temp,
+      tempHigh,
+      tempLow,
+      dewp,
+      dewpHigh,
+      dewpLow,
+      hum,
+      humHigh,
+      humLow,
+      rainDaily,
+      wind,
+      windGust,
+      windGustHigh,
+      windDir,
+      lat: st.lat,
+      lon: st.lon,
+      inactive: temp == null
+    };
+
+    updateMarker(id);
+
+  } catch (err) {
+    console.error(`Errore fetch stazione ${id}:`, err);
+    latestData[id] = { 
+      temp: null,
+      tempHigh: null,
+      tempLow: null,
+      dewp: null,
+      dewpHigh: null,
+      dewpLow: null,
+      hum: null,
+      humHigh: null,
+      humLow: null,
+      rainDaily: null,
+      wind: null,
+      windGust: null,
+      windGustHigh: null,
+      windDir: null,
+      lat: st.lat,
+      lon: st.lon,
+      inactive: true
+    };
+    updateMarker(id);
+  }
+}
 
 
-// ----- Inizializza Marker Wunderground -----
+
+
+
+
+// ----- Inizializza Marker -----
 Object.keys(stations).forEach(id => createMarker(id));
+Object.keys(stationsCML).forEach(id => createMarker(id));
+Object.keys(stationsMeteoTortona).forEach(id => createMarker(id));
 Object.keys(stationsDMA).forEach(id => createMarker(id));
 Object.keys(stations1).forEach(id => createMarker(id));
 Object.keys(stations2).forEach(id => createMarker(id));
@@ -1924,15 +2614,20 @@ Object.keys(stationsLimet).forEach(id => createMarker(id));
 Object.keys(stationsBest).forEach(id => createMarker(id));
 
 Object.keys(stations).forEach(id => fetchPws(id));
+fetchCML(); // fetch unico per tutte le stazioni CML
 Object.keys(stationsDMA).forEach(id => fetchDMA(id));
+Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id));
 Object.keys(stations1).forEach(id => fetchStations1(id));
 Object.keys(stations2).forEach(id => fetchStations2(id));
 Object.keys(stations3).forEach(id => fetchStations3(id));
 Object.keys(stationsLimet).forEach(id => fetchLimet(id));
 Object.keys(stationsBest).forEach(id => fetchPws(id));
 
+
     // Aggiornamento ogni 10 secondi
 setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 60000);
+setInterval(() => { fetchCML(); }, 15000);
+setInterval(() => { Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id)); }, 30000);
 setInterval(() => { Object.keys(stationsDMA).forEach(id => fetchDMA(id)); }, 150000);
 setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 15000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations2(id)); }, 135000);
@@ -1943,6 +2638,8 @@ setInterval(() => {Object.keys(stationsBest).forEach(id => fetchPws(id));}, 5000
     // Cambia tipo di temperatura
     document.getElementById("tempSelect").addEventListener("change", () => {
   Object.keys(stations).forEach(id => updateMarker(id));
+  Object.keys(stationsCML).forEach(id => updateMarker(id));
+  Object.keys(stationsMeteoTortona).forEach(id => updateMarker(id));
   Object.keys(stationsDMA).forEach(id => updateMarker(id));
   Object.keys(stationsLimet).forEach(id => updateMarker(id));
   Object.keys(stations1).forEach(id => updateMarker(id));
