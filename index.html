@@ -2109,7 +2109,7 @@ async function fetchLimet(id) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(data.contents, "text/html");
 
-    // Temp
+    // Temperatura
     const tempTxt = doc.querySelector("#temp")?.textContent?.trim();
     const temp = tempTxt ? parseFloat(tempTxt.replace(",", ".")) : null;
 
@@ -2130,7 +2130,7 @@ async function fetchLimet(id) {
       }
     }
 
-    // Rain Daily
+    // Pioggia giornaliera
     let rainDaily = null;
     const tempSpans = Array.from(doc.querySelectorAll("span.temp"));
     for (let span of tempSpans) {
@@ -2141,37 +2141,42 @@ async function fetchLimet(id) {
       }
     }
 
-    // Rain rate
+    // Intensità pioggia (rain rate)
     let rainRate = null;
-    for (let span of scrittineSpans) {
+    const scrittineSpan = Array.from(doc.querySelectorAll("span.scrittine"));
+    for (let span of scrittineSpan) {
       if (span.textContent.trim().startsWith("Intensità")) {
         const parentDiv = span.parentElement;
         if (parentDiv) {
           const valori2 = parentDiv.querySelector("span.valori2 strong");
-          if (valori2) rainRate = parseFloat(valori2.textContent.replace(",", "."));
+          if (valori2) {
+            rainRate = parseFloat(valori2.textContent.replace(",", "."));
+          }
         }
         break;
       }
     }
 
-    // Aggiorna subito latestData e marker
+    // Aggiorna i dati
     latestData[id] = {
-      temp, tempHigh, tempLow, dewp, rainDaily, rainRate,
-      lat: st.lat, lon: st.lon,
-      inactive: temp == null
+      temp,
+      tempHigh,
+      tempLow,
+      dewp,
+      rainDaily,
+      rainRate,
+      lat: st.lat,
+      lon: st.lon
     };
 
     updateMarker(id);
 
   } catch (err) {
     console.error(`Errore fetch LIMET ${id}:`, err);
-    latestData[id] = {
-      temp: null, tempHigh: null, tempLow: null, dewp: null,
-      rainDaily: null, rainRate: null, lat: st.lat, lon: st.lon, inactive: true
-    };
-    updateMarker(id);
   }
 }
+
+
 
 
 
