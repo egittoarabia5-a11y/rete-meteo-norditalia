@@ -2109,6 +2109,7 @@ async function fetchLimet(id) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(data.contents, "text/html");
 
+    // Temp
     const tempTxt = doc.querySelector("#temp")?.textContent?.trim();
     const temp = tempTxt ? parseFloat(tempTxt.replace(",", ".")) : null;
 
@@ -2140,30 +2141,35 @@ async function fetchLimet(id) {
       }
     }
 
+    // Rain rate
     let rainRate = null;
-const scrittineSpan = Array.from(doc.querySelectorAll("span.scrittine"));
-for (let span of scrittineSpan) {
-  if (span.textContent.trim().startsWith("Intensità")) {
-    // Prendi il prossimo span con classe 'valori2' nel parent
-    const parentDiv = span.parentElement;
-    if (parentDiv) {
-      const valori2 = parentDiv.querySelector("span.valori2 strong");
-      if (valori2) {
-        rainRate = parseFloat(valori2.textContent.replace(",", "."));
+    for (let span of scrittineSpans) {
+      if (span.textContent.trim().startsWith("Intensità")) {
+        const parentDiv = span.parentElement;
+        if (parentDiv) {
+          const valori2 = parentDiv.querySelector("span.valori2 strong");
+          if (valori2) rainRate = parseFloat(valori2.textContent.replace(",", "."));
+        }
+        break;
       }
     }
-    break;
-  }
-}
+
+    // Aggiorna subito latestData e marker
     latestData[id] = {
       temp, tempHigh, tempLow, dewp, rainDaily, rainRate,
-      lat: st.lat, lon: st.lon
+      lat: st.lat, lon: st.lon,
+      inactive: temp == null
     };
 
     updateMarker(id);
 
   } catch (err) {
     console.error(`Errore fetch LIMET ${id}:`, err);
+    latestData[id] = {
+      temp: null, tempHigh: null, tempLow: null, dewp: null,
+      rainDaily: null, rainRate: null, lat: st.lat, lon: st.lon, inactive: true
+    };
+    updateMarker(id);
   }
 }
 
@@ -2212,6 +2218,124 @@ for (let span of scrittineSpan) {
         console.error(`Errore fetch dati ${id}:`, err);
       }
     }
+    const stationsOMIRL = {}; // qui salviamo tutte le stazioni OMIRL
+
+    async function fetchOMIRL() {
+  try {
+    // Endpoint vecchio (lat/lon)
+    const urlStations = "https://corsproxy.io/?" + encodeURIComponent(
+      "https://omirl.regione.liguria.it/Omirl/rest/stations/Termo"
+    );
+    const resStations = await fetch(urlStations);
+    const stations = await resStations.json();
+
+    if (!Array.isArray(stations)) {
+      console.warn("Risposta stazioni inattesa:", stations);
+      return;
+    }
+
+    // Endpoint temperatura
+    const urlTemps = "https://corsproxy.io/?" + encodeURIComponent(
+      "https://omirl.regione.liguria.it/Omirl/rest/stations/sensorvalues/Termo"
+    );
+    const resTemps = await fetch(urlTemps);
+    const tempsData = await resTemps.json();
+
+    // Endpoint vento
+    const urlWind = "https://corsproxy.io/?" + encodeURIComponent(
+      "https://omirl.regione.liguria.it/Omirl/rest/stations/sensorvalues/Vento"
+    );
+    const resWind = await fetch(urlWind);
+    const windData = await resWind.json();
+
+    // Endpoint umidità
+    const urlHum = "https://corsproxy.io/?" + encodeURIComponent(
+      "https://omirl.regione.liguria.it/Omirl/rest/stations/sensorvalues/Igro"
+    );
+    const resHum = await fetch(urlHum);
+    const humData = await resHum.json();
+
+    // Mappa code → temperature
+    const tempsMap = {};
+    if (tempsData.tableRows && Array.isArray(tempsData.tableRows)) {
+      tempsData.tableRows.forEach(st => {
+        tempsMap[st.code] = {
+          temp: st.last != null ? parseFloat(st.last) : null,
+          tempHigh: st.max != null ? parseFloat(st.max) : null,
+          tempLow: st.min != null ? parseFloat(st.min) : null
+        };
+      });
+    }
+
+    // Mappa code → vento
+    const windMap = {};
+    if (windData.tableRows && Array.isArray(windData.tableRows)) {
+      windData.tableRows.forEach(st => {
+        windMap[st.code] = {
+          wind: st.last != null ? parseFloat(st.last.toFixed(1)) : null,
+          windGust: st.last != null ? parseFloat(st.last.toFixed(1)) : null,
+          windGustHigh: st.max != null ? parseFloat(st.max.toFixed(1)) : null
+        };
+      });
+    }
+
+    // Mappa code → umidità
+    const humMap = {};
+    if (humData.tableRows && Array.isArray(humData.tableRows)) {
+      humData.tableRows.forEach(st => {
+        humMap[st.code] = {
+          hum: st.last != null ? parseFloat(st.last) : null,
+          humHigh: st.max != null ? parseFloat(st.max) : null,
+          humLow: st.min != null ? parseFloat(st.min) : null
+        };
+      });
+    }
+
+    // Unisco dati temperatura + vento + umidità + lat/lon
+    stations.forEach(st => {
+      const id = st.shortCode;
+      const lat = st.lat;
+      const lon = st.lon;
+
+      const tempInfo = tempsMap[id] || {};
+      const windInfo = windMap[id] || {};
+      const humInfo = humMap[id] || {};
+
+      latestData[id] = {
+        temp: tempInfo.temp ?? null,
+        tempHigh: tempInfo.tempHigh ?? null,
+        tempLow: tempInfo.tempLow ?? null,
+        wind: windInfo.wind ?? null,
+        windGust: windInfo.windGust ?? null,
+        windGustHigh: windInfo.windGustHigh ?? null,
+        hum: humInfo.hum ?? null,
+        humHigh: humInfo.humHigh ?? null,
+        humLow: humInfo.humLow ?? null,
+        lat,
+        lon,
+        isInactive: tempInfo.temp == null && windInfo.wind == null && humInfo.hum == null
+      };
+
+      // salva la stazione in stationsOMIRL
+      stationsOMIRL[id] = { lat, lon };
+
+      // crea marker se non esiste
+      if (!markers[id]) {
+        createMarker(id, lat, lon);
+      }
+
+      // aggiorna marker
+      updateMarker(id);
+    });
+
+  } catch (err) {
+    console.error("Errore fetch OMIRL:", err);
+  }
+}
+
+
+
+
 
 
 
@@ -2605,6 +2729,7 @@ async function fetchMeteoTortona(id) {
 // ----- Inizializza Marker -----
 Object.keys(stations).forEach(id => createMarker(id));
 Object.keys(stationsCML).forEach(id => createMarker(id));
+Object.keys(stationsOMIRL).forEach(id => createMarker(id));
 Object.keys(stationsMeteoTortona).forEach(id => createMarker(id));
 Object.keys(stationsDMA).forEach(id => createMarker(id));
 Object.keys(stations1).forEach(id => createMarker(id));
@@ -2615,6 +2740,7 @@ Object.keys(stationsBest).forEach(id => createMarker(id));
 
 Object.keys(stations).forEach(id => fetchPws(id));
 fetchCML(); // fetch unico per tutte le stazioni CML
+fetchOMIRL();
 Object.keys(stationsDMA).forEach(id => fetchDMA(id));
 Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id));
 Object.keys(stations1).forEach(id => fetchStations1(id));
@@ -2626,19 +2752,21 @@ Object.keys(stationsBest).forEach(id => fetchPws(id));
 
     // Aggiornamento ogni 10 secondi
 setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 60000);
-setInterval(() => { fetchCML(); }, 15000);
+setInterval(() => { fetchCML(); }, 30000);
+setInterval(() => { fetchOMIRL(); }, 30000);
 setInterval(() => { Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id)); }, 30000);
 setInterval(() => { Object.keys(stationsDMA).forEach(id => fetchDMA(id)); }, 150000);
 setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 15000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations2(id)); }, 135000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations3(id)); }, 15000);
-setInterval(() => { Object.keys(stationsLimet).forEach(id => fetchLimet(id)); }, 5000);
+setInterval(() => { Object.keys(stationsLimet).forEach(id => fetchLimet(id)); }, 30000);
 setInterval(() => {Object.keys(stationsBest).forEach(id => fetchPws(id));}, 5000);
 
     // Cambia tipo di temperatura
     document.getElementById("tempSelect").addEventListener("change", () => {
   Object.keys(stations).forEach(id => updateMarker(id));
   Object.keys(stationsCML).forEach(id => updateMarker(id));
+  Object.keys(stationsOMIRL).forEach(id => updateMarker(id));
   Object.keys(stationsMeteoTortona).forEach(id => updateMarker(id));
   Object.keys(stationsDMA).forEach(id => updateMarker(id));
   Object.keys(stationsLimet).forEach(id => updateMarker(id));
