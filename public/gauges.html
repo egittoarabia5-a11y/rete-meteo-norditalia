@@ -381,8 +381,94 @@ const stationsLimet = {
     
   },
 };
+// ----- Colori -----
+const tempSections = [
+  steelseries.Section(-50,-10, "#191970"),
+  steelseries.Section(-10,-5,  "#0000FF"),
+  steelseries.Section(-5,0,    "#4682B4"),
+  steelseries.Section(0,5,     "#87CEEB"),
+  steelseries.Section(5,11,    "#006400"),
+  steelseries.Section(11,15,   "#3AA300"),
+  steelseries.Section(15,20,   "#E6B800"),
+  steelseries.Section(20,25,   "#E67D00"),
+  steelseries.Section(25,30,   "#FF0000"),
+  steelseries.Section(30,35,   "#8B0000"),
+  steelseries.Section(35,38,   "#FF69B4"),
+  steelseries.Section(38,50,   "#843BEB")
+];
 
+// Umidità (%)
+const humSections = [
+  steelseries.Section(0,10,   "#F01E00"),
+  steelseries.Section(10,20,  "#F07D00"),
+  steelseries.Section(20,30,  "#F0CB00"),
+  steelseries.Section(30,40,  "#F0B800"),
+  steelseries.Section(40,50,  "#3AA300"),
+  steelseries.Section(50,60,  "#21C573"),
+  steelseries.Section(60,70,  "#21C2C5"),
+  steelseries.Section(70,80,  "#00BDEF"),
+  steelseries.Section(80,90,  "#0060F0"),
+  steelseries.Section(90,100, "#0114F0")
+];
 
+// Pioggia (mm)
+const rainSections = [
+  steelseries.Section(0,0.2,   "#808080"),
+  steelseries.Section(0.2,5,  "#F09F00"),
+  steelseries.Section(5,10,   "#006400"),
+  steelseries.Section(10,20,  "#3AA300"),
+  steelseries.Section(20,30,  "#87CEEB"),
+  steelseries.Section(30,50,  "#4682B4"),
+  steelseries.Section(50,100, "#0038F0"),
+  steelseries.Section(100,150,"#FF69B4"),
+  steelseries.Section(150,500,"#843BEB")
+];
+
+// Vento (km/h) – esempio con tre intervalli
+const windSections = [
+  steelseries.Section(0,20,"#00BFFF"),
+  steelseries.Section(20,50,"#00FF00"),
+  steelseries.Section(50,100,"#FF0000")
+];
+
+// Pressione (hPa) – esempio con intervalli
+const pressSections = [
+  steelseries.Section(950,980,"#FF0000"),
+  steelseries.Section(980,1010,"#00FF00"),
+  steelseries.Section(1010,1055,"#0000FF")
+];
+
+function dynamicRange(value, buffer = 10, minLimit = null, maxLimit = null) {
+  if (value === null || value === undefined || isNaN(value)) {
+    return { min: minLimit ?? 0, max: maxLimit ?? 100 };
+  }
+  let min = Math.floor(value - buffer);
+  let max = Math.ceil(value + buffer);
+
+  // Applica limiti se definiti
+  if (minLimit !== null) min = Math.max(min, minLimit);
+  if (maxLimit !== null) max = Math.min(max, maxLimit);
+
+  // Assicura gap minimo
+  if (max - min < buffer * 2) {
+    min = value - buffer;
+    max = value + buffer;
+    if (minLimit !== null) min = Math.max(min, minLimit);
+    if (maxLimit !== null) max = Math.min(max, maxLimit);
+  }
+
+  return { min, max };
+}
+
+function updateGaugeWithDynamicScale(gauge, value, options = {}) {
+  if (value === null || value === undefined) return;
+  const range = dynamicRange(value, options.buffer ?? 10, options.min, options.max);
+  gauge.setMinValue(range.min);
+  gauge.setMaxValue(range.max);
+  gauge.setValueAnimated(value);
+}
+
+// ----- CONFIGURAZIONE COMUNE GAUGES -----
 const commonRadial = {
   gaugeType: steelseries.GaugeType.TYPE4,
   frameDesign: steelseries.FrameDesign.TILTED_GRAY,
@@ -392,23 +478,51 @@ const commonRadial = {
   lcdVisible: true,
   lcdDecimals: 1,
   tickLabelOrientation: steelseries.TickLabelOrientation.HORIZONTAL,
-  niceScale: true,
-  section: [steelseries.Section(0,50,'rgba(0,150,0,0.6)'),steelseries.Section(50,80,'rgba(255,165,0,0.6)'),steelseries.Section(80,100,'rgba(200,0,0,0.6)')],
-  area: [steelseries.Section(0,50,'rgba(0,150,0,0)'),steelseries.Section(50,80,'rgba(255,165,0,0)'),steelseries.Section(80,100,'rgba(200,0,0,0)')]
+  niceScale: true
 };
 
-const gTemp     = new steelseries.Radial("g_temp",     { ...commonRadial, minValue:-20, maxValue:50, titleString:"TEMPERATURA", unitString:"°C" });
-const gDew      = new steelseries.Radial("g_dew",      { ...commonRadial, minValue:-20, maxValue:30, titleString:"DEW POINT", unitString:"°C" });
-const gRH       = new steelseries.Radial("g_rh",       { ...commonRadial, minValue:0, maxValue:100, titleString:"UMIDITÀ", unitString:"%" });
-const gPress    = new steelseries.Radial("g_press",    { ...commonRadial, minValue:950, maxValue:1055, titleString:"PRESSIONE", unitString:"hPa" });
-const gWind     = new steelseries.Radial("g_wind",     { ...commonRadial, minValue:0, maxValue:100, titleString:"VELOCITÀ VENTO", unitString:"km/h" });
-const gRain     = new steelseries.RadialBargraph("g_rain", { minValue:0, maxValue:100, titleString:"PIOGGIA TOTALE", unitString:"mm", frameDesign:steelseries.FrameDesign.TILTED_GRAY, backgroundColor:steelseries.BackgroundColor.BEIGE, lcdVisible:true, lcdDecimals:1, ledVisible:false, niceScale:true, section:[steelseries.Section(0,30,'rgba(0,150,255,0.6)'),steelseries.Section(30,60,'rgba(0,100,200,0.6)'),steelseries.Section(60,100,'rgba(0,50,150,0.6)')] });
-const gRainRate = new steelseries.Radial("g_rainrate", { ...commonRadial, minValue:0, maxValue:20, titleString:"RAIN RATE", unitString:"mm/h" });
+// Funzione helper per aggiornare colori dinamici
+function setGaugeColor(gauge, value, type) {
+  let color = "#000"; // colore di default
+  switch(type) {
+    case "hum": color = getColorHum(value); break;
+    case "rain": color = getColorRain(value); break;
+    case "temp": color = getColorTemp(value); break;
+  }
+  gauge.setLedColor(color);   // cambia colore LED
+  gauge.setFrameColor(color); // cambia colore frame
+  gauge.setSection([steelseries.Section(gauge.getMinValue(), gauge.getMaxValue(), color, 0.6)]);
+}
 
-function updateGauges(data){
+// Esempio di aggiornamento valori:
+function updateGauges(data) {
+  if(data.hum !== null) {
+    gRH.setValueAnimated(data.hum);
+    setGaugeColor(gRH, data.hum, "hum");
+  }
+  if(data.rtot !== null) {
+    gRain.setValueAnimated(data.rtot);
+    setGaugeColor(gRain, data.rtot, "rain");
+  }
+  if(data.temp !== null) {
+    gTemp.setValueAnimated(data.temp);
+    setGaugeColor(gTemp, data.temp, "temp");
+  }
+  // ... altri gauges come prima
+}
+
+// ----- CREAZIONE GAUGES -----
+const gTemp     = new steelseries.Radial("g_temp",     { ...commonRadial, minValue:-20, maxValue:50, titleString:"TEMPERATURA", unitString:"°C", section: tempSections });
+const gDew      = new steelseries.Radial("g_dew",      { ...commonRadial, minValue:-20, maxValue:30, titleString:"DEW POINT", unitString:"°C", section: tempSections });
+const gRH       = new steelseries.Radial("g_rh",       { ...commonRadial, minValue:0, maxValue:100, titleString:"UMIDITÀ", unitString:"%", section: humSections });
+const gPress    = new steelseries.Radial("g_press",    { ...commonRadial, minValue:950, maxValue:1055, titleString:"PRESSIONE", unitString:"hPa", section: pressSections });
+const gWind     = new steelseries.Radial("g_wind",     { ...commonRadial, minValue:0, maxValue:100, titleString:"VELOCITÀ VENTO", unitString:"km/h", section: windSections });
+const gRain     = new steelseries.RadialBargraph("g_rain", { minValue:0, maxValue:150, titleString:"PIOGGIA TOTALE", unitString:"mm", frameDesign:steelseries.FrameDesign.TILTED_GRAY, backgroundColor:steelseries.BackgroundColor.BEIGE, lcdVisible:true, lcdDecimals:1, ledVisible:false, niceScale:true, section: rainSections });
+const gRainRate = new steelseries.Radial("g_rainrate", { ...commonRadial, minValue:0, maxValue:20, titleString:"RAIN RATE", unitString:"mm/h", section: rainSections });
+
+function updateGauges(data) {
   const temp = data.temp ?? null;
   const dewpt = data.dewp ?? null;
-  const feels = data.heat ?? temp;
   const rh = data.hum ?? null;
   const pres = data.pres ?? null;
   const ws = data.wind ?? null;
@@ -416,27 +530,37 @@ function updateGauges(data){
   const wdir = data.windDir ?? null;
   const rtot = data.rainDaily ?? data.rtot ?? null;
   const rrate = data.rainRate ?? data.rrate ?? null;
-  const uv = data.uv ?? null;
-  const pTrend = data.pTrend ?? null;
 
-  if(temp !== null) gTemp.setValueAnimated(temp);
-  if(dewpt !== null) gDew.setValueAnimated(dewpt);
-  if(rh !== null) gRH.setValueAnimated(rh);
-  if(pres !== null) gPress.setValueAnimated(pres);
-  if(ws !== null) gWind.setValueAnimated(ws);
-  if(rtot !== null) gRain.setValueAnimated(rtot);
-  if(rrate !== null) gRainRate.setValueAnimated(rrate);
+  // Temperature e dew point: scala dinamica
+  if (temp !== null) updateGaugeWithDynamicScale(gTemp, temp, { buffer: 15 });
+  if (dewpt !== null) updateGaugeWithDynamicScale(gDew, dewpt, { buffer: 10 });
 
+  // Umidità: scala 0-100
+  if (rh !== null) updateGaugeWithDynamicScale(gRH, rh, { min: 0, max: 100 });
+
+  // Pressione: scala dinamica ±15 hPa
+  if (pres !== null) updateGaugeWithDynamicScale(gPress, pres, { buffer: 15 });
+
+  // Vento e raffica: minimo 0
+  if (ws !== null) updateGaugeWithDynamicScale(gWind, ws, { min: 0 });
+  if (gust !== null) updateGaugeWithDynamicScale(gWind, gust, { min: 0 });
+
+  // Pioggia totale e rain rate: minimo 0
+  if (rtot !== null) updateGaugeWithDynamicScale(gRain, rtot, { min: 0 });
+  if (rrate !== null) updateGaugeWithDynamicScale(gRainRate, rrate, { min: 0 });
+
+  // Aggiornamento testo
   setText("dewpt", fmt1(dewpt));
-  setText("feels", fmt1(feels));
+  setText("feels", fmt1(data.heat ?? temp));
   setText("rh_txt", fmt1(rh));
-  setText("uv", uv ?? "—");
+  setText("uv", data.uv ?? "—");
   setText("p_txt", fmt1(pres));
-  setText("ptrend", pTrend ?? "—");
+  setText("ptrend", data.pTrend ?? "—");
   setText("gust", fmt1(gust));
   setText("wdir", fmt1(wdir));
   setText("rtotal", fmt1(rtot));
 }
+
 
 // --- FETCH FUNZIONI ---
 
