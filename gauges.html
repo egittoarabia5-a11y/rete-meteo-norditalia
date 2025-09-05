@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Gauges</title>
+
+<!-- SteelSeries (HanSolo) + Tween per animazioni -->
+<script src="https://cdn.jsdelivr.net/gh/HanSolo/SteelSeries-Canvas/tween-min.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/HanSolo/SteelSeries-Canvas/steelseries.js"></script>
+
+<style>
+  body { margin:0; font-family:Arial,sans-serif; background:#fff; color:#0b1020 }
+  header { padding:16px 20px; display:flex; align-items:baseline; gap:12px }
+  header h1 { margin:0; font-size:20px; font-weight:700 }
+  header .sub { color:#4b4b3c; font-size:13px }
+  #updated { color:#4b4b3c; font-size:12px; margin-left:auto }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:18px; padding:18px; max-width:1200px; margin:0 auto }
+  .card { background:#eee7d3; border-radius:18px; padding:14px; box-shadow:0 6px 24px rgba(0,0,0,.15) }
+  .card h3 { margin:0 0 8px; font-size:14px; font-weight:600; color:#0b1020 }
+  .row { display:flex; gap:14px; align-items:center; justify-content:space-between }
+  .meta { font-size:12px; color:#4b4b3c }
+  .meta b { color:#0b1020; font-weight:700 }
+  canvas { display:block; margin:0 auto }
+  footer { text-align:center; color:#6b7280; font-size:12px; padding:12px 0 28px }
+</style>
+</head>
+<body>
+<header>
+  <h1 id="stationTitle">Stazione Meteo: —</h1>
+  <span class="sub">Dati in tempo reale (unità metriche)</span>
+  <span id="updated">Aggiornamento…</span>
+</header>
+
+<div class="grid">
+  <div class="card"><h3>Temperatura (°C)</h3><canvas id="g_temp" width="260" height="260"></canvas>
+    <div class="row"><div class="meta">Dew point: <b id="dewpt">—</b> °C</div><div class="meta">Percepita: <b id="feels">—</b> °C</div></div></div>
+  <div class="card"><h3>Dew Point (°C)</h3><canvas id="g_dew" width="260" height="260"></canvas></div>
+  <div class="card"><h3>Umidità (%)</h3><canvas id="g_rh" width="260" height="260"></canvas>
+    <div class="row"><div class="meta">UR: <b id="rh_txt">—</b> %</div><div class="meta">UV: <b id="uv">—</b></div></div></div>
+  <div class="card"><h3>Pressione (hPa)</h3><canvas id="g_press" width="260" height="260"></canvas>
+    <div class="row"><div class="meta">Trend: <b id="ptrend">—</b></div><div class="meta">QNH: <b id="p_txt">—</b> hPa</div></div></div>
+  <div class="card"><h3>Vento (km/h)</h3><canvas id="g_wind" width="260" height="260"></canvas>
+    <div class="row"><div class="meta">Dir: <b id="wdir">—</b>°</div><div class="meta">Raffica: <b id="gust">—</b> km/h</div></div></div>
+  <div class="card"><h3>Pioggia totale (mm)</h3><canvas id="g_rain" width="260" height="260"></canvas>
+    <div class="row"><div class="meta">Giorno: <b id="rtotal">—</b> mm</div></div></div>
+  <div class="card"><h3>Rain Rate (mm/h)</h3><canvas id="g_rainrate" width="260" height="260"></canvas></div>
+</div>
+
+<footer>Gauges: SteelSeries-Canvas · Dati da Weather.com / OMIRL / LIMET</footer>
+
+<script>
+const urlParams = new URLSearchParams(window.location.search);
+const stationId = urlParams.get("station") || "ICREMO15";
+const stationName = urlParams.get("name") || stationId;
+const source = urlParams.get("source") || "wunderground";
+
+document.title = `WeatherCloud — Stazione ${stationName}`;
+document.getElementById("stationTitle").textContent = `Stazione Meteo: ${stationName}`;
+
+const REFRESH_MS = 5000;
+const $ = id => document.getElementById(id);
+const setText = (id,v) => { if($(id)) $(id).textContent=v; };
+function fmt1(n){ return (n===null||n===undefined||isNaN(n)) ? "—" : Number(n).toFixed(1); }
+const stationsLimet = {
+  Molassana: {
+    link: "molassana-alta", // parte variabile della URL
+    link2: "terzereti",
+    lat: 44.461,            // latitudine
+    lon: 8.987              // longitudine
+  },
+  Fabbriche: {
+    link: "fabbriche-brusinetti", // parte variabile della URL
+    link2: "meteo-fabbriche-brusinetti",
+    lat: 44.446,            // latitudine
+    lon: 8.714              // longitudine
+  },
+  Pietralavezzara: {
+    link: "pietralavezzara", // parte variabile della URL
+    link2: "meteo-pietralavezzara",
+    lat: 44.536,            // latitudine
+    lon: 8.883              // longitudine
+  },
+  SantOlcese: {
+    link: "solcese", // parte variabile della URL
+    link2: "meteo-solcese",
+    lat: 44.483,            // latitudine
+    lon: 8.966             // longitudine
+  },
+  Foce: {
+    link: "ldoria", // parte variabile della URL
+    link2: "meteo-ldoria",
+    lat: 44.401,            // latitudine
+    lon: 8.942            // longitudine
+  },
+  Pontori: {
+    link: "pontori", // parte variabile della URL
+    link2: "meteo-pontori",
+    lat: 44.367,            // latitudine
+    lon: 9.435        // longitudine
+  },
+  Arenzano: {
+    link: "arenzano-porto", // parte variabile della URL
+    link2: "terzereti",
+    lat: 44.400,            // latitudine
+    lon: 8.687            // longitudine
+  },
+  WTC: {
+    link: "wtc", // parte variabile della URL
+    link2: "meteo-wtc",
+    lat: 44.408,            // latitudine
+    lon: 8.901              // longitudine
+  },
+  Sampierdarena: {
+    link: "sampierdarena", // parte variabile della URL
+    link2: "meteo-sampierdarena",
+    lat: 44.416,            // latitudine
+    lon: 8.886              // longitudine
+  },
+  Parazzuolo: {
+    link: "parazzuolo", // parte variabile della URL
+    link2: "meteo-parazzuolo",
+    lat: 44.478,            // latitudine
+    lon: 9.325             // longitudine
+    
+  },
+  Montoggio: {
+    link: "montoggio", // parte variabile della URL
+    link2: "meteo-montoggio",
+    lat: 44.517,            // latitudine
+    lon: 9.050             // longitudine
+    
+  },
+  SanRocco: {
+    link: "sanrocco", // parte variabile della URL
+    link2: "meteo-sanrocco",
+    lat: 44.334,            // latitudine
+    lon: 9.161             // longitudine
+    
+  },
+  SantAlberto: {
+    link: "salberto", // parte variabile della URL
+    link2: "meteo-salberto",
+    lat: 44.444,            // latitudine
+    lon: 9.103             // longitudine
+    
+  },
+  LagoLame: {
+    link: "lame", // parte variabile della URL
+    link2: "meteo-lame",
+    lat: 44.503,            // latitudine
+    lon: 9.408             // longitudine
+    
+  },
+  Rezzoaglio: {
+    link: "rezzoaglio", // parte variabile della URL
+    link2: "meteo-rezzoaglio",
+    lat: 44.525,            // latitudine
+    lon: 9.385             // longitudine
+    
+  },
+  RezzoaglioCerisola: {
+    link: "rezzoaglio-cerisola", // parte variabile della URL
+    link2: "meteo-rezzoaglio-cerisola",
+    lat: 44.515,            // latitudine
+    lon: 9.408             // longitudine
+    
+  },
+  PuntaChiappa: {
+    link: "batterie-pchiappa", // parte variabile della URL
+    link2: "meteo-batterie-pchiappa",
+    lat: 44.322,            // latitudine
+    lon: 9.152             // longitudine
+    
+  },
+  Ventarola: {
+    link: "ventarola", // parte variabile della URL
+    link2: "meteo-ventarola",
+    lat: 44.555,            // latitudine
+    lon: 9.305             // longitudine
+    
+  },
+  ICBorzoli: {
+    link: "borzoli", // parte variabile della URL
+    link2: "meteo-borzoli",
+    lat: 44.429,            // latitudine
+    lon: 8.856             // longitudine
+    
+  },
+  SantEusebio: {
+    link: "eusebio", // parte variabile della URL
+    link2: "meteo-eusebio",
+    lat: 44.442,            // latitudine
+    lon: 8.991             // longitudine
+    
+  },
+  Fregarie: {
+    link: "fregarie-scolombano", // parte variabile della URL
+    link2: "meteo-fregarie-scolombano",
+    lat: 44.380,            // latitudine
+    lon: 9.305             // longitudine
+    
+  },
+  Zoagli: {
+    link: "zoagli-oliveto", // parte variabile della URL
+    link2: "meteo-zoagli-oliveto",
+    lat: 44.344,            // latitudine
+    lon: 9.275             // longitudine
+    
+  },
+  Moconesi: {
+    link: "moconesi", // parte variabile della URL
+    link2: "meteo-moconesi",
+    lat: 44.424,            // latitudine
+    lon: 9.190             // longitudine
+    
+  },
+  SantaMaria: {
+    link: "smaria", // parte variabile della URL
+    link2: "meteo-smaria",
+    lat: 44.358,            // latitudine
+    lon: 9.186             // longitudine
+    
+  },
+  Murlo: {
+    link: "murlo", // parte variabile della URL
+    link2: "meteo-murlo",
+    lat: 44.055,            // latitudine
+    lon: 9.956             // longitudine
+    
+  },
+  Urbe: {
+    link: "terzereti", // parte variabile della URL
+    link2: "meteo-urbe-monta",
+    lat: 44.489,            // latitudine
+    lon: 8.581             // longitudine
+    
+  },
+  UrbeSanPietro: {
+    link: "urbe", // parte variabile della URL
+    link2: "meteo-urbe",
+    lat: 44.486,            // latitudine
+    lon: 8.587             // longitudine
+    
+  },
+  Tiglieto: {
+    link: "tiglieto", // parte variabile della URL
+    link2: "meteo-tiglieto",
+    lat: 44.529,            // latitudine
+    lon: 8.626             // longitudine
+    
+  },
+  Giusvalla: {
+    link: "giusvalla", // parte variabile della URL
+    link2: "meteo-giusvalla",
+    lat: 44.448,            // latitudine
+    lon: 8.394             // longitudine
+    
+  },
+  Casanova: {
+    link: "casanova", // parte variabile della URL
+    link2: "meteo-casanova",
+    lat: 44.375,            // latitudine
+    lon: 8.574             // longitudine
+    
+  },
+  CelleLigure: {
+    link: "celle", // parte variabile della URL
+    link2: "meteo-celle",
+    lat: 44.343,            // latitudine
+    lon: 8.545             // longitudine
+    
+  },
+    Oregina: {
+    link: "oregina", // parte variabile della URL
+    link2: "meteo-oregina",
+    lat: 44.424,            // latitudine
+    lon: 8.927             // longitudine
+    
+  },
+  MarassiFirpo: {
+    link: "terzereti", // parte variabile della URL
+    link2: "meteo-marassi-firpo",
+    lat: 44.415,            // latitudine
+    lon: 8.950             // longitudine
+    
+  },
+  Cornigliano: {
+    link: "cornigliano", // parte variabile della URL
+    link2: "meteo-cornigliano",
+    lat: 44.415,            // latitudine
+    lon: 8.873             // longitudine
+    
+  },
+  TramontanaSurfVoltri: {
+    link: "voltri", // parte variabile della URL
+    link2: "meteo-voltri",
+    lat: 44.427,            // latitudine
+    lon: 8.757             // longitudine
+    
+  },
+  Albisola: {
+    link: "albisola", // parte variabile della URL
+    link2: "meteo-albisola",
+    lat: 44.326,            // latitudine
+    lon: 8.501             // longitudine
+    
+  },
+  SavonaNautico: {
+    link: "savona", // parte variabile della URL
+    link2: "meteo-savona",
+    lat: 44.308,            // latitudine
+    lon: 8.487             // longitudine
+    
+  },
+  Zinola: {
+    link: "savona-zinola", // parte variabile della URL
+    link2: "meteo-savona-zinola",
+    lat: 44.282,            // latitudine
+    lon: 8.443             // longitudine
+    
+  },
+  Masone: {
+    link: "savona-zinola", // parte variabile della URL
+    link2: "meteo-masone-vallechiara",
+    lat: 44.503,            // latitudine
+    lon: 8.720             // longitudine
+    
+  },
+  RossiglioneLIMET: {
+    link: "savona-zinola", // parte variabile della URL
+    link2: "meteo-rossiglione",
+    lat: 44.560,            // latitudine
+    lon: 8.672             // longitudine
+    
+  },
+    RossiglioneLIMET: {
+    link: "savona-zinola", // parte variabile della URL
+    link2: "meteo-rossiglione",
+    lat: 44.560,            // latitudine
+    lon: 8.672             // longitudine
+    
+  },  LaTerza: {
+    link: "savona-zinola", // parte variabile della URL
+    link2: "meteo-rifugio-laterza",
+    lat: 44.059,            // latitudine
+    lon: 7.730             // longitudine
+    
+  }, Piaggia: {
+    link: "savona-zinola", // parte variabile della URL
+    link2: "meteo-piaggia",
+    lat: 44.082,            // latitudine
+    lon: 7.749             // longitudine
+    
+  }, 
+  Bragalla: {
+    link: "h", // parte variabile della URL
+    link2: "meteo-bragalla",
+    lat: 44.446,            // latitudine
+    lon: 9.102             // longitudine
+    
+  },
+  Caucaso: {
+    link: "h", // parte variabile della URL
+    link2: "meteo-caucaso",
+    lat: 44.455,            // latitudine
+    lon: 9.225             // longitudine
+    
+  },
+  Rocca: {
+    link: "h", // parte variabile della URL
+    link2: "meteo-rocca",
+    lat: 44.552,            // latitudine
+    lon: 9.471             // longitudine
+    
+  },
+  Oregin: {
+    link: "h", // parte variabile della URL
+    link2: "meteo-oregina",
+    lat: 44.423,            // latitudine
+    lon: 8.928             // longitudine
+    
+  },
+};
+
+
+const commonRadial = {
+  gaugeType: steelseries.GaugeType.TYPE4,
+  frameDesign: steelseries.FrameDesign.TILTED_GRAY,
+  backgroundColor: steelseries.BackgroundColor.BEIGE,
+  pointerVisible: false,
+  ledVisible: false,
+  lcdVisible: true,
+  lcdDecimals: 1,
+  tickLabelOrientation: steelseries.TickLabelOrientation.HORIZONTAL,
+  niceScale: true,
+  section: [steelseries.Section(0,50,'rgba(0,150,0,0.6)'),steelseries.Section(50,80,'rgba(255,165,0,0.6)'),steelseries.Section(80,100,'rgba(200,0,0,0.6)')],
+  area: [steelseries.Section(0,50,'rgba(0,150,0,0)'),steelseries.Section(50,80,'rgba(255,165,0,0)'),steelseries.Section(80,100,'rgba(200,0,0,0)')]
+};
+
+const gTemp     = new steelseries.Radial("g_temp",     { ...commonRadial, minValue:-20, maxValue:50, titleString:"TEMPERATURA", unitString:"°C" });
+const gDew      = new steelseries.Radial("g_dew",      { ...commonRadial, minValue:-20, maxValue:30, titleString:"DEW POINT", unitString:"°C" });
+const gRH       = new steelseries.Radial("g_rh",       { ...commonRadial, minValue:0, maxValue:100, titleString:"UMIDITÀ", unitString:"%" });
+const gPress    = new steelseries.Radial("g_press",    { ...commonRadial, minValue:950, maxValue:1055, titleString:"PRESSIONE", unitString:"hPa" });
+const gWind     = new steelseries.Radial("g_wind",     { ...commonRadial, minValue:0, maxValue:100, titleString:"VELOCITÀ VENTO", unitString:"km/h" });
+const gRain     = new steelseries.RadialBargraph("g_rain", { minValue:0, maxValue:100, titleString:"PIOGGIA TOTALE", unitString:"mm", frameDesign:steelseries.FrameDesign.TILTED_GRAY, backgroundColor:steelseries.BackgroundColor.BEIGE, lcdVisible:true, lcdDecimals:1, ledVisible:false, niceScale:true, section:[steelseries.Section(0,30,'rgba(0,150,255,0.6)'),steelseries.Section(30,60,'rgba(0,100,200,0.6)'),steelseries.Section(60,100,'rgba(0,50,150,0.6)')] });
+const gRainRate = new steelseries.Radial("g_rainrate", { ...commonRadial, minValue:0, maxValue:20, titleString:"RAIN RATE", unitString:"mm/h" });
+
+function updateGauges(data){
+  const temp = data.temp ?? null;
+  const dewpt = data.dewp ?? null;
+  const feels = data.heat ?? temp;
+  const rh = data.hum ?? null;
+  const pres = data.pres ?? null;
+  const ws = data.wind ?? null;
+  const gust = data.windGust ?? null;
+  const wdir = data.windDir ?? null;
+  const rtot = data.rainDaily ?? data.rtot ?? null;
+  const rrate = data.rainRate ?? data.rrate ?? null;
+  const uv = data.uv ?? null;
+  const pTrend = data.pTrend ?? null;
+
+  if(temp !== null) gTemp.setValueAnimated(temp);
+  if(dewpt !== null) gDew.setValueAnimated(dewpt);
+  if(rh !== null) gRH.setValueAnimated(rh);
+  if(pres !== null) gPress.setValueAnimated(pres);
+  if(ws !== null) gWind.setValueAnimated(ws);
+  if(rtot !== null) gRain.setValueAnimated(rtot);
+  if(rrate !== null) gRainRate.setValueAnimated(rrate);
+
+  setText("dewpt", fmt1(dewpt));
+  setText("feels", fmt1(feels));
+  setText("rh_txt", fmt1(rh));
+  setText("uv", uv ?? "—");
+  setText("p_txt", fmt1(pres));
+  setText("ptrend", pTrend ?? "—");
+  setText("gust", fmt1(gust));
+  setText("wdir", fmt1(wdir));
+  setText("rtotal", fmt1(rtot));
+}
+
+// --- FETCH FUNZIONI ---
+
+async function fetchWunderground(){
+  try{
+    const apiKey = "e1f10a1e78da46f5b10a1e78da96f525";
+    const url = `https://api.weather.com/v2/pws/observations/current?apiKey=${apiKey}&stationId=${stationId}&numericPrecision=decimal&format=json&units=m`;
+    const res = await fetch(url);
+    const json = await res.json();
+    const obs = json.observations?.[0];
+    if(!obs) throw new Error("Nessuna osservazione");
+    const m = obs.metric || {};
+    updateGauges({
+      source: "Wunderground",
+      temp: m.temp,
+      tempHigh: m.tempHigh,
+      tempLow: m.tempLow,
+      dewp: m.dewpt,
+      heat: m.heatIndex ?? m.windChill,
+      hum: obs.humidity,
+      pres: m.pressure,
+      wind: m.windSpeed,
+      windGust: m.windGust,
+      windDir: obs.winddir,
+      rainDaily: m.precipTotal,
+      rainRate: m.precipRate,
+      uv: obs.uv,
+      pTrend: obs.pressureTrend
+    });
+    $("updated").textContent = "Ultimo aggiornamento: "+new Date().toLocaleString();
+  }catch(e){ console.error(e); $("updated").textContent="Errore: "+e.message; }
+}
+
+async function fetchLimet(){
+  try{
+    if(!stationsLimet || !stationsLimet[stationId]) throw new Error("Stazione LIMET non definita");
+    const link2 = stationsLimet[stationId].link2;
+    const res = await fetch("https://api.allorigins.win/get?url="+encodeURIComponent(`https://retelimet.centrometeoligure.it/stazioni/${link2}/data/cu/realtimegauges.txt`));
+    const json = await res.json();
+    const data = JSON.parse(json.contents);
+
+    updateGauges({
+      source:"Limet",
+      temp: parseFloat(data.temp.replace(",", ".")) || null,
+      tempHigh: parseFloat(data.tempTH.replace(",", ".")) || null,
+      tempLow: parseFloat(data.tempTL.replace(",", ".")) || null,
+      dewp: parseFloat(data.dew.replace(",", ".")) || null,
+      heat: parseFloat(data.heatindex.replace(",", ".")) || null,
+      hum: parseFloat(data.hum.replace(",", ".")) || null,
+      wind: parseFloat(data.wspeed.replace(",", ".")) || null,
+      windGust: parseFloat(data.wgust.replace(",", ".")) || null,
+      windDir: parseFloat(data.bearing.replace(",", ".")) || null,
+      rtot: parseFloat(data.rfall.replace(",", ".")) || null,
+      rrate: parseFloat(data.rrate.replace(",", ".")) || null
+    });
+    $("updated").textContent="Ultimo aggiornamento: "+new Date().toLocaleString();
+  }catch(e){ console.error("Errore fetch LIMET:",e); $("updated").textContent="Errore LIMET: "+e.message; }
+}
+
+async function fetchOMIRL(){
+  try{
+    const fetchSensor = async(sensor)=>{ 
+      const url="https://corsproxy.io/?"+encodeURIComponent(`https://omirl.regione.liguria.it/Omirl/rest/stations/sensorvalues/${sensor}`);
+      const res = await fetch(url);
+      return await res.json();
+    };
+    const [tempsData, windData, humData, rainData] = await Promise.all([fetchSensor("Termo"), fetchSensor("Vento"), fetchSensor("Igro"), fetchSensor("Pluvio")]);
+    const tempEntry = tempsData.tableRows?.find(st=>st.code===stationId) || {};
+    const windEntry = windData.tableRows?.find(st=>st.code===stationId) || {};
+    const humEntry  = humData.tableRows?.find(st=>st.code===stationId) || {};
+    const rainEntry = rainData.tableRows?.find(st=>st.code===stationId) || {};
+    updateGauges({
+      source:"OMIRL",
+      temp: tempEntry.last!=null?parseFloat(tempEntry.last):null,
+      tempHigh: tempEntry.max!=null?parseFloat(tempEntry.max):null,
+      tempLow: tempEntry.min!=null?parseFloat(tempEntry.min):null,
+      dewp:null,
+      heat: tempEntry.last!=null?parseFloat(tempEntry.last):null,
+      hum: humEntry.last!=null?parseFloat(humEntry.last):null,
+      wind: windEntry.last!=null?parseFloat(windEntry.last):null,
+      windGust: windEntry.max!=null?parseFloat(windEntry.max):null,
+      windDir: windEntry.direction!=null?parseFloat(windEntry.direction):null,
+      rtot: rainEntry.last!=null?parseFloat(rainEntry.last):null,
+      rrate:null
+    });
+    $("updated").textContent="Ultimo aggiornamento: "+new Date().toLocaleString();
+  }catch(e){ console.error("Errore fetch OMIRL:",e); $("updated").textContent="Errore OMIRL: "+e.message; }
+}
+
+// --- REFRESH ---
+async function refresh(){
+  switch(source.toLowerCase()){
+    case "limet": await fetchLimet(); break;
+    case "omirl": await fetchOMIRL(); break;
+    default: await fetchWunderground();
+  }
+}
+
+// primo caricamento + refresh automatico
+refresh();
+setInterval(refresh, REFRESH_MS);
+</script>
+</body>
+</html>
