@@ -1089,16 +1089,6 @@
 
 };
 const stations3R = {
-  CapannaMargherita: { link: "misure_PIE_S2897.json" },
-  MacugnagaZamboni: { link: "misure_PIE_S4895.json" },
-  CeppoMorelli: { link: "misure_PIE_098.json" },
-  PassoMoro: { link: "misure_PIE_007.json" },
-  MacugnagaPecetto: { link: "misure_PIE_338.json" },
-  BocchettaPisse: { link: "misure_PIE_006.json" },
-  Alagna: { link: "misure_PIE_341.json" },
-  Carcoforo: { link: "misure_PIE_182.json" },
-  AltoSermenza: { link: "misure_PIE_S2581.json" },
-  MacugnagaPecetto: { link: "misure_PIE_338.json" },
 };
 const stationsLimet = {
   Molassana: {
@@ -2297,98 +2287,61 @@ async function fetchLimet(id) {
 
 
 
-async function fetch3R(id) {
-  const st = stations3R[id];
-  if (!st) return;
-
-  // Crea il marker subito se non esiste
-  if (!markers[id] && st.lat != null && st.lon != null) {
-    createMarker(id, st.lat, st.lon);
-  }
-
+async function fetch3R() {
   try {
-    const url = `https://www.meteo3r.it/dati/misure/${st.link}`;
-    const proxyUrl = "https://api.allorigins.win/get?url=" + encodeURIComponent(url) + "&timestamp=" + Date.now();
+    // URL stazioni 3R con proxy
+    const urlStations = "https://api.allorigins.win/get?url=" + 
+      encodeURIComponent("https://www.meteo3r.it/dati/mappe/misure.geojson");
 
-    const response = await fetch(proxyUrl);
-    const dataWrapped = await response.json();
-    const data = JSON.parse(dataWrapped.contents);
+    const resStations = await fetch(urlStations);
+    const dataText = await resStations.json();
+    const data = JSON.parse(dataText.contents);
 
-    const lat = parseFloat(data.ANAGRAFICA.LAT);
-    const lon = parseFloat(data.ANAGRAFICA.LON);
-
-    const temps = data.DATI.T;
-    const dates = data.DATI.DATA_ORA;
-
-    // Ultima temperatura valida
-    let temp = temps[temps.length - 1];
-
-    // Trova l'ultimo "00:00"
-    let lastMidnightIndex = -1;
-    for (let i = dates.length - 1; i >= 0; i--) {
-      if (dates[i].endsWith("00:00")) {
-        lastMidnightIndex = i;
-        break;
-      }
+    if (!data.features || !Array.isArray(data.features)) {
+      console.warn("Risposta stazioni 3R inattesa:", data);
+      return;
     }
 
-    let tempHigh = null;
-    let tempLow = null;
+    data.features.forEach(st => {
+      const id = st.properties.IDRETE_CODSTAZ;
+      // filtro solo PIE e VDA
+      if (!id.startsWith("PIE") && !id.startsWith("VDA")) return;
 
-    if (lastMidnightIndex >= 0) {
-      let endIndex = dates.length;
-      for (let i = lastMidnightIndex + 1; i < dates.length; i++) {
-        if (dates[i].endsWith("00:00")) {
-          endIndex = i;
-          break;
-        }
+      const lat = parseFloat(st.geometry.coordinates[1]);
+      const lon = parseFloat(st.geometry.coordinates[0]);
+
+      const temp = st.properties.T !== "" ? parseFloat(st.properties.T) : null;
+      const wind = st.properties.VV !== "" ? parseFloat(st.properties.VV) : null;
+      const windDir = st.properties.DD !== "" ? parseFloat(st.properties.DD) : null;
+      const rainDaily = st.properties.P_24H !== "" ? parseFloat(st.properties.P_24H) : null;
+
+      // salva dati in latestData
+      latestData[id] = {
+        temp,
+        wind,
+        windDir,
+        rainDaily,
+        lat,
+        lon,
+        isInactive: temp == null && wind == null && windDir == null && rainDaily == null
+      };
+
+      // salva la stazione in stations3R
+      stations3R[id] = { lat, lon };
+
+      // crea marker se non esiste
+      if (!markers[id]) {
+        createMarker(id, lat, lon);
       }
 
-      const tempsOfDay = temps.slice(lastMidnightIndex, endIndex).filter(t => t != null);
-      if (tempsOfDay.length > 0) {
-        tempHigh = Math.max(...tempsOfDay);
-        tempLow = Math.min(...tempsOfDay);
-      }
+      // aggiorna marker
+      updateMarker(id);
+    });
 
-      if (temp == null && tempHigh != null && tempLow != null) {
-        temp = (tempHigh + tempLow) / 2;
-      }
-    }
-
-    // Se temp è valido aggiorna latestData, altrimenti lascia i valori precedenti
-    if (temp != null) {
-      latestData[id] = { temp, tempHigh, tempLow, lat, lon };
-    } else {
-      // mantieni il valore precedente se esiste
-      if (latestData[id]) {
-        latestData[id] = {
-          ...latestData[id],
-          tempHigh: tempHigh ?? latestData[id].tempHigh,
-          tempLow: tempLow ?? latestData[id].tempLow,
-          lat, lon
-        };
-      } else {
-        latestData[id] = { temp: null, tempHigh, tempLow, lat, lon };
-      }
-    }
-
-    updateMarker(id);
+    console.log("Dati 3R aggiornati:", latestData);
 
   } catch (err) {
-    console.error(`Errore fetch 3R ${id}:`, err);
-
-    // non sovrascrivere i dati validi, tieni gli ultimi disponibili
-    if (!latestData[id]) {
-      latestData[id] = {
-        temp: null,
-        tempHigh: null,
-        tempLow: null,
-        lat: st.lat,
-        lon: st.lon
-      };
-    }
-
-    updateMarker(id);
+    console.error("Errore fetch dati 3R:", err);
   }
 }
 
@@ -3105,7 +3058,7 @@ Object.keys(stations).forEach(id => fetchPws(id));
 fetchCML(); // fetch unico per tutte le stazioni CML
 fetchOMIRL();
 scheduleLimetFetch();
-schedule3RFetch();
+fetch3R();
 fetchTorinoMeteo();
 Object.keys(stationsDMA).forEach(id => fetchDMA(id));
 Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id));
@@ -3120,8 +3073,8 @@ setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 60000)
 setInterval(() => { fetchCML(); }, 30000);
 setInterval(() => { fetchOMIRL(); }, 30000);
 setInterval(() => { fetchTorinoMeteo(); }, 60000);
+setInterval(() => { fetch3R(); }, 150000);
 setInterval(() => { Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id)); }, 30000);
-setInterval(() => { Object.keys(stations3R).forEach(id => fetch3R(id)); }, 150000);
 setInterval(() => { Object.keys(stationsDMA).forEach(id => fetchDMA(id)); }, 150000);
 setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 15000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations2(id)); }, 135000);

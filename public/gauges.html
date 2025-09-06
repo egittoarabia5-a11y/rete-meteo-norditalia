@@ -44,6 +44,8 @@
   <div class="card"><h3>Pioggia totale (mm)</h3><canvas id="g_rain" width="260" height="260"></canvas>
     <div class="row"><div class="meta">Giorno: <b id="rtotal">—</b> mm</div></div></div>
   <div class="card"><h3>Rain Rate (mm/h)</h3><canvas id="g_rainrate" width="260" height="260"></canvas></div>
+<div id="gaugeTooltip" style="position:absolute; pointer-events:none; background:rgba(0,0,0,0.8); color:#fff; padding:4px 8px; border-radius:4px; font-size:12px; display:none;"></div>
+
 </div>
 
 <footer>Gauges: SteelSeries-Canvas · Dati da Weather.com / OMIRL / LIMET</footer>
@@ -459,6 +461,28 @@ function dynamicRange(value, buffer = 10, minLimit = null, maxLimit = null) {
 
   return { min, max };
 }
+const tooltip = document.getElementById("gaugeTooltip");
+
+function addGaugeTooltip(gauge, TempLow, TempHigh, current, label="Valori") {
+  const canvas = gauge.canvas;
+
+  canvas.addEventListener("mousemove", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    tooltip.style.left = (e.clientX + 10) + "px";
+    tooltip.style.top = (e.clientY + 10) + "px";
+    tooltip.style.display = "block";
+    tooltip.innerHTML = `
+      ${label}<br>
+      Massima: ${fmt1(TempHigh)}<br>
+      Minima: ${fmt1(TempLow)}<br>
+      Attuale: ${fmt1(current)}
+    `;
+  });
+
+  canvas.addEventListener("mouseleave", () => {
+    tooltip.style.display = "none";
+  });
+}
 
 function updateGaugeWithDynamicScale(gauge, value, options = {}) {
   if (value === null || value === undefined) return;
@@ -507,6 +531,7 @@ function updateGauges(data) {
   if(data.temp !== null) {
     gTemp.setValueAnimated(data.temp);
     setGaugeColor(gTemp, data.temp, "temp");
+    addGaugeTooltip(gTemp, data.tempLow, data.tempHigh, temp, "Temperatura");
   }
   // ... altri gauges come prima
 }
