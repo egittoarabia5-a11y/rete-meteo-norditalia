@@ -34,7 +34,7 @@
     .circle-label {
       color: white;
       border-radius: 50%;
-      font-weight: 600;
+      font-weight: 500;
       font-size: 9px;
       display: flex;
       align-items: center;
@@ -1410,9 +1410,7 @@ const stationsLimet = {
     
   },
 };
-const stationsLamma = {
 
-};
 const stations1 = {
   Favale: {
     link: "https://retelimet.centrometeoligure.it/stazioni/meteo-favale/data/wd/file/customclientraw.txt",
@@ -2350,148 +2348,6 @@ async function fetch3R() {
 
 
 
-async function fetchLamma() {
-  try {
-    function parseNum(val) {
-      if (val === "" || val === "-" || val == null) return null;
-      return parseFloat(val);
-    }
-
-    // === TEMPERATURE ===
-    const urlTemp = "https://corsproxy.io/?" + encodeURIComponent(
-      "https://www.lamma.toscana.it/previ/ita/mappa_cfr/dati_termo_toscana.csv?t=" + Date.now()
-    );
-    const resTemp = await fetch(urlTemp);
-    const textTemp = await resTemp.text();
-
-    const rowsTemp = textTemp.trim().split("\n");
-    rowsTemp.shift();
-
-    const tempMap = {};
-    rowsTemp.forEach(row => {
-      const cols = row.split(",");
-
-      const id   = cols[0];
-      const name = cols[1];
-
-      tempMap[id] = {
-        name,
-        temp:     parseNum(cols[6]),
-        tempHigh: parseNum(cols[8]),
-        tempLow:  parseNum(cols[10]),
-        lat:      parseNum(cols[16]),
-        lon:      parseNum(cols[17])
-      };
-    });
-
-    // === PLUVIO ===
-    const urlPluvio = "https://corsproxy.io/?" + encodeURIComponent(
-      "https://www.lamma.toscana.it/previ/ita/mappa_cfr/dati_pluvio_toscana.csv?t=" + Date.now()
-    );
-    const resPluvio = await fetch(urlPluvio);
-    const textPluvio = await resPluvio.text();
-
-    const rowsPluvio = textPluvio.trim().split("\n");
-    rowsPluvio.shift();
-
-    const rainMap = {};
-    rowsPluvio.forEach(row => {
-      const cols = row.split(",");
-
-      const id  = cols[0];
-      const d15 = parseNum(cols[4]);
-      const d24 = parseNum(cols[8]);
-
-      rainMap[id] = {
-        rainRate: d15 != null ? d15 * 4 : null,
-        rainDaily: d24
-      };
-    });
-
-    // === VENTO ===
-    const urlWind = "https://corsproxy.io/?" + encodeURIComponent(
-      "https://www.lamma.toscana.it/previ/ita/mappa_cfr/dati_anemo.csv?t=" + Date.now()
-    );
-    const resWind = await fetch(urlWind);
-    const textWind = await resWind.text();
-
-    const rowsWind = textWind.trim().split("\n");
-    rowsWind.shift();
-
-    const windMap = {};
-    rowsWind.forEach(row => {
-      const cols = row.split(",");
-
-      const id   = cols[0];
-      const name = cols[1];
-
-      windMap[id] = {
-        name,
-        wind:        parseNum(cols[6]),   // vel
-        windGust:    parseNum(cols[7]),   // raff
-        windDir:     parseNum(cols[8]),   // direz_raff (°)
-        windGustHigh: parseNum(cols[11]), // raff_max_ms
-        lat:         parseNum(cols[16]),
-        lon:         parseNum(cols[17])
-      };
-    });
-
-    // === UNISCO I DATI ===
-    const allIds = new Set([
-      ...Object.keys(tempMap),
-      ...Object.keys(rainMap),
-      ...Object.keys(windMap)
-    ]);
-
-    allIds.forEach(id => {
-      const t = tempMap[id] || {};
-      const r = rainMap[id] || {};
-      const w = windMap[id] || {};
-
-      // scelgo un name valido (preferisco quello di temp, se non c'è prendo vento)
-      const name = t.name || w.name || id;
-
-      const lat = t.lat ?? w.lat ?? null;
-      const lon = t.lon ?? w.lon ?? null;
-
-      latestData[id] = {
-        source: "LAMMA",
-        name,
-        temp: t.temp ?? null,
-        tempHigh: t.tempHigh ?? null,
-        tempLow: t.tempLow ?? null,
-        rainDaily: r.rainDaily ?? null,
-        rainRate: r.rainRate ?? null,
-        wind: w.wind ?? null,
-        windGust: w.windGust ?? null,
-        windDir: w.windDir ?? null,
-        windGustHigh: w.windGustHigh ?? null,
-        lat,
-        lon,
-        isInactive: 
-          t.temp == null &&
-          r.rainDaily == null &&
-          w.wind == null
-      };
-
-      stationsLamma[id] = { lat, lon, name };
-
-      if (!markers[id]) {
-        createMarker(id, lat, lon);
-      }
-      updateMarker(id);
-    });
-
-    console.log("LAMMA aggiornate:", latestData);
-
-  } catch (err) {
-    console.error("Errore fetch LAMMA:", err);
-  }
-}
-
-
-
-
 
 
     // ----- Fetch dati temperatura -----
@@ -3190,7 +3046,6 @@ Object.keys(stationsTorinoMeteo).forEach(id => createMarker(id));
 Object.keys(stationsCML).forEach(id => createMarker(id));
 Object.keys(stationsOMIRL).forEach(id => createMarker(id));
 Object.keys(stations3R).forEach(id => createMarker(id));
-Object.keys(stationsLamma).forEach(id => createMarker(id));
 Object.keys(stationsMeteoTortona).forEach(id => createMarker(id));
 Object.keys(stationsDMA).forEach(id => createMarker(id));
 Object.keys(stations1).forEach(id => createMarker(id));
@@ -3205,7 +3060,6 @@ fetchOMIRL();
 scheduleLimetFetch();
 fetch3R();
 fetchTorinoMeteo();
-fetchLamma();
 Object.keys(stationsDMA).forEach(id => fetchDMA(id));
 Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id));
 Object.keys(stations1).forEach(id => fetchStations1(id));
@@ -3220,7 +3074,6 @@ setInterval(() => { fetchCML(); }, 30000);
 setInterval(() => { fetchOMIRL(); }, 30000);
 setInterval(() => { fetchTorinoMeteo(); }, 60000);
 setInterval(() => { fetch3R(); }, 150000);
-setInterval(() => { fetchLamma(); }, 60000);
 setInterval(() => { Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id)); }, 30000);
 setInterval(() => { Object.keys(stationsDMA).forEach(id => fetchDMA(id)); }, 150000);
 setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 15000);
@@ -3236,7 +3089,6 @@ setInterval(() => {Object.keys(stationsBest).forEach(id => fetchPws(id));}, 5000
   Object.keys(stationsCML).forEach(id => updateMarker(id));
   Object.keys(stationsOMIRL).forEach(id => updateMarker(id));
   Object.keys(stations3R).forEach(id => updateMarker(id));
-  Object.keys(stationsLamma).forEach(id => updateMarker(id));
   Object.keys(stationsMeteoTortona).forEach(id => updateMarker(id));
   Object.keys(stationsDMA).forEach(id => updateMarker(id));
   Object.keys(stationsLimet).forEach(id => updateMarker(id));
