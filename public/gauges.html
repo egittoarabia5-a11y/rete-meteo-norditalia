@@ -566,13 +566,34 @@ function updateGauges(data) {
   // Pressione: scala dinamica ±15 hPa
   if (pres !== null) updateGaugeWithDynamicScale(gPress, pres, { buffer: 15 });
 
-  // Vento e raffica: minimo 0
-  if (ws !== null) updateGaugeWithDynamicScale(gWind, ws, { min: 0 });
-  if (gust !== null) updateGaugeWithDynamicScale(gWind, gust, { min: 0 });
+  // Vento e raffica → range dinamico ma ampiezza max 30
+  if (ws !== null) {
+    const min = Math.max(0, Math.floor(ws - 15));
+    const max = Math.ceil(ws + 15);
+    gWind.setMinValue(min);
+    gWind.setMaxValue(max);
+    gWind.setValueAnimated(ws);
+  }
+  if (gust !== null) {
+    const min = Math.max(0, Math.floor(gust - 15));
+    const max = Math.ceil(gust + 15);
+    gWind.setMinValue(min);
+    gWind.setMaxValue(max);
+    gWind.setValueAnimated(gust);
+  }
 
-  // Pioggia totale e rain rate: minimo 0
+  // Pioggia totale → minimo 0, scala dinamica
   if (rtot !== null) updateGaugeWithDynamicScale(gRain, rtot, { min: 0 });
-  if (rrate !== null) updateGaugeWithDynamicScale(gRainRate, rrate, { min: 0, max: 1000 });
+
+  // Rain rate → range dinamico ma ampiezza max 100
+  if (rrate !== null) {
+    const min = Math.max(0, Math.floor(rrate - 50));
+    const max = Math.ceil(rrate + 50);
+    gRainRate.setMinValue(min);
+    gRainRate.setMaxValue(max);
+    gRainRate.setValueAnimated(rrate);
+  }
+
 
   // Aggiornamento testo
   setText("dewpt", fmt1(dewpt));
