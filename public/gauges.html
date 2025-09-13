@@ -572,7 +572,7 @@ function updateGauges(data) {
 
   // Pioggia totale e rain rate: minimo 0
   if (rtot !== null) updateGaugeWithDynamicScale(gRain, rtot, { min: 0 });
-  if (rrate !== null) updateGaugeWithDynamicScale(gRainRate, rrate, { min: 0 });
+  if (rrate !== null) updateGaugeWithDynamicScale(gRainRate, rrate, { min: 0, max: 1000 });
 
   // Aggiornamento testo
   setText("dewpt", fmt1(dewpt));
