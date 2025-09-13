@@ -542,8 +542,8 @@ const gDew      = new steelseries.Radial("g_dew",      { ...commonRadial, minVal
 const gRH       = new steelseries.Radial("g_rh",       { ...commonRadial, minValue:0, maxValue:100, titleString:"UMIDITÀ", unitString:"%", section: humSections });
 const gPress    = new steelseries.Radial("g_press",    { ...commonRadial, minValue:950, maxValue:1055, titleString:"PRESSIONE", unitString:"hPa", section: pressSections });
 const gWind     = new steelseries.Radial("g_wind",     { ...commonRadial, minValue:0, maxValue:100, titleString:"VELOCITÀ VENTO", unitString:"km/h", section: windSections });
-const gRain     = new steelseries.RadialBargraph("g_rain", { minValue:0, maxValue:150, titleString:"PIOGGIA TOTALE", unitString:"mm", frameDesign:steelseries.FrameDesign.TILTED_GRAY, backgroundColor:steelseries.BackgroundColor.BEIGE, lcdVisible:true, lcdDecimals:1, ledVisible:false, niceScale:true, section: rainSections });
-const gRainRate = new steelseries.Radial("g_rainrate", { ...commonRadial, minValue:0, maxValue:20, titleString:"RAIN RATE", unitString:"mm/h", section: rainSections });
+const gRain     = new steelseries.RadialBargraph("g_rain", { minValue:0, maxValue:1000, titleString:"PIOGGIA TOTALE", unitString:"mm", frameDesign:steelseries.FrameDesign.TILTED_GRAY, backgroundColor:steelseries.BackgroundColor.BEIGE, lcdVisible:true, lcdDecimals:1, ledVisible:false, niceScale:true, section: rainSections });
+const gRainRate = new steelseries.Radial("g_rainrate", { ...commonRadial, minValue:0, maxValue:1000, titleString:"RAIN RATE", unitString:"mm/h", section: rainSections });
 
 function updateGauges(data) {
   const temp = data.temp ?? null;
