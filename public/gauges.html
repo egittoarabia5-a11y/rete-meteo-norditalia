@@ -896,19 +896,20 @@ const stationsLimet = {
 };
 // ----- Colori -----
 const tempSections = [
-  steelseries.Section(-50,-10, "#191970"),
-  steelseries.Section(-10,-5,  "#0000FF"),
-  steelseries.Section(-5,0,    "#4682B4"),
-  steelseries.Section(0,5,     "#87CEEB"),
-  steelseries.Section(5,11,    "#006400"),
-  steelseries.Section(11,15,   "#3AA300"),
-  steelseries.Section(15,20,   "#E6B800"),
-  steelseries.Section(20,25,   "#E67D00"),
-  steelseries.Section(25,30,   "#FF0000"),
-  steelseries.Section(30,35,   "#8B0000"),
-  steelseries.Section(35,38,   "#FF69B4"),
-  steelseries.Section(38,50,   "#843BEB")
+  steelseries.Section(-50,-10, "#1c1f4a"),  // blu notte meno intenso
+  steelseries.Section(-10,-5,  "#1a3bbf"),  // blu
+  steelseries.Section(-5,0,    "#5a85a0"),  // azzurro-grigio
+  steelseries.Section(0,5,     "#a0c4d4"),  // azzurro chiaro
+  steelseries.Section(5,11,    "#2f4d2f"),  // verde scuro smorzato
+  steelseries.Section(11,15,   "#5a8a3f"),  // verde più tenue
+  steelseries.Section(15,20,   "#c0a840"),  // giallo-arancio smorzato
+  steelseries.Section(20,25,   "#c07030"),  // arancio tenue
+  steelseries.Section(25,30,   "#bf4040"),  // rosso smorzato
+  steelseries.Section(30,35,   "#5c0c0c"),  // rosso scuro più tenue
+  steelseries.Section(35,38,   "#c06ca0"),  // rosa smorzato
+  steelseries.Section(38,50,   "#6b4bbc")   // viola meno intenso
 ];
+
 
 // Umidità (%)
 const humSections = [
@@ -1170,66 +1171,6 @@ async function fetchTorinoMeteo() {
 }
 async function fetchCML() {
   try {
-    // URL con cors proxy
-    const url = "https://corsproxy.io/?" + encodeURIComponent(
-      "http://www.centrometeolombardo.com/Moduli/refx.php?t=all&r=" + Date.now()
-    );
-
-    // Fetch dei dati
-    const res = await fetch(url);
-    const text = await res.text();
-
-    // Estrazione array datostazione
-    const matchData = text.match(/datostazione\s*=\s*(\[\[[\s\S]*?\]\]);/);
-    if (!matchData) throw new Error("Dati stazioni non trovati");
-    const datostazione = JSON.parse(matchData[1].replace(/'/g, '"'));
-
-    // Ciclo su tutte le stazioni definite in stationsCML
-    for (const stationId in stationsCML) {
-      const row = datostazione.find(r => r[0].toLowerCase() === stationId.toLowerCase());
-      if (!row) {
-        console.warn(`Stazione ${stationId} non trovata nei dati CML`);
-        continue;
-      }
-
-      const { lat, lon } = stationsCML[stationId];
-
-      updateGauges({
-        source: "CML",
-        temp: row[4] ? parseFloat(row[4]) : null,
-        tempHigh: row[5] ? parseFloat(row[5]) : null,
-        tempLow: row[7] ? parseFloat(row[7]) : null,
-        dewp: row[15] ? parseFloat(row[15]) : null,
-        dewpHigh: row[16] ? parseFloat(row[16]) : null,
-        dewpLow: row[18] ? parseFloat(row[18]) : null,
-        hum: row[9] ? parseFloat(row[9]) : null,
-        humHigh: row[10] ? parseFloat(row[10]) : null,
-        humLow: row[12] ? parseFloat(row[12]) : null,
-        rainDaily: row[37] ? parseFloat(row[37]) : 0.0,
-        rainRate: row[41] ? parseFloat(row[41]) : 0.0,
-        wind: row[28] ? parseFloat(row[28]) : null,
-        windGust: row[25] ? parseFloat(row[25]) : null,
-        windGustHigh: row[26] ? parseFloat(row[26]) : null,
-        windDir: row[29] || null,
-        lat,
-        lon,
-        isInactive: false
-      });
-    }
-
-    $("updated").textContent = "Ultimo aggiornamento: " + new Date().toLocaleString();
-
-  } catch (e) {
-    console.error("Errore fetch CML:", e);
-    $("updated").textContent = "Errore CML: " + e.message;
-  }
-}
-
-
-
-
-async function fetchCML() {
-  try {
     const url = "https://corsproxy.io/?" + encodeURIComponent(
       "http://www.centrometeolombardo.com/Moduli/refx.php?t=all&r=" + Date.now()
     );
@@ -1330,6 +1271,8 @@ async function fetchCML() {
     $("updated").textContent = "Errore CML: " + err.message;
   }
 }
+
+
 
 async function fetchMeteoTortona(id) {
   const st = stationsMeteoTortona[stationId];
