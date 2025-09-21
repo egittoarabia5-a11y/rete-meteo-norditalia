@@ -1169,6 +1169,45 @@ async function fetchTorinoMeteo() {
     $("updated").textContent = "Ultimo aggiornamento: "+new Date().toLocaleString();
   }catch(e){ console.error(e); $("updated").textContent="Errore: "+e.message; }
 }
+async function fetchWunderground() {
+    try {
+        const apiKey = "e1f10a1e78da46f5b10a1e78da96f525";
+        const url = `https://api.weather.com/v2/pws/observations/current?apiKey=${apiKey}&stationId=${stationId}&numericPrecision=decimal&format=json&units=m`;
+
+        const res = await fetch(url);
+        const json = await res.json();
+        const obs = json.observations?.[0];
+
+        if (!obs) throw new Error("Nessuna osservazione");
+
+        const m = obs.metric || {};
+
+        updateGauges({
+            source: "Wunderground",
+            temp: m.temp,
+            tempHigh: m.tempHigh,
+            tempLow: m.tempLow,
+            dewp: m.dewpt,
+            heat: m.heatIndex ?? m.windChill,
+            hum: obs.humidity,
+            pres: m.pressure,
+            wind: m.windSpeed,
+            windGust: m.windGust,
+            windDir: obs.winddir,
+            rainDaily: m.precipTotal,
+            rainRate: m.precipRate,
+            uv: obs.uv,
+            pTrend: obs.pressureTrend
+        });
+
+        $("updated").textContent = "Ultimo aggiornamento: " + new Date().toLocaleString();
+
+    } catch (e) {
+        console.error(e);
+        $("updated").textContent = "Errore: " + e.message;
+    }
+}
+
 async function fetchCML() {
   try {
     const url = "https://corsproxy.io/?" + encodeURIComponent(
