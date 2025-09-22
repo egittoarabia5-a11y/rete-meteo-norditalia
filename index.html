@@ -2134,104 +2134,101 @@ function updateMarker(id) {
   if (!data) return;
 
   let value = null;
-  let color = "#808080";
+  let color = null;
 
   // Valore e colore
   if (type === "winddirection") {
     value = data.windDir;
-    color = data.windGust != null ? getColorRain(data.windGust) : "#808080"; // colore in base alla raffica
+    color = data.windGust != null ? getColorRain(data.windGust) : null;
   } else {
     switch(type) {
-      case "current": value = data.temp; color = value != null ? getColorTemp(value) : "#808080"; break;
-      case "max": value = data.tempHigh; color = value != null ? getColorTemp(value) : "#808080"; break;
-      case "min": value = data.tempLow; color = value != null ? getColorTemp(value) : "#808080"; break;
-      case "dewpt": value = data.dewp; color = value != null ? getColorTemp(value) : "#808080"; break;
-      case "dewpMax": value = data.dewpHigh; color = value != null ? getColorTemp(value) : "#808080"; break;
-      case "dewpMin": value = data.dewpLow; color = value != null ? getColorTemp(value) : "#808080"; break;
-      case "Heat": value = data.heat; color = value != null ? getColorTemp(value) : "#808080"; break;
-      case "HeatMax": value = data.heatHigh; color = value != null ? getColorTemp(value) : "#808080"; break;
-      case "HeatMin": value = data.heatLow; color = value != null ? getColorTemp(value) : "#808080"; break;
-      case "hum": value = data.hum; color = value != null ? getColorHum(value) : "#808080"; break;
-      case "humMax": value = data.humHigh; color = value != null ? getColorHum(value) : "#808080"; break;
-      case "humMin": value = data.humLow; color = value != null ? getColorHum(value) : "#808080"; break;
-      case "rainDay": value = data.rainDaily; color = value != null ? getColorRain(value) : "#808080"; break;
-      case "rainRate": value = data.rainRate; color = value != null ? getColorRain(value) : "#808080"; break;
-      case "wind": value = data.wind; color = value != null ? getColorRain(value) : "#808080"; break;
-      case "windGust": value = data.windGust; color = value != null ? getColorRain(value) : "#808080"; break;
-      case "windGustMax": value = data.windGustHigh; color = value != null ? getColorRain(value) : "#808080"; break;
-      default: value = null; color = "#808080";
+      case "current": value = data.temp; color = value != null ? getColorTemp(value) : null; break;
+      case "max": value = data.tempHigh; color = value != null ? getColorTemp(value) : null; break;
+      case "min": value = data.tempLow; color = value != null ? getColorTemp(value) : null; break;
+      case "dewpt": value = data.dewp; color = value != null ? getColorTemp(value) : null; break;
+      case "dewpMax": value = data.dewpHigh; color = value != null ? getColorTemp(value) : null; break;
+      case "dewpMin": value = data.dewpLow; color = value != null ? getColorTemp(value) : null; break;
+      case "Heat": value = data.heat; color = value != null ? getColorTemp(value) : null; break;
+      case "HeatMax": value = data.heatHigh; color = value != null ? getColorTemp(value) : null; break;
+      case "HeatMin": value = data.heatLow; color = value != null ? getColorTemp(value) : null; break;
+      case "hum": value = data.hum; color = value != null ? getColorHum(value) : null; break;
+      case "humMax": value = data.humHigh; color = value != null ? getColorHum(value) : null; break;
+      case "humMin": value = data.humLow; color = value != null ? getColorHum(value) : null; break;
+      case "rainDay": value = data.rainDaily; color = value != null ? getColorRain(value) : null; break;
+      case "rainRate": value = data.rainRate; color = value != null ? getColorRain(value) : null; break;
+      case "wind": value = data.wind; color = value != null ? getColorRain(value) : null; break;
+      case "windGust": value = data.windGust; color = value != null ? getColorRain(value) : null; break;
+      case "windGustMax": value = data.windGustHigh; color = value != null ? getColorRain(value) : null; break;
+      default: value = null; color = null;
     }
   }
 
-  // Testo pallino
-  const displayValue = (value !== undefined && value !== null)
-    ? (type === "winddirection" ? degToDir(value) : value.toFixed(1))
-    : "N/D";
+  // Se il marker non esiste, crealo
+  if (!markers[id]) {
+    // Se non c'è valore, creiamo un marker trasparente piccolo
+    const markerIcon = value != null ? L.divIcon({
+      className: '',
+      html: `<div class="circle-label" style="background-color:${color}; border:2px solid white;">${value.toFixed(1)}</div>`,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16]
+    }) : L.divIcon({
+      className: '',
+      html: `<div style="width:1px; height:1px;"></div>`,
+      iconSize: [1, 1],
+      iconAnchor: [0, 0]
+    });
 
-  // Aggiorna icona
-  const icon = L.divIcon({
-    className: '',
-    html: `<div class="circle-label" style="background-color:${color}; border:2px solid white;">${displayValue}</div>`,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16]
-  });
-  markers[id].setIcon(icon);
+    const marker = L.marker([data.lat, data.lon], { icon: markerIcon }).addTo(map);
+    markers[id] = marker;
+  } else {
+    // Aggiorna solo l'icona se c'è un valore
+    if (value != null) {
+      const icon = L.divIcon({
+        className: '',
+        html: `<div class="circle-label" style="background-color:${color}; border:2px solid white;">${value.toFixed(1)}</div>`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+      markers[id].setIcon(icon);
+    }
+  }
 
+  // Aggiorna popup sempre
+  const meta = getStationMeta(id);
+  const stationSource = meta.source;
+  const stationName = meta.name;
+
+  let popupContent = `<b>Stazione:</b> ${stationName}<br>`;
+  popupContent += `<b>Fonte:</b> ${stationSource}<br>`;
+  if (type.startsWith("current") || type.startsWith("max") || type.startsWith("min")) {
+    popupContent += `🌡️ Attuale: ${data.temp != null ? data.temp.toFixed(1) : "N/D"}°C<br>`;
+    popupContent += `🔺 Max: ${data.tempHigh != null ? data.tempHigh.toFixed(1) : "N/D"}°C<br>`;
+    popupContent += `🔻 Min: ${data.tempLow != null ? data.tempLow.toFixed(1) : "N/D"}°C<br>`;
+  } else if (type.startsWith("dew")) {
+    popupContent += `🌡️ Attuale: ${data.dewp != null ? data.dewp.toFixed(1) : "N/D"}°C<br>`;
+  } else if (type.startsWith("hum")) {
+    popupContent += `💧 Attuale: ${data.hum != null ? data.hum.toFixed(1) : "N/D"}%<br>`;
+  } else if (type.startsWith("rain")) {
+    popupContent += `🌧️ Pioggia giorno: ${data.rainDaily != null ? data.rainDaily.toFixed(1) : "N/D"} mm<br>`;
+    popupContent += `💦 Rain rate: ${data.rainRate != null ? data.rainRate.toFixed(1) : "N/D"} mm/h<br>`;
+  } else if (type.startsWith("wind")) {
+    popupContent += `💨 Velocità attuale: ${data.wind != null ? data.wind.toFixed(1) : "N/D"} km/h<br>`;
+  }
+
+  const gaugesUrl = 'gauges.html?station=' + encodeURIComponent(id)
+                  + '&source=' + encodeURIComponent(stationSource)
+                  + '&name=' + encodeURIComponent(stationName);
+  popupContent += `<br><button type="button" onclick="window.open('${gaugesUrl}', 'gaugesWindow')">📊 Gauges</button>`;
+
+  markers[id].setPopupContent(popupContent);
+
+  // Aggiorna posizione
   if (data.lat != null && data.lon != null) {
     markers[id].setLatLng([data.lat, data.lon]);
   }
-
-  // Popup contestuale
-  // esempio da inserire dentro updateMarker (sostituisce la creazione del popupContent)
-const meta = getStationMeta(id);
-const stationSource = meta.source;
-const stationName = meta.name;
-
-let popupContent = `<b>Stazione:</b> ${stationName}<br>`;
-popupContent += `<b>Fonte:</b> ${stationSource}<br>`; // <- nuova riga per la fonte
-
-if (type.startsWith("current") || type.startsWith("max") || type.startsWith("min")) {
-  popupContent += `🌡️ Attuale: ${data.temp != null ? data.temp.toFixed(1) : "N/D"}°C<br>`;
-  popupContent += `🔺 Max: ${data.tempHigh != null ? data.tempHigh.toFixed(1) : "N/D"}°C<br>`;
-  popupContent += `🔻 Min: ${data.tempLow != null ? data.tempLow.toFixed(1) : "N/D"}°C<br>`;
-} else if (type.startsWith("dew")) {
-  popupContent += `🌡️ Attuale: ${data.dewp != null ? data.dewp.toFixed(1) : "N/D"}°C<br>`;
-  popupContent += `🔺 Max: ${data.dewpHigh != null ? data.dewpHigh.toFixed(1) : "N/D"}°C<br>`;
-  popupContent += `🔻 Min: ${data.dewpLow != null ? data.dewpLow.toFixed(1) : "N/D"}°C<br>`;
-} else if (type.startsWith("Heat")) {
-  popupContent += `🌡️ Attuale: ${data.heat != null ? data.heat.toFixed(1) : "N/D"}°C<br>`;
-  popupContent += `🔺 Max: ${data.heatHigh != null ? data.heatHigh.toFixed(1) : "N/D"}°C<br>`;
-  popupContent += `🔻 Min: ${data.heatLow != null ? data.heatLow.toFixed(1) : "N/D"}°C<br>`;
-} else if (type.startsWith("hum")) {
-  popupContent += `💧 Attuale: ${data.hum != null ? data.hum.toFixed(1) : "N/D"}%<br>`;
-  popupContent += `🔺 Max: ${data.humHigh != null ? data.humHigh.toFixed(1) : "N/D"}%<br>`;
-  popupContent += `🔻 Min: ${data.humLow != null ? data.humLow.toFixed(1) : "N/D"}%<br>`;
-} else if (type.startsWith("rain")) {
-  popupContent += `🌧️ Pioggia giorno: ${data.rainDaily != null ? data.rainDaily.toFixed(1) : "N/D"} mm<br>`;
-  popupContent += `💦 Rain rate: ${data.rainRate != null ? data.rainRate.toFixed(1) : "N/D"} mm/h<br>`;
-} else if (type.startsWith("wind")) {
-  popupContent += `💨 Velocità attuale: ${data.wind != null ? data.wind.toFixed(1) : "N/D"} km/h<br>`;
-  popupContent += `🌬️ Raffica: ${data.windGust != null ? data.windGust.toFixed(1) : "N/D"} km/h<br>`;
-  popupContent += `🧭 Direzione: ${data.windDir != null ? degToDir(data.windDir) : "N/D"}<br>`;
-  popupContent += `🔺 Raffica massima: ${data.windGustHigh != null ? data.windGustHigh.toFixed(1) : "N/D"} km/h<br>`;
 }
 
-const windowName = "gaugesWindow";
 
-// crea URL sicuro con i parametri corretti
-const gaugesUrl = 'gauges.html?station=' + encodeURIComponent(id)
-                + '&source=' + encodeURIComponent(stationSource)
-                + '&name=' + encodeURIComponent(stationName);
-
-// aggiungi il pulsante
-popupContent += `<br>
-  <button type="button" onclick="window.open('${gaugesUrl}', '${windowName}')">
-    📊 Gauges
-  </button>`;
-
-// imposta il popup del marker
-markers[id].setPopupContent(popupContent);
-}
 function openGauges(stationId) {
   // Apre gauges.html passando la stazione selezionata
   window.open(`gauges.html?station=${stationId}`, "_blank", "width=420,height=600");
@@ -2532,7 +2529,6 @@ async function fetch3R() {
     hum: humInfo.hum ?? null,
     humHigh: humInfo.humHigh ?? null,
     humLow: humInfo.humLow ?? null,
-    rainDaily: rainInfo.rain ?? null,
     rainRate: rainInfo.rainrate ?? null,
     lat,
     lon,
