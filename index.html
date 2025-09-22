@@ -68,6 +68,17 @@
   </style>
 </head>
 <body>
+  <div id="sourceMenu" style="position:absolute; top:10px; right:10px; z-index:1000; background:white; padding:8px 12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); font-size:14px;">
+    <b>Fonti:</b><br>
+    <label><input type="checkbox" class="sourceFilter" value="LIMET" checked> LIMET</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="TorinoMeteo, MeteoTortona"> TorinoMeteo</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="Meteo3R" > Meteo3R</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="Wunderground"> Wunderground</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="CentroMeteoLombardo"> CML</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="OMIRL"> OMIRL</label>
+  </div>
+  
+  
   <div id="menu">
     <label for="tempSelect"><b>Dati:</b></label>
     <select id="tempSelect">
@@ -2100,7 +2111,7 @@ function createMarker(id, lat = 44.423, lon = 8.972) {
   });
   
 
-  const marker = L.marker([lat, lon], { icon }).addTo(map);
+  const marker = L.marker([lat, lon], { icon });
 
   const popupFont = Math.max(12, 14 * scale);
   marker.bindPopup(`<b style="font-size:${popupFont}px">Stazione:</b> ${id}<br>⚠️ Offline`);
@@ -2233,6 +2244,26 @@ function openGauges(stationId) {
   // Apre gauges.html passando la stazione selezionata
   window.open(`gauges.html?station=${stationId}`, "_blank", "width=420,height=600");
 }
+
+function filterMarkersBySource() {
+  const checked = Array.from(document.querySelectorAll('.sourceFilter:checked')).map(cb => cb.value);
+
+  Object.keys(markers).forEach(id => {
+    const meta = getStationMeta(id);
+    if (!meta) return;
+    const source = meta.source;
+    if (checked.includes(source)) {
+      markers[id].addTo(map);
+    } else {
+      map.removeLayer(markers[id]);
+    }
+  });
+}
+
+// Event listener per tutti i checkbox
+document.querySelectorAll('.sourceFilter').forEach(cb => {
+  cb.addEventListener('change', filterMarkersBySource);
+});
 
 
 
@@ -3110,6 +3141,9 @@ setInterval(() => {Object.keys(stationsBest).forEach(id => fetchPws(id));}, 5000
   Object.keys(stations3).forEach(id => updateMarker(id));
   Object.keys(stationsBest).forEach(id => updateMarker(id));
     });
+    // Dopo createMarker / updateMarker di tutte le stazioni
+filterMarkersBySource();
+
   </script>
 </body>
 </html>
