@@ -2594,61 +2594,54 @@ async function fetch3R() {
 }
 async function fetchCML() {
   try {
-    const url = "https://vitejs-vite-sguaefmc.vercel.app/centrometeolombardodata.html"; // URL della tua pagina
+    const url = "https://vitejs-vite-sguaefmc.vercel.app/centrometeolombardodata.json"; // URL JSON generato dalla pagina CML
     const res = await fetch(url);
     if (!res.ok) throw new Error("HTTP " + res.status);
-    const text = await res.text();
+    const data = await res.json();
 
-    // dividiamo in righe
-    const righe = text.trim().split("\n");
+    const lines = [];
+    // prima riga: timestamp
+    lines.push(data.timestamp);
 
-    // la prima riga è il timestamp
-    const timestamp = righe[0];
-
-    // le righe successive sono i dati delle stazioni
-    righe.slice(1).forEach(line => {
-      const data = {};
-      line.split(",").forEach(pair => {
-        const [key, val] = pair.split(":");
-        const cleanKey = key.trim();
-        let cleanVal = val.trim();
-        if (cleanVal === "null") cleanVal = null;
-        else if (!isNaN(parseFloat(cleanVal))) cleanVal = parseFloat(cleanVal);
-        else cleanVal = cleanVal.replace(/^"|"$/g, ""); // togli le virgolette
-        data[cleanKey] = cleanVal;
-      });
-
-      const id = data.N; // puoi usare il nome come ID
+    // righe stazioni
+    data.stations.forEach(st => {
+      lines.push(`S:"${st.S}",N:"${st.N}",T:"${st.T}",TH:"${st.TH}",TL:"${st.TL}",D:"${st.D}",DH:"${st.DH}",DL:"${st.DL}",H:"${st.H}",HH:"${st.HH}",HL:"${st.HL}",V:"${st.V}",G:"${st.G}",GH:"${st.GH}",WD:"${st.WD}",R:"${st.R}",RR:"${st.RR}",LAT:"${st.LAT}",LON:"${st.LON}"`);
+      
+      // aggiorna latestData
+      const id = st.N;
       latestData[id] = {
-        temp: data.T,
-        tempHigh: data.TH,
-        tempLow: data.TL,
-        dewp: data.D,
-        dewpHigh: data.DH,
-        dewpLow: data.DL,
-        hum: data.H,
-        humHigh: data.HH,
-        humLow: data.HL,
-        rainDaily: data.R,
-        rainRate: data.RR,
-        wind: data.V,
-        windGust: data.G,
-        windGustHigh: data.GH || null,
-        windDir: data.WD || null,
-        lat: data.LAT,
-        lon: data.LON,
-        isInactive: data.S === 1 || data.S === "1"
+        temp: st.T,
+        tempHigh: st.TH,
+        tempLow: st.TL,
+        dewp: st.D,
+        dewpHigh: st.DH,
+        dewpLow: st.DL,
+        hum: st.H,
+        humHigh: st.HH,
+        humLow: st.HL,
+        wind: st.V,
+        windGust: st.G,
+        windGustHigh: st.GH,
+        windDir: st.WD,
+        rainDaily: st.R,
+        rainRate: st.RR,
+        lat: st.LAT,
+        lon: st.LON,
+        isInactive: st.S === "1" || st.S === 1
       };
 
       updateMarker(id);
     });
 
-    console.log("Ultimo fetch:", timestamp);
+    document.getElementById('output').textContent = lines.join("\n");
+    console.log("Ultimo fetch:", data.timestamp);
 
   } catch (err) {
-    console.error("Errore fetch dati CML:", err);
+    document.getElementById('output').textContent = 'Errore fetch dati CML: ' + err.message;
+    console.error(err);
   }
 }
+
 
 
 const stationsTorinoMeteo = {};
