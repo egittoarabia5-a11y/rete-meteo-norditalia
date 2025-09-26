@@ -35,12 +35,10 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const text = await res.text();
 
-        // Estrai coords
         const matchCoords = text.match(/var coords\s*=\s*(\[\[[\s\S]*?\]\]);/);
         if (!matchCoords) throw new Error('Coords non trovati');
         const coords = JSON.parse(matchCoords[1].replace(/'/g, '"'));
 
-        // Estrai datostazione
         const matchData = text.match(/datostazione\s*=\s*(\[\[[\s\S]*?\]\]);/);
         if (!matchData) throw new Error('Dati stazioni non trovati');
         const datostazione = JSON.parse(matchData[1].replace(/'/g, '"'));
