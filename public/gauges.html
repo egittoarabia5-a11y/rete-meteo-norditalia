@@ -1387,13 +1387,18 @@ try {
 }
 }
 
-async function fetchLimet(){
-  try{
-    if(!stationsLimet || !stationsLimet[stationId]) throw new Error("Stazione LIMET non definita");
-    const link2 = stationsLimet[stationId].link2;
-    const res = await fetch("https://api.allorigins.win/get?url="+encodeURIComponent(`https://retelimet.centrometeoligure.it/stazioni/${link2}/data/cu/realtimegauges.txt`));
-    const json = await res.json();
-    const data = JSON.parse(json.contents);
+async function fetchLimet(id) {
+  const st = stationsLimet[id];
+  if (!st) return;
+
+  try {
+    const response = await fetch(
+      "https://corsproxy.io/?" + encodeURIComponent(`https://retelimet.centrometeoligure.it/stazioni/${st.link2}/data/cu/realtimegauges.txt`)
+    );
+
+    // Prendi direttamente il testo
+    const text = await response.text();
+    const data = JSON.parse(text); // ora text è già il contenuto originale JSON
 
     updateGauges({
       source:"Limet",

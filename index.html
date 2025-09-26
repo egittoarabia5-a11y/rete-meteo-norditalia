@@ -72,7 +72,7 @@
     <b>Fonti:</b><br>
     <label><input type="checkbox" class="sourceFilter" value="LIMET" checked> LIMET</label><br>
     <label><input type="checkbox" class="sourceFilter" value="TorinoMeteo" > TorinoMeteo</label><br>
-    <label><input type="checkbox" class="sourceFilter" value="Meteo3R" > Meteo3R</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="3R" checked> Meteo3R</label><br>
     <label><input type="checkbox" class="sourceFilter" value="Wunderground"> Wunderground</label><br>
     <label><input type="checkbox" class="sourceFilter" value="CentroMeteoLombardo"> CML</label><br>
     <label><input type="checkbox" class="sourceFilter" value="OMIRL"> OMIRL</label>
@@ -183,77 +183,77 @@
 };
 
     const stations = {
-  IACQUI10: { api: "IACQUI10" }, 
-  IALBAR21: { api: "IALBAR21" },
-  IBEDON8: { api: "IBEDON8" },
-  IITALIA8: { api: "IITALIA8" },
-  IALBAR26: { api: "IALBAR26" },
-  IBORGO129: { api: "IBORGO129" },
-  IACQUI19: { api: "IACQUI19" },
-  IBISTA1: { api: "IBISTA1" },
-  IBUBBI1: { api: "IBUBBI1" },
-  ICANEL29: { api: "ICANEL29" },
+  IACQUI10: { api: "IACQUI10", nome: "Acqui Terme" }, 
+  IALBAR21: { api: "IALBAR21", nome: "Albareto" },
+  IBEDON8: { api: "IBEDON8", nome: "Bedonia" },
+  IITALIA8: { api: "IITALIA8", nome: "Montevaca" },
+  IALBAR26: { api: "IALBAR26", nome: "Albareto" },
+  IBORGO129: { api: "IBORGO129", nome: "Borgo Val di Taro" },
+  IACQUI19: { api: "IACQUI19", nome: "Acqui Terme" },
+  IBISTA1: { api: "IBISTA1", nome: "Bistagno" },
+  IBUBBI1: { api: "IBUBBI1", nome: "Bubbio" },
+  ICANEL29: { api: "ICANEL29", nome: "Canelli" },
   IAGLIA8: { api: "IAGLIA8" },
-  ICOSTI5: { api: "ICOSTI5" },
-  ICOSTI9: { api: "ICOSTI9" },
-  ICOSTI13: { api: "ICOSTI13" },
-  ICOSTI16: { api: "ICOSTI16" },
-  ICOSTI18: { api: "ICOSTI18" },
-  IALASS4: { api: "IALASS4" },
-  IALBA46: { api: "IALBA46" },
-  IALBEN12: { api: "IALBEN12" },
-  IALBEN13: { api: "IALBEN13" },
-  IALBIS15: { api: "IALBIS15" },
-  IALBIS17: { api: "IALBIS17" },
-  IALESS19: { api: "IALESS19" },
-  IALESS20: { api: "IALESS20" },
-  IALESS22: { api: "IALESS22" },
-  IALLUV5: { api: "IALLUV5" },
-  IALTAR9: { api: "IALTAR9" },
-  IANDOR36: { api: "IANDOR36" },
-  IANDOR38: { api: "IANDOR38" },
-  IANDOR45: { api: "IANDOR45" },
-  ICALIZ2: { api: "ICALIZ2" },
+  ICOSTI5: { api: "ICOSTI5", nome: "Costigliole d'Asti" },
+  ICOSTI9: { api: "ICOSTI9", nome: "Costigliole d'Asti" },
+  ICOSTI13: { api: "ICOSTI13", nome: "Costigliole d'Asti" },
+  ICOSTI16: { api: "ICOSTI16", nome: "Costigliole d'Asti" },
+  ICOSTI18: { api: "ICOSTI18", nome: "Costigliole d'Asti" },
+  IALASS4: { api: "IALASS4", nome: "Alassio" },
+  IALBA46: { api: "IALBA46", nome: "Alba" },
+  IALBEN12: { api: "IALBEN12", nome: "Albenga" },
+  IALBEN13: { api: "IALBEN13", nome: "Albenga" },
+  IALBIS15: { api: "IALBIS15", nome: "Albisola" },
+  IALBIS17: { api: "IALBIS17", nome: "Albisola" },
+  IALESS19: { api: "IALESS19", nome: "Alessandria" },
+  IALESS20: { api: "IALESS20", nome: "Alessandria" },
+  IALESS22: { api: "IALESS22", nome: "Alessandria" },
+  IALLUV5: { api: "IALLUV5", nome: "Alluvioni" },
+  IALTAR9: { api: "IALTAR9", nome: "Altare" },
+  IANDOR36: { api: "IANDOR36", nome: "Andora" },
+  IANDOR38: { api: "IANDOR38", nome: "Andora" },
+  IANDOR45: { api: "IANDOR45", nome: "Andora" },
+  ICALIZ2: { api: "ICALIZ2", nome: "Calizzano" },
   IPIETR53: { api: "IPIETR53" },
   IMARMO9: { api: "IMARMO9" },
   ICASTE724: { api: "ICASTE724" },
   IOSTAN1: { api: "IOSTAN1" },
   IBAGNO61: { api: "IBAGNO61" },
-  IPRALI9: { api: "IPRALI9" },
-  IPRALI3: { api: "IPRALI3" },
-  ISESTR42: { api: "ISESTR42" },
-  ISAUZE2: { api: "ISAUZE2" },
-  IBELLI49: { api: "IBELLI49" },
+  IPRALI9: { api: "IPRALI9", nome: "Prali" },
+  IPRALI3: { api: "IPRALI3", nome: "Prali" },
+  ISESTR42: { api: "ISESTR42", nome: "Sestriere" },
+  ISAUZE2: { api: "ISAUZE2", nome: "Sauze d'Oulx" },
+  IBELLI49: { api: "IBELLI49", nome: "Acqui Terme" },
   IARCOL18: { api: "IARCOL18" },
   IARNAS13: { api: "IARNAS13" },
-  IASTI37: { api: "IASTI37" },
-  IASTI39: { api: "IASTI39" },
-  IASTI54: { api: "IASTI54" },
+  IASTI37: { api: "IASTI37", nome: "Asti" },
+  IASTI39: { api: "IASTI39", nome: "Asti" },
+  IASTI54: { api: "IASTI54", nome: "Asti" },
   IBAGNA27: { api: "IBAGNA27" },
   IBALDI160: { api: "IBALDI160" },
-  IBARGAGL5: { api: "IBARGAGL5" },
-  IBEINE9: { api: "IBEINE9" },
-  IBOGLI8: { api: "IBOGLI8" },
-  IBONAS9: { api: "IBONAS9" },
+  IBARGAGL5: { api: "IBARGAGL5", nome: "Bargagli" },
+  IBEINE9: { api: "IBEINE9", nome: "Beinette" },
+  IBOGLI8: { api: "IBOGLI8", nome: "Bogliasco" },
+  IBONAS9: { api: "IBONAS9", nome: "Bonassola" },
   IBORGO125: { api: "IBORGO125" },
-  IBORGH21: { api: "IBORGH21" },
-  IBOVES17: { api: "IBOVES17" },
-  IBOVES27: { api: "IBOVES27" },
-  IBOVES31: { api: "IBOVES31" },
+  IBORGH21: { api: "IBORGH21", nome: "Borghetto S.Spirito" },
+  IBOVES17: { api: "IBOVES17", nome: "Boves" },
+  IBOVES27: { api: "IBOVES27", nome: "Boves" },
+  IBOVES31: { api: "IBOVES31", nome: "Boves" },
   IBOZZO4: { api: "IBOZZO4" },
-  IBRA535:  { api: "IBRA535" },
-  IBRALL2: { api: "IBRALL2" },
-  IBRIGA11: { api: "IBRIGA11" },
-  IBRIGA19: { api: "IBRIGA19" },
-  IBRUGN23: { api: "IBRUGN23" },
-  IBUSAL1: { api: "IBUSAL1" },
-  IBUSAL3: { api: "IBUSAL3" },
+  IBRA535:  { api: "IBRA535", nome: "Bra" },
+  IBRALL2: { api: "IBRALL2", nome: "Brallo" },
+  IBRIGA11: { api: "IBRIGA11", nome: "Briga" },
+  IBRIGA19: { api: "IBRIGA19", nome: "Briga" },
+  IBRUGN23: { api: "IBRUGN23", nome: "Brugnato" },
+  IBUSAL1: { api: "IBUSAL1", nome: "Busalla" },
+  IBUSAL3: { api: "IBUSAL3", nome: "Busalla" },
   IBUTTI12: { api: "IBUTTI12" },
-  ICAIRO36: { api: "ICAIRO36" },
-  ICAIROMO3: { api: "ICAIROMO3" },
-  ICAMER8: { api: "ICAMER8" },
-  ICAMPO219: { api: "ICAMPO219" },
-  ICAMPOMO4: { api: "ICAMPOMO4" },
+  ICAIRO36: { api: "ICAIRO36", nome: "Cairo Montenotte" },
+  ICAIROMO3: { api: "ICAIROMO3", nome: "Cairo Montenotte" },
+  ICAMER8: { api: "ICAMER8", nome: "Camerana" },
+  ICAMPO219: { api: "ICAMPO219", nome: "Campo Ligure" },
+  ICAMPOMO4: { api: "ICAMPOMO4", nome: "Campomorone" },
   ICAPANNO16: { api: "ICAPANNO16" },
   ICASSA19: { api: "ICASSA19" },
   ICASTE229: { api: "ICASTE229" },
@@ -261,68 +261,68 @@
   ICASTE932: { api: "ICASTE932" },
   ICALIC1_: { api: "ICALIC1" },
   ICALIC3: { api: "ICALIC3" },
-  ICALIZ13: { api: "ICALIZ13" },
+  ICALIZ13: { api: "ICALIZ13", nome: "Calizzano" },
   ICALOS1: { api: "ICALOS1" },
-  ICAMOG7: { api: "ICAMOG7" },
+  ICAMOG7: { api: "ICAMOG7", nome: "Camogli" },
   ICAMPO57: { api: "ICAMPO57" },
-  ICARAS4: { api: "ICARAS4" },
+  ICARAS4: { api: "ICARAS4", nome: "Carasco" },
   ICARBO36: { api: "ICARBO36" },
   ICARIG15: { api: "ICARIG15" },
-  ICARMA33: { api: "ICARMA33" },
-  ICARMA35: { api: "ICARMA35" },
-  ICARRA91: { api: "ICARRA91" },
-  ICARRO37: { api: "ICARRO37" },
+  ICARMA33: { api: "ICARMA33", nome: "Carmagnola" },
+  ICARMA35: { api: "ICARMA35", nome: "Carmagnola" },
+  ICARRA91: { api: "ICARRA91", nome: "Carrara" },
+  ICARRO37: { api: "ICARRO37", nome: "Carrodano" },
   ICASAL53: { api: "ICASAL53" },
   ICASAL85: { api: "ICASAL85" },
   ICASAR73: { api: "ICASAR73" },
-  ICASEL6: { api: "ICASEL6" },
+  ICASEL6: { api: "ICASEL6", nome: "Casella" },
   ICASSI26: { api: "ICASSI26" },
   ICASTE241: { api: "ICASTE241" },
   ICASTE560: { api: "ICASTE560" },
   ICASTE1086: { api: "ICASTE1086" },
   ICASTI67: { api: "ICASTI67" },
-  ICENGI4: { api: "ICENGI4" },
+  ICENGI4: { api: "ICENGI4", nome: "Cengio" },
   ICENTA4: { api: "ICENTA4" },
-  ICERAN6: { api: "ICERAN6" },
-  ICERES22: { api: "ICERES22" },
-  ICERIA1: { api: "ICERIA1" },
+  ICERAN6: { api: "ICERAN6", nome: "Ceranesi" },
+  ICERES22: { api: "ICERES22", nome: "Ceres" },
+  ICERIA1: { api: "ICERIA1", nome: "Ceriale" },
   ICESSO17: { api: "ICESSO17" },
-  ICEVA7: { api: "ICEVA7" },
-  ICHERA3: { api: "ICHERA3" },
-  ICHERA4: { api: "ICHERA4" },
-  ICHERA5: { api: "ICHERA5" },
-  ICHIAV1: { api: "ICHIAV1" },
-  ICHIAV4: { api: "ICHIAV4" },
-  ICHIAV7: { api: "ICHIAV7" },
-  ICHIAV12: { api: "ICHIAV12" },
-  ICHIUS13: { api: "ICHIUS13" },
-  ICHIUS15: { api: "ICHIUS15" },
-  ICICAG1: { api: "ICICAG1" },
-  ICOGOL7: { api: "ICOGOL7" },
-  ICOGOL47: { api: "ICOGOL47" },
-  ICOGOL52: { api: "ICOGOL52" },
-  ICORTE57: { api: "ICORTE57" },
-  ICREMO15: { api: "ICREMO15" },
-  ICROCE7: { api: "ICROCE7" },
-  IDAVAG2: { api: "IDAVAG2" },
-  IDIANO12: { api: "IDIANO12" },
+  ICEVA7: { api: "ICEVA7", nome: "Ceva" },
+  ICHERA3: { api: "ICHERA3", nome: "Cherasco" },
+  ICHERA4: { api: "ICHERA4", nome: "Cherasco" },
+  ICHERA5: { api: "ICHERA5", nome: "Cherasco" },
+  ICHIAV1: { api: "ICHIAV1", nome: "Chiavari" },
+  ICHIAV4: { api: "ICHIAV4", nome: "Chiavari" },
+  ICHIAV7: { api: "ICHIAV7", nome: "Chiavari" },
+  ICHIAV12: { api: "ICHIAV12", nome: "Chiavari" },
+  ICHIUS13: { api: "ICHIUS13", nome: "Chiusa di Pesio" },
+  ICHIUS15: { api: "ICHIUS15", nome: "Chiusa di Pesio" },
+  ICICAG1: { api: "ICICAG1", nome: "Cicagna" },
+  ICOGOL7: { api: "ICOGOL7", nome: "Cogoleto" },
+  ICOGOL47: { api: "ICOGOL47", nome: "Cogoleto" },
+  ICOGOL52: { api: "ICOGOL52", nome: "Cogoleto" },
+  ICORTE57: { api: "ICORTE57", nome: "Cortemilia" },
+  ICREMO15: { api: "ICREMO15", nome: "Cremolino" },
+  ICROCE7: { api: "ICROCE7", nome: "Crocefieschi" },
+  IDAVAG2: { api: "IDAVAG2", nome: "Davagna" },
+  IDIANO12: { api: "IDIANO12", nome: "Diano Marina" },
   IDOLCE9: { api: "IDOLCE9" },
   IDOGLI1: { api: "IDOGLI1" },
   IDERNI2: { api: "IDERNI2" },
-  IDUSIN1: { api: "IDUSIN1" },
-  IFABBR5: { api: "IFABBR5" },
+  IDUSIN1: { api: "IDUSIN1", nome: "Dusino San Michele" },
+  IFABBR5: { api: "IFABBR5", nome: "Fabbriche" },
   IFARIG1: { api: "IFARIG1" },
-  IFERRIER5: { api: "IFERRIER5" },
+  IFERRIER5: { api: "IFERRIER5", nome: "Ferriere" },
   IFILIG4: { api: "IFILIG4" },
   IFOLLO7: { api: "IFOLLO7" },
-  IFINAL12: { api: "IFINAL12" },
-  IFOSSA15: { api: "IFOSSA15" },
-  IFOSSANO8: { api: "IFOSSANO8" },
+  IFINAL12: { api: "IFINAL12", nome: "Finale Ligure" },
+  IFOSSA15: { api: "IFOSSA15", nome: "Fossano" },
+  IFOSSANO8: { api: "IFOSSANO8", nome: "Fossano" },
   IGAMAL1: { api: "IGAMAL1" },
-  IGARES3: { api: "IGARES3" },
-  IGAVI6: { api: "IGAVI6" },
-  IGAVI7: { api: "IGAVI7" },
-  IGENOA58: { api: "IGENOA58" },
+  IGARES3: { api: "IGARES3", nome: "Garessio" },
+  IGAVI6: { api: "IGAVI6", nome: "Gavi" },
+  IGAVI7: { api: "IGAVI7", nome: "Gavi" },
+  IGENOA58: { api: "IGENOA58", nome: "Genova Multedo" },
   IGENOA3078: { api: "IGENOA2728" },
   IGENOA2767: { api: "IGENOA2767" },
   IGENOA2800: { api: "IGENOA2800" },
@@ -367,92 +367,92 @@
   IGENOA3041: { api: "IGENOA3041" },
   IGENOVAA2: { api: "IGENOVAA2" },
   IGENOVAN1: { api: "IGENOVAN1" },
-  IBOGLI12: { api: "IBOGLI12" },
-  IPIEVE46: { api: "IPIEVE46" },
-  IGROND1: { api: "IGROND1" },
+  IBOGLI12: { api: "IBOGLI12", nome: "Bogliasco" },
+  IPIEVE46: { api: "IPIEVE46", nome: "Pieve Ligure" },
+  IGROND1: { api: "IGROND1", nome: "Grondona" },
   IISOLA59: { api: "IISOLA59" },
-  IISOLDA1: { api: "IISOLDA1" },
-  ILAIGU19: { api: "ILAIGU19" },
-  ILERIC8: { api: "ILERIC8" },
-  ILEQUI3: { api: "ILEQUI3" },
-  ILEVAN16: { api: "ILEVAN16" },
-  ILIGURIA2: { api: "ILIGURIA2" },
-  ILIGURIA20: { api: "ILIGURIA20" },
-  ILIGURIA51: { api: "ILIGURIA51" },
+  IISOLDA1: { api: "IISOLDA1", nome: "Soldano" },
+  ILAIGU19: { api: "ILAIGU19", nome: "Laigueglia" },
+  ILERIC8: { api: "ILERIC8", nome: "Lerici" },
+  ILEQUI3: { api: "ILEQUI3", nome: "Lequio Berria" },
+  ILEVAN16: { api: "ILEVAN16", nome: "Levanto" },
+  ILIGURIA2: { api: "ILIGURIA2", nome: "Genova Quezzi Bassa" },
+  ILIGURIA20: { api: "ILIGURIA20", nome: "Moneglia" },
+  ILIGURIA51: { api: "ILIGURIA51", nome: "Sori" },
   ILIGURIA88: { api: "ILIGURIA88" },
-  ILIGURIA123: { api: "ILIGURIA123" },
-  ILIGURIA175: { api: "ILIGURIA175" },
+  ILIGURIA123: { api: "ILIGURIA123", nome: "Villa Oneto" },
+  ILIGURIA175: { api: "ILIGURIA175", nome: "Lavagna" },
   ILIGURIA181: { api: "ILIGURIA181" },
   ILIGURIA186: { api: "ILIGURIA186" },
-  ILIMON9: { api: "ILIMON9" },
-  ILIMON17: { api: "ILIMON17" },
-  ILIMON19: { api: "ILIMON19" },
+  ILIMON9: { api: "ILIMON9", nome: "Limonetto 1400" },
+  ILIMON17: { api: "ILIMON17", nome: "Limone Piemonte" },
+  ILIMON19: { api: "ILIMON19", nome: "Limone Piemonte" },
   ILOMBARD405: { api: "ILOMBARD405" },
   ILGFORNA4: { api: "ILGFORNA4" },
-  ILUCCA69: { api: "ILUCCA69" },
+  ILUCCA69: { api: "ILUCCA69", nome: "Lucca" },
   ILUCIN14: { api: "ILUCIN14" },
-  IMACCA6: { api: "IMACCA6" },
-  IMALLA14: { api: "IMALLA14" },
-  IMASON4: { api: "IMASON4" },
-  IMASON6: { api: "IMASON6" },
-  IMASSA43: { api: "IMASSA43" },
-  IMEDE8: { api: "IMEDE8" },
-  IMELE15: { api: "IMELE15" },
-  IMELE16_: { api: "IMELE16" },
-  IMENDA13: { api: "IMENDA13" },
-  IMENDA14: { api: "IMENDA14" },
-  IMERAN2: { api: "IMERAN2" },
-  IMIGNA23: { api: "IMIGNA23" },
-  IMILLE3: { api: "IMILLE3" },
-  IMOCON1: { api: "IMOCON1" },
-  IMOLAR2: { api: "IMOLAR2" },
-  IMONEG33: { api: "IMONEG33" },
-  IMONGI4: { api: "IMONGI4" },
-  IMONTA172: { api: "IMONTA172" },
-  IMONTE1010: { api: "IMONTE1010" },
-  IMONTO93: { api: "IMONTO93" },
-  IMORSA15: { api: "IMORSA15" },
-  IMONFO5: { api: "IMONFO5" },
-  IMONTO47: { api: "IMONTO47" },
-  IMURAZ6: { api: "IMURAZ6" },
-  IMURIALD2: { api: "IMURIALD2" },
-  INEIRO1: { api: "INEIRO1" },
-  INEIRO2: { api: "INEIRO2" },
-  INEIVE1: { api: "INEIVE1" },
-  INOVEL23: { api: "INOVEL23" },
-  INOVIL12: { api: "INOVIL12" },
-  INOVIL17: { api: "INOVIL17" },
-  INOVIL34: { api: "INOVIL34" },
-  INOVILIG13: { api: "INOVILIG13" },
-  IONZO2: { api: "IONZO2" },
-  IORMEA3: { api: "IORMEA3" },
-  IORMEA11: { api: "IORMEA11" },
-  IOTTON1: { api: "IOTTON1" },
-  IOTTON2: { api: "IOTTON2" },
-  IORTOV1: { api: "IORTOV1" },
-  IORSAR1: { api: "IORSAR1" },
-  IOVADA9: { api: "IOVADA9" },
-  IOVADA12: { api: "IOVADA12" },
-  IPAVIA9: { api: "IPAVIA9" },
-  IPAVIA24: { api: "IPAVIA24" },
-  IPAVIA42: { api: "IPAVIA42" },
-  IPEVER4: { api: "IPEVER4" },
-  IPIEA6: { api: "IPIEA6" },
-  IPIEMONT238: { api: "IPIEMONT238" },
-  IPIETR8: { api: "IPIETR8" },
-  IPIEVE47: { api: "IPIEVE47" },
-  IPOIRI2: { api: "IPOIRI2" },
-  IPONZO6: { api: "IPONZO6" },
-  IPONZO9: { api: "IPONZO9" },
+  IMACCA6: { api: "IMACCA6", nome: "Maccagno" },
+  IMALLA14: { api: "IMALLA14", nome: "Mallare" },
+  IMASON4: { api: "IMASON4", nome: "Masone" },
+  IMASON6: { api: "IMASON6", nome: "Masone" },
+  IMASSA43: { api: "IMASSA43", nome: "Massa" },
+  IMEDE8: { api: "IMEDE8", nome: "Mede" },
+  IMELE15: { api: "IMELE15", nome: "Mele" },
+  IMELE16_: { api: "IMELE16", nome: "Mele" },
+  IMENDA13: { api: "IMENDA13", nome: "Mendatica" },
+  IMENDA14: { api: "IMENDA14", nome: "Mendatica" },
+  IMERAN2: { api: "IMERAN2", nome: "Merano" },
+  IMIGNA23: { api: "IMIGNA23", nome: "Mignanego" },
+  IMILLE3: { api: "IMILLE3", nome: "Millesimo" },
+  IMOCON1: { api: "IMOCON1", nome: "Moconesi" },
+  IMOLAR2: { api: "IMOLAR2", nome: "Molare" },
+  IMONEG33: { api: "IMONEG33", nome: "Moneglia" },
+  IMONGI4: { api: "IMONGI4", nome: "Mongiardino Ligure" },
+  IMONTA172: { api: "IMONTA172", nome: "Montaldo" },
+  IMONTE1010: { api: "IMONTE1010", nome: "Montegrosso" },
+  IMONTO93: { api: "IMONTO93", nome: "Casà" },
+  IMORSA15: { api: "IMORSA15", nome: "Morsasco" },
+  IMONFO5: { api: "IMONFO5", nome: "Monforte" },
+  IMONTO47: { api: "IMONTO47", nome: "Montoggio" },
+  IMURAZ6: { api: "IMURAZ6", nome: "Murazzano" },
+  IMURIALD2: { api: "IMURIALD2", nome: "Murialdo" },
+  INEIRO1: { api: "INEIRO1", nome: "Neirone" },
+  INEIRO2: { api: "INEIRO2", nome: "Neirone" },
+  INEIVE1: { api: "INEIVE1", nome: "Neive" },
+  INOVEL23: { api: "INOVEL23", nome: "Novello" },
+  INOVIL12: { api: "INOVIL12", nome: "Novi Ligure" },
+  INOVIL17: { api: "INOVIL17", nome: "Novi Ligure" },
+  INOVIL34: { api: "INOVIL34", nome: "Novi Ligure" },
+  INOVILIG13: { api: "INOVILIG13", nome: "Novi Ligure" },
+  IONZO2: { api: "IONZO2", nome: "Onzo" },
+  IORMEA3: { api: "IORMEA3", nome: "Ormea" },
+  IORMEA11: { api: "IORMEA11", nome: "Ormea" },
+  IOTTON1: { api: "IOTTON1", nome: "Ottone" },
+  IOTTON2: { api: "IOTTON2", nome: "Ottone" },
+  IORTOV1: { api: "IORTOV1", nome: "Ortovero" },
+  IORSAR1: { api: "IORSAR1", nome: "San Quirico" },
+  IOVADA9: { api: "IOVADA9", nome: "Ovada" },
+  IOVADA12: { api: "IOVADA12", nome: "Ovada" },
+  IPAVIA9: { api: "IPAVIA9", nome: "Pavia" },
+  IPAVIA24: { api: "IPAVIA24", nome: "Pavia" },
+  IPAVIA42: { api: "IPAVIA42", nome: "Pavia" },
+  IPEVER4: { api: "IPEVER4", nome: "Peveragno" },
+  IPIEA6: { api: "IPIEA6", nome: "Piea" },
+  IPIEMONT238: { api: "IPIEMONT238", nome: "Cortandone" },
+  IPIETR8: { api: "IPIETR8", nome: "Pietra Ligure" },
+  IPIEVE47: { api: "IPIEVE47", nome: "Pieve Ligure" },
+  IPOIRI2: { api: "IPOIRI2", nome: "Poirini" },
+  IPONZO6: { api: "IPONZO6", nome: "Ponzone" },
+  IPONZO9: { api: "IPONZO9", nome: "Ponzone" },
   IPMVILLA8: { api: "IPMVILLA8" },
-  IPRASC3: { api: "IPRASC3" },
-  IRAPAL8: { api: "IRAPAL8" },
-  IRAPAL15: { api: "IRAPAL15" },
-  IRAPAL26: { api: "IRAPAL26" },
-  IRAPAL29: { api: "IRAPAL29" },
-  IRAPAL33: { api: "IRAPAL33" },
+  IPRASC3: { api: "IPRASC3", nome: "Prasco" },
+  IRAPAL8: { api: "IRAPAL8", nome: "Rapallo" },
+  IRAPAL15: { api: "IRAPAL15", nome: "Rapallo" },
+  IRAPAL26: { api: "IRAPAL26", nome: "Rapallo" },
+  IRAPAL29: { api: "IRAPAL29", nome: "Rapallo" },
+  IRAPAL33: { api: "IRAPAL33", nome: "Rapallo" },
   IRIALT2: { api: "IRIALT2" },
-  IRICCD2: { api: "IRICCD2" },
+  IRICCD2: { api: "IRICCD2", nome: "Riccò del Golfo" },
   IRIVAP3: { api: "IRIVAP3" },
   IROATT2: { api: "IROATT2" },
   IROCCA35: { api: "IROCCA35" },
@@ -2049,19 +2049,19 @@ function getStationMeta(id) {
   };
 
   const defaultSource = {
-    stations: 'Wunderground',
-    stationsLimet: 'LIMET',
-    stations3R: 'Meteo3R',
-    stationsTorinoMeteo: 'TorinoMeteo',
-    stationsOMIRL: 'OMIRL',
-    stationsCML: 'CentroMeteoLombardo',
-    stationsDMA: 'Dati Meteo Asti',
-    stationsMeteoTortona: 'MeteoTortona',
-    stations1: 'LIMET1',
-    stations2: 'LIMET2',
-    stations3: 'LIMET3',
-    stationsBest: 'Wunderground'
-  };
+  stations: 'Wunderground',
+  stationsLimet: 'LIMET',
+  stations3R: '3R',          // <- coerente con il value
+  stationsTorinoMeteo: 'TorinoMeteo',
+  stationsOMIRL: 'OMIRL',
+  stationsCML: 'CentroMeteoLombardo',
+  stationsDMA: 'Dati Meteo Asti',
+  stationsMeteoTortona: 'MeteoTortona',
+  stations1: 'LIMET1',
+  stations2: 'LIMET2',
+  stations3: 'LIMET3',
+  stationsBest: 'Wunderground'
+};
 
   for (const key of Object.keys(maps)) {
     const map = maps[key];
@@ -2229,8 +2229,9 @@ function updateMarker(id) {
   const gaugesUrl = 'gauges.html?station=' + encodeURIComponent(id)
                   + '&source=' + encodeURIComponent(stationSource)
                   + '&name=' + encodeURIComponent(stationName);
-  popupContent += `<br><button type="button" onclick="window.open('${gaugesUrl}', 'gaugesWindow')">📊 Gauges</button>`;
-
+  const gaugesUrl2 = 'centrometeolombardodata.html';
+popupContent += `<br><button type="button" onclick="window.open('${gaugesUrl2}', 'gaugesWindow')">📊 Gauges</button>`;
+ 
   markers[id].setPopupContent(popupContent);
 
   // Aggiorna posizione
@@ -2333,7 +2334,7 @@ async function fetchLimet(id) {
 async function fetch3R() {
   try {
     // URL stazioni 3R con proxy
-    const urlStations = "https://api.allorigins.win/get?url=" + 
+    const urlStations = "https://corsproxy.io/?" + 
       encodeURIComponent("https://www.meteo3r.it/dati/mappe/misure.geojson");
 
     const resStations = await fetch(urlStations);
@@ -2593,83 +2594,63 @@ async function fetch3R() {
 }
 async function fetchCML() {
   try {
-    const url = "https://corsproxy.io/?" + encodeURIComponent(
-      "http://www.centrometeolombardo.com/Moduli/refx.php?t=all&r=1756559495232"
-    );
-
+    const url = "/centrometeolombardodata.html"; // URL della tua pagina
     const res = await fetch(url);
+    if (!res.ok) throw new Error("HTTP " + res.status);
     const text = await res.text();
 
-    const matchCoords = text.match(/var coords\s*=\s*(\[\[[\s\S]*?\]\]);/);
-    if (!matchCoords) throw new Error("Coords non trovati");
-    const coords = JSON.parse(matchCoords[1].replace(/'/g, '"'));
+    // dividiamo in righe
+    const righe = text.trim().split("\n");
 
-    const matchData = text.match(/datostazione\s*=\s*(\[\[[\s\S]*?\]\]);/);
-    if (!matchData) throw new Error("Dati stazioni non trovati");
-    const datostazione = JSON.parse(matchData[1].replace(/'/g, '"'));
+    // la prima riga è il timestamp
+    const timestamp = righe[0];
 
-    Object.keys(stationsCML).forEach(id => {
-      const idx = coords.findIndex(c => c[0].toLowerCase() === id.toLowerCase());
-      if (idx === -1) {
-        console.warn(`Stazione ${id} non trovata in coords`);
-        latestData[id] = {};
-        updateMarker(id);
-        return;
-      }
+    // le righe successive sono i dati delle stazioni
+    righe.slice(1).forEach(line => {
+      // line esempio: S:"0",N:"Brignole",T:"23.4",TH:"25.1",TL:"21.0",D:"15.0",DH:"16.0",DL:"14.0",H:"60",HH:"65",HL:"55",V:"5.0",G:"7.0",R:"0.0",RR:"0.0",LAT:"44.411",LON:"8.943"
+      const data = {};
+      line.split(",").forEach(pair => {
+        const [key, val] = pair.split(":");
+        const cleanKey = key.trim();
+        let cleanVal = val.trim();
+        if (cleanVal === "null") cleanVal = null;
+        else if (!isNaN(parseFloat(cleanVal))) cleanVal = parseFloat(cleanVal);
+        else cleanVal = cleanVal.replace(/^"|"$/g, ""); // togli le virgolette
+        data[cleanKey] = cleanVal;
+      });
 
-      const stFittizio = coords[idx];
-      const { lat, lon } = fittizioAReale(parseFloat(stFittizio[3]), parseFloat(stFittizio[4]));
-      const row = datostazione[idx];
-
-      // Se il primo dato è 1, tutti i valori sono N/D e marker grigio
-      const isInactive = row[0] === '1';
-      latestData[id] = isInactive ? {
-        temp: null,
-        tempHigh: null,
-        tempLow: null,
-        dewp: null,
-        dewpHigh: null,
-        dewpLow: null,
-        hum: null,
-        humHigh: null,
-        humLow: null,
-        rainDaily: null,
-        rainRate: null,
-        wind: null,
-        windGust: null,
-        windGustHigh: null,
-        windDir: null,
-        lat,
-        lon,
-        isInactive: true
-      } : {
-        temp: row[4] ? parseFloat(row[4]) : null,
-        tempHigh: row[5] ? parseFloat(row[5]) : null,
-        tempLow: row[7] ? parseFloat(row[7]) : null,
-        dewp: row[15] ? parseFloat(row[15]) : null,
-        dewpHigh: row[16] ? parseFloat(row[16]) : null,
-        dewpLow: row[18] ? parseFloat(row[18]) : null,
-        hum: row[9] ? parseFloat(row[9]) : null,
-        humHigh: row[10] ? parseFloat(row[10]) : null,
-        humLow: row[12] ? parseFloat(row[12]) : null,
-        rainDaily: row[37] ? parseFloat(row[37]) : null,
-        rainRate: row[41] ? parseFloat(row[41]) : null,
-        wind: row[28] ? parseFloat(row[28]) : null,
-        windGust: row[25] ? parseFloat(row[25]) : null,
-        windGustHigh: row[26] ? parseFloat(row[26]) : null,
-        windDir: row[29] || null,
-        lat,
-        lon,
-        isInactive: false
+      const id = data.N; // puoi usare il nome come ID
+      latestData[id] = {
+        temp: data.T,
+        tempHigh: data.TH,
+        tempLow: data.TL,
+        dewp: data.D,
+        dewpHigh: data.DH,
+        dewpLow: data.DL,
+        hum: data.H,
+        humHigh: data.HH,
+        humLow: data.HL,
+        rainDaily: data.R,
+        rainRate: data.RR,
+        wind: data.V,
+        windGust: data.G,
+        windGustHigh: data.GH || null,
+        windDir: data.WD || null,
+        lat: data.LAT,
+        lon: data.LON,
+        isInactive: data.S === 1 || data.S === "1"
       };
 
       updateMarker(id);
     });
 
+    console.log("Ultimo fetch:", timestamp);
+
   } catch (err) {
     console.error("Errore fetch dati CML:", err);
   }
 }
+
 const stationsTorinoMeteo = {};
 
 async function fetchTorinoMeteo() {
