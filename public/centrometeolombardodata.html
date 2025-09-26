@@ -1,8 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Dati stazioni CML</title>
   <style>
     body { font-family: monospace; font-size: 13px; margin: 10px; background: #fff; color: #000; }
@@ -13,9 +13,9 @@
   <pre id="output">Caricamento...</pre>
 
   <script>
-    const PROXY_BASE = 'https://corsproxy.io/?';
-    const REMOTE = 'http://www.centrometeolombardo.com/Moduli/refx.php?t=all&r=1756559495232';
     const REFRESH_INTERVAL = 30 * 1000; // 30 secondi
+    const REMOTE = 'http://www.centrometeolombardo.com/Moduli/refx.php?t=all&r=1756559495232';
+    const PROXY = 'https://corsproxy.io/?';
 
     function fittizioAReale(xFittizio, yFittizio) {
       const lon = ((8260 + xFittizio / 1.18) / 1000).toFixed(3);
@@ -29,26 +29,27 @@
              `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
     }
 
-    async function fetchCML(){
+    async function updateData() {
       try {
-        const url = PROXY_BASE + encodeURIComponent(REMOTE);
-        const res = await fetch(url);
-        if(!res.ok) throw new Error('HTTP ' + res.status);
+        const res = await fetch(PROXY + encodeURIComponent(REMOTE));
+        if (!res.ok) throw new Error('HTTP ' + res.status);
         const text = await res.text();
 
+        // estrai coords
         const matchCoords = text.match(/var coords\s*=\s*(\[\[[\s\S]*?\]\]);/);
         if (!matchCoords) throw new Error('Coords non trovati');
         const coords = JSON.parse(matchCoords[1].replace(/'/g, '"'));
 
+        // estrai datostazione
         const matchData = text.match(/datostazione\s*=\s*(\[\[[\s\S]*?\]\]);/);
         if (!matchData) throw new Error('Dati stazioni non trovati');
         const datostazione = JSON.parse(matchData[1].replace(/'/g, '"'));
 
         const lines = [];
-        // prima riga con timestamp in formato GG/MM/AAAA HH:MM:SS
+        // prima riga: timestamp
         lines.push(formatTimestamp(new Date()));
 
-        for (let i = 0; i < coords.length; i++){
+        for (let i = 0; i < coords.length; i++) {
           const c = coords[i];
           const row = datostazione[i] || [];
           const nome = (c[1] || c[0]).toString();
@@ -57,36 +58,22 @@
 
           const p = v => (v === null || v === undefined || v === '' ? 'null' : String(v));
 
-          if (isInactive){
+          if (isInactive) {
             lines.push(`S:"1",N:"${nome}",T:"null",TH:"null",TL:"null",D:"null",DH:"null",DL:"null",H:"null",HH:"null",HL:"null",V:"null",G:"null",R:"null",RR:"null",LAT:"${p(lat)}",LON:"${p(lon)}"`);
           } else {
-            const temp = row[4] ? parseFloat(row[4]) : null;
-            const tempHigh = row[5] ? parseFloat(row[5]) : null;
-            const tempLow = row[7] ? parseFloat(row[7]) : null;
-            const dewp = row[15] ? parseFloat(row[15]) : null;
-            const dewpHigh = row[16] ? parseFloat(row[16]) : null;
-            const dewpLow = row[18] ? parseFloat(row[18]) : null;
-            const hum = row[9] ? parseFloat(row[9]) : null;
-            const humHigh = row[10] ? parseFloat(row[10]) : null;
-            const humLow = row[12] ? parseFloat(row[12]) : null;
-            const rainDaily = row[37] ? parseFloat(row[37]) : null;
-            const rainRate = row[41] ? parseFloat(row[41]) : null;
-            const wind = row[28] ? parseFloat(row[28]) : null;
-            const windGust = row[25] ? parseFloat(row[25]) : null;
-
-            lines.push(`S:"0",N:"${nome}",T:"${p(temp)}",TH:"${p(tempHigh)}",TL:"${p(tempLow)}",D:"${p(dewp)}",DH:"${p(dewpHigh)}",DL:"${p(dewpLow)}",H:"${p(hum)}",HH:"${p(humHigh)}",HL:"${p(humLow)}",V:"${p(wind)}",G:"${p(windGust)}",R:"${p(rainDaily)}",RR:"${p(rainRate)}",LAT:"${p(lat)}",LON:"${p(lon)}"`);
+            lines.push(`S:"0",N:"${nome}",T:"${p(row[4])}",TH:"${p(row[5])}",TL:"${p(row[7])}",D:"${p(row[15])}",DH:"${p(row[16])}",DL:"${p(row[18])}",H:"${p(row[9])}",HH:"${p(row[10])}",HL:"${p(row[12])}",V:"${p(row[28])}",G:"${p(row[25])}",R:"${p(row[37])}",RR:"${p(row[41])}",LAT:"${p(lat)}",LON:"${p(lon)}"`);
           }
         }
 
         document.getElementById('output').textContent = lines.join("\n");
-      } catch(err){
+      } catch (err) {
         document.getElementById('output').textContent = 'Errore: ' + err.message;
         console.error(err);
       }
     }
 
-    fetchCML();
-    setInterval(fetchCML, REFRESH_INTERVAL);
+    updateData();
+    setInterval(updateData, REFRESH_INTERVAL);
   </script>
 </body>
 </html>
