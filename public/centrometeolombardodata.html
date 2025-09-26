@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Dati stazioni CML (JSON)</title>
+  <title>Dati CML JSON</title>
   <style>
     body { font-family: monospace; font-size: 13px; margin: 10px; background: #fff; color: #000; }
     pre { white-space: pre-wrap; word-break: break-word; }
@@ -84,7 +84,12 @@
           });
         }
 
+        // Mostra JSON pronto
         document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+
+        // Se vuoi, puoi anche esportarlo globalmente per altri script
+        window.CMLData = data;
+
       } catch (err) {
         document.getElementById('output').textContent = 'Errore: ' + err.message;
         console.error(err);

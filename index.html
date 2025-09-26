@@ -2607,7 +2607,6 @@ async function fetchCML() {
 
     // le righe successive sono i dati delle stazioni
     righe.slice(1).forEach(line => {
-      // line esempio: S:"0",N:"Brignole",T:"23.4",TH:"25.1",TL:"21.0",D:"15.0",DH:"16.0",DL:"14.0",H:"60",HH:"65",HL:"55",V:"5.0",G:"7.0",R:"0.0",RR:"0.0",LAT:"44.411",LON:"8.943"
       const data = {};
       line.split(",").forEach(pair => {
         const [key, val] = pair.split(":");
@@ -2650,6 +2649,7 @@ async function fetchCML() {
     console.error("Errore fetch dati CML:", err);
   }
 }
+
 
 const stationsTorinoMeteo = {};
 
