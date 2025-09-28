@@ -70,11 +70,12 @@
 <body>
   <div id="sourceMenu" style="position:absolute; top:10px; right:10px; z-index:1000; background:white; padding:8px 12px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); font-size:14px;">
     <b>Fonti:</b><br>
-    <label><input type="checkbox" class="sourceFilter" value="LIMET" checked> LIMET</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="LIMET" > LIMET</label><br>
     <label><input type="checkbox" class="sourceFilter" value="TorinoMeteo" > TorinoMeteo</label><br>
-    <label><input type="checkbox" class="sourceFilter" value="3R" checked> Meteo3R</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="3R" > Meteo3R</label><br>
     <label><input type="checkbox" class="sourceFilter" value="Wunderground"> Wunderground</label><br>
     <label><input type="checkbox" class="sourceFilter" value="CentroMeteoLombardo"> CML</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="DatiMeteoAsti"> DMA</label><br>
     <label><input type="checkbox" class="sourceFilter" value="OMIRL"> OMIRL</label>
   </div>
   
@@ -1114,328 +1115,8 @@
   ISAREZ2: { api: "ISAREZ2" },
   IGENOVA3078: { api: "IGENOA3078" },
 };
-const stations3R = {
-};
-const stationsLimet = {
-  Molassana: {
-    link: "molassana-alta", // parte variabile della URL
-    link2: "terzereti",
-    lat: 44.461,            // latitudine
-    lon: 8.987              // longitudine
-  },
-  Fabbriche: {
-    link: "fabbriche-brusinetti", // parte variabile della URL
-    link2: "meteo-fabbriche-brusinetti",
-    lat: 44.446,            // latitudine
-    lon: 8.714              // longitudine
-  },
-  Pietralavezzara: {
-    link: "pietralavezzara", // parte variabile della URL
-    link2: "meteo-pietralavezzara",
-    lat: 44.536,            // latitudine
-    lon: 8.883              // longitudine
-  },
-  SantOlcese: {
-    link: "solcese", // parte variabile della URL
-    link2: "meteo-solcese",
-    lat: 44.483,            // latitudine
-    lon: 8.966             // longitudine
-  },
-  Foce: {
-    link: "ldoria", // parte variabile della URL
-    link2: "meteo-ldoria",
-    lat: 44.401,            // latitudine
-    lon: 8.942            // longitudine
-  },
-  Pontori: {
-    link: "pontori", // parte variabile della URL
-    link2: "meteo-pontori",
-    lat: 44.367,            // latitudine
-    lon: 9.435        // longitudine
-  },
-  Arenzano: {
-    link: "arenzano-porto", // parte variabile della URL
-    link2: "terzereti",
-    lat: 44.400,            // latitudine
-    lon: 8.687            // longitudine
-  },
-  WTC: {
-    link: "wtc", // parte variabile della URL
-    link2: "meteo-wtc",
-    lat: 44.408,            // latitudine
-    lon: 8.901              // longitudine
-  },
-  Sampierdarena: {
-    link: "sampierdarena", // parte variabile della URL
-    link2: "meteo-sampierdarena",
-    lat: 44.416,            // latitudine
-    lon: 8.886              // longitudine
-  },
-  Parazzuolo: {
-    link: "parazzuolo", // parte variabile della URL
-    link2: "meteo-parazzuolo",
-    lat: 44.478,            // latitudine
-    lon: 9.325             // longitudine
-    
-  },
-  Montoggio: {
-    link: "montoggio", // parte variabile della URL
-    link2: "meteo-montoggio",
-    lat: 44.517,            // latitudine
-    lon: 9.050             // longitudine
-    
-  },
-  SanRocco: {
-    link: "sanrocco", // parte variabile della URL
-    link2: "meteo-sanrocco",
-    lat: 44.334,            // latitudine
-    lon: 9.161             // longitudine
-    
-  },
-  SantAlberto: {
-    link: "salberto", // parte variabile della URL
-    link2: "meteo-salberto",
-    lat: 44.444,            // latitudine
-    lon: 9.103             // longitudine
-    
-  },
-  LagoLame: {
-    link: "lame", // parte variabile della URL
-    link2: "meteo-lame",
-    lat: 44.503,            // latitudine
-    lon: 9.408             // longitudine
-    
-  },
-  Rezzoaglio: {
-    link: "rezzoaglio", // parte variabile della URL
-    link2: "meteo-rezzoaglio",
-    lat: 44.525,            // latitudine
-    lon: 9.385             // longitudine
-    
-  },
-  RezzoaglioCerisola: {
-    link: "rezzoaglio-cerisola", // parte variabile della URL
-    link2: "meteo-rezzoaglio-cerisola",
-    lat: 44.515,            // latitudine
-    lon: 9.408             // longitudine
-    
-  },
-  PuntaChiappa: {
-    link: "batterie-pchiappa", // parte variabile della URL
-    link2: "meteo-batterie-pchiappa",
-    lat: 44.322,            // latitudine
-    lon: 9.152             // longitudine
-    
-  },
-  Ventarola: {
-    link: "ventarola", // parte variabile della URL
-    link2: "meteo-ventarola",
-    lat: 44.555,            // latitudine
-    lon: 9.305             // longitudine
-    
-  },
-  ICBorzoli: {
-    link: "borzoli", // parte variabile della URL
-    link2: "meteo-borzoli",
-    lat: 44.429,            // latitudine
-    lon: 8.856             // longitudine
-    
-  },
-  SantEusebio: {
-    link: "eusebio", // parte variabile della URL
-    link2: "meteo-eusebio",
-    lat: 44.442,            // latitudine
-    lon: 8.991             // longitudine
-    
-  },
-  Fregarie: {
-    link: "fregarie-scolombano", // parte variabile della URL
-    link2: "meteo-fregarie-scolombano",
-    lat: 44.380,            // latitudine
-    lon: 9.305             // longitudine
-    
-  },
-  Zoagli: {
-    link: "zoagli-oliveto", // parte variabile della URL
-    link2: "meteo-zoagli-oliveto",
-    lat: 44.344,            // latitudine
-    lon: 9.275             // longitudine
-    
-  },
-  Moconesi: {
-    link: "moconesi", // parte variabile della URL
-    link2: "meteo-moconesi",
-    lat: 44.424,            // latitudine
-    lon: 9.190             // longitudine
-    
-  },
-  SantaMaria: {
-    link: "smaria", // parte variabile della URL
-    link2: "meteo-smaria",
-    lat: 44.358,            // latitudine
-    lon: 9.186             // longitudine
-    
-  },
-  Murlo: {
-    link: "murlo", // parte variabile della URL
-    link2: "meteo-murlo",
-    lat: 44.055,            // latitudine
-    lon: 9.956             // longitudine
-    
-  },
-  Urbe: {
-    link: "terzereti", // parte variabile della URL
-    link2: "meteo-urbe-monta",
-    lat: 44.489,            // latitudine
-    lon: 8.581             // longitudine
-    
-  },
-  UrbeSanPietro: {
-    link: "urbe", // parte variabile della URL
-    link2: "meteo-urbe",
-    lat: 44.486,            // latitudine
-    lon: 8.587             // longitudine
-    
-  },
-  Tiglieto: {
-    link: "tiglieto", // parte variabile della URL
-    link2: "meteo-tiglieto",
-    lat: 44.529,            // latitudine
-    lon: 8.626             // longitudine
-    
-  },
-  Giusvalla: {
-    link: "giusvalla", // parte variabile della URL
-    link2: "meteo-giusvalla",
-    lat: 44.448,            // latitudine
-    lon: 8.394             // longitudine
-    
-  },
-  Casanova: {
-    link: "casanova", // parte variabile della URL
-    link2: "meteo-casanova",
-    lat: 44.375,            // latitudine
-    lon: 8.574             // longitudine
-    
-  },
-  CelleLigure: {
-    link: "celle", // parte variabile della URL
-    link2: "meteo-celle",
-    lat: 44.343,            // latitudine
-    lon: 8.545             // longitudine
-    
-  },
-    Oregina: {
-    link: "oregina", // parte variabile della URL
-    link2: "meteo-oregina",
-    lat: 44.424,            // latitudine
-    lon: 8.927             // longitudine
-    
-  },
-  MarassiFirpo: {
-    link: "terzereti", // parte variabile della URL
-    link2: "meteo-marassi-firpo",
-    lat: 44.415,            // latitudine
-    lon: 8.950             // longitudine
-    
-  },
-  Cornigliano: {
-    link: "cornigliano", // parte variabile della URL
-    link2: "meteo-cornigliano",
-    lat: 44.415,            // latitudine
-    lon: 8.873             // longitudine
-    
-  },
-  TramontanaSurfVoltri: {
-    link: "voltri", // parte variabile della URL
-    link2: "meteo-voltri",
-    lat: 44.427,            // latitudine
-    lon: 8.757             // longitudine
-    
-  },
-  Albisola: {
-    link: "albisola", // parte variabile della URL
-    link2: "meteo-albisola",
-    lat: 44.326,            // latitudine
-    lon: 8.501             // longitudine
-    
-  },
-  SavonaNautico: {
-    link: "savona", // parte variabile della URL
-    link2: "meteo-savona",
-    lat: 44.308,            // latitudine
-    lon: 8.487             // longitudine
-    
-  },
-  Zinola: {
-    link: "savona-zinola", // parte variabile della URL
-    link2: "meteo-savona-zinola",
-    lat: 44.282,            // latitudine
-    lon: 8.443             // longitudine
-    
-  },
-  Masone: {
-    link: "savona-zinola", // parte variabile della URL
-    link2: "meteo-masone-vallechiara",
-    lat: 44.503,            // latitudine
-    lon: 8.720             // longitudine
-    
-  },
-  RossiglioneLIMET: {
-    link: "savona-zinola", // parte variabile della URL
-    link2: "meteo-rossiglione",
-    lat: 44.560,            // latitudine
-    lon: 8.672             // longitudine
-    
-  },
-    RossiglioneLIMET: {
-    link: "savona-zinola", // parte variabile della URL
-    link2: "meteo-rossiglione",
-    lat: 44.560,            // latitudine
-    lon: 8.672             // longitudine
-    
-  },  LaTerza: {
-    link: "savona-zinola", // parte variabile della URL
-    link2: "meteo-rifugio-laterza",
-    lat: 44.059,            // latitudine
-    lon: 7.730             // longitudine
-    
-  }, Piaggia: {
-    link: "savona-zinola", // parte variabile della URL
-    link2: "meteo-piaggia",
-    lat: 44.082,            // latitudine
-    lon: 7.749             // longitudine
-    
-  }, 
-  Bragalla: {
-    link: "h", // parte variabile della URL
-    link2: "meteo-bragalla",
-    lat: 44.446,            // latitudine
-    lon: 9.102             // longitudine
-    
-  },
-  Caucaso: {
-    link: "h", // parte variabile della URL
-    link2: "meteo-caucaso",
-    lat: 44.455,            // latitudine
-    lon: 9.225             // longitudine
-    
-  },
-  Rocca: {
-    link: "h", // parte variabile della URL
-    link2: "meteo-rocca",
-    lat: 44.552,            // latitudine
-    lon: 9.471             // longitudine
-    
-  },
-  Oregin: {
-    link: "h", // parte variabile della URL
-    link2: "meteo-oregina",
-    lat: 44.423,            // latitudine
-    lon: 8.928             // longitudine
-    
-  },
-};
+const stations3R = {};
+const stationsLimet = {};
 
 const stations1 = {
   Favale: {
@@ -1464,23 +1145,8 @@ const stations2 = {
   // aggiungi qui altre stazioni Cumulus MX, ognuna con link/lat/lon
 };
 const stationsDMA =  {
-  pontecurone: {lat: 44.941, lon: 8.918}, 
-  dusino: {lat: 44.922, lon: 7.974},
-  antola: {lat: 44.567, lon: 9.150},
-  mongiardino: {lat: 44.633, lon: 9.064},
-  rossiglione: {lat: 44.561, lon: 8.671},
-  grognardo: {lat: 44.629, lon: 8.485},
-  ovadaCoinova: {lat: 44.618, lon: 8.608},
-  lerma: {lat: 44.631, lon: 8.695},
-  fraconalto: {lat: 44.618, lon: 8.608},
-  ovadaCoinova: {lat: 44.618, lon: 8.608},
-  ovadaCoinova: {lat: 44.618, lon: 8.608},
-  ovadaCoinova: {lat: 44.618, lon: 8.608},
-  ovadaCoinova: {lat: 44.618, lon: 8.608},
-  ovadaCoinova: {lat: 44.618, lon: 8.608},
 };
-const stationsCML = {
-};
+const stationsCML = {};
 const stationsMeteoTortona =  {
   Tortona: {
     link: "https://meteotortona.it/link/dettaglio_stazioni.php?stazione=tortona",
@@ -1565,11 +1231,12 @@ function getColorTemp(temp) {
   if (temp >= -10.0) return "#0000FF";
   return "#191970";
 }
-function getColorWindDir(wind) {
-  if (WindDir >= 0) return "#4682B4";
+function getColorWindDir(deg) {
+  if (deg >= 0 && deg <= 360) return "#4682B4";
   return "#191970";
 }
-// cerca meta della stazione nelle tue varie collezioni
+
+// ----- Cerca meta della stazione -----
 function getStationMeta(id) {
   const maps = {
     stations, stationsLimet, stations3R, stationsTorinoMeteo,
@@ -1578,19 +1245,19 @@ function getStationMeta(id) {
   };
 
   const defaultSource = {
-  stations: 'Wunderground',
-  stationsLimet: 'LIMET',
-  stations3R: '3R',          // <- coerente con il value
-  stationsTorinoMeteo: 'TorinoMeteo',
-  stationsOMIRL: 'OMIRL',
-  stationsCML: 'CentroMeteoLombardo',
-  stationsDMA: 'Dati Meteo Asti',
-  stationsMeteoTortona: 'MeteoTortona',
-  stations1: 'LIMET1',
-  stations2: 'LIMET2',
-  stations3: 'LIMET3',
-  stationsBest: 'Wunderground'
-};
+    stations: 'Wunderground',
+    stationsLimet: 'LIMET',
+    stations3R: '3R',
+    stationsTorinoMeteo: 'TorinoMeteo',
+    stationsOMIRL: 'OMIRL',
+    stationsCML: 'CentroMeteoLombardo',
+    stationsDMA: 'DatiMeteoAsti',
+    stationsMeteoTortona: 'MeteoTortona',
+    stations1: 'LIMET1',
+    stations2: 'LIMET2',
+    stations3: 'LIMET3',
+    stationsBest: 'Wunderground'
+  };
 
   for (const key of Object.keys(maps)) {
     const map = maps[key];
@@ -1607,50 +1274,32 @@ function getStationMeta(id) {
   return { source: 'unknown', name: id, meta: null };
 }
 
-
 // ----- Creazione Marker Responsivo -----
 function createMarker(id, lat = 44.423, lon = 8.972) {
-  const isMainMarker = lat === 44.423 && lon === 8.972;
-
-  // scala tra 0.5 (mobile) e 1 (desktop)
   const scale = Math.min(window.innerWidth / 1200, 1);
-  const baseSize = 40;
-  const size = isMainMarker ? 0 : baseSize * scale;
-
-  const fontSize = Math.max(12, 16 * scale); // font minimo 12px
+  const size = 20 * scale;
 
   const icon = L.divIcon({
     className: '',
     html: `<div class="circle-label2"
                  style="
-                   width: 0px;
-                   height: 0px;
-                   line-height: ${size}px;
-                   border-radius: 50%;
-                   background-color: #808080;
-                   text-align: center;
-                   color: white;
-                   font-weight: bold;
-                   font-size: 0px;
+                   width:${size}px;
+                   height:${size}px;
+                   border-radius:50%;
+                   background-color:#808080;
+                   border:1px solid #fff;
                  ">
-           ${isMainMarker ? '' : id}
            </div>`,
     iconSize: [size, size],
     iconAnchor: [size / 2, size / 2]
   });
-  
 
   const marker = L.marker([lat, lon], { icon });
-
-  const popupFont = Math.max(12, 14 * scale);
-  marker.bindPopup(`<b style="font-size:${popupFont}px">Stazione:</b> ${id}<br>⚠️ Offline`);
-
-
-
+  marker.bindPopup(`<b>Stazione:</b> ${id}<br>⚠️ Offline`);
   markers[id] = marker;
 }
 
-// Aggiorna dimensione marker al resizer
+// Aggiorna dimensione marker su resize
 window.addEventListener("resize", () => {
   Object.keys(markers).forEach(id => {
     const m = markers[id];
@@ -1659,15 +1308,15 @@ window.addEventListener("resize", () => {
     createMarker(id, latlng.lat, latlng.lng);
   });
 });
-// ----- Aggiorna Marker -----
-// Funzione helper per convertire gradi in direzione cardinale
+
+// ----- Converti gradi in direzione cardinale -----
 function degToDir(deg) {
-  if (deg === null || deg === undefined) return "N/D";
-  const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
-  const index = Math.floor(((deg + 22.5) % 360) / 45);
-  return directions[index];
+  if (deg == null) return "N/D";
+  const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+  return dirs[Math.floor(((deg + 22.5) % 360) / 45)];
 }
 
+// ----- Aggiorna Marker -----
 function updateMarker(id) {
   const type = document.getElementById("tempSelect").value;
   const data = latestData[id];
@@ -1676,107 +1325,115 @@ function updateMarker(id) {
   let value = null;
   let color = null;
 
-  // Valore e colore
+  // Valore e colore in base al tipo
   if (type === "winddirection") {
     value = data.windDir;
-    color = data.windGust != null ? getColorRain(data.windGust) : null;
+    color = data.windGust != null ? getColorRain(data.windGust) : "#808080";
   } else {
     switch(type) {
-      case "current": value = data.temp; color = value != null ? getColorTemp(value) : null; break;
-      case "max": value = data.tempHigh; color = value != null ? getColorTemp(value) : null; break;
-      case "min": value = data.tempLow; color = value != null ? getColorTemp(value) : null; break;
-      case "dewpt": value = data.dewp; color = value != null ? getColorTemp(value) : null; break;
-      case "dewpMax": value = data.dewpHigh; color = value != null ? getColorTemp(value) : null; break;
-      case "dewpMin": value = data.dewpLow; color = value != null ? getColorTemp(value) : null; break;
-      case "Heat": value = data.heat; color = value != null ? getColorTemp(value) : null; break;
-      case "HeatMax": value = data.heatHigh; color = value != null ? getColorTemp(value) : null; break;
-      case "HeatMin": value = data.heatLow; color = value != null ? getColorTemp(value) : null; break;
-      case "hum": value = data.hum; color = value != null ? getColorHum(value) : null; break;
-      case "humMax": value = data.humHigh; color = value != null ? getColorHum(value) : null; break;
-      case "humMin": value = data.humLow; color = value != null ? getColorHum(value) : null; break;
-      case "rainDay": value = data.rainDaily; color = value != null ? getColorRain(value) : null; break;
-      case "rainRate": value = data.rainRate; color = value != null ? getColorRain(value) : null; break;
-      case "wind": value = data.wind; color = value != null ? getColorRain(value) : null; break;
-      case "windGust": value = data.windGust; color = value != null ? getColorRain(value) : null; break;
-      case "windGustMax": value = data.windGustHigh; color = value != null ? getColorRain(value) : null; break;
+      case "current": value = data.temp; color = getColorTemp(value); break;
+      case "max": value = data.tempHigh; color = getColorTemp(value); break;
+      case "min": value = data.tempLow; color = getColorTemp(value); break;
+      case "dewpt": value = data.dewp; color = getColorTemp(value); break;
+      case "dewpMax": value = data.dewpHigh; color = getColorTemp(value); break;
+      case "dewpMin": value = data.dewpLow; color = getColorTemp(value); break;
+      case "Heat": value = data.heat; color = getColorTemp(value); break;
+      case "HeatMax": value = data.heatHigh; color = getColorTemp(value); break;
+      case "HeatMin": value = data.heatLow; color = getColorTemp(value); break;
+      case "hum": value = data.hum; color = getColorHum(value); break;
+      case "humMax": value = data.humHigh; color = getColorHum(value); break;
+      case "humMin": value = data.humLow; color = getColorHum(value); break;
+      case "rainDay": value = data.rainDaily; color = getColorRain(value); break;
+      case "rainRate": value = data.rainRate; color = getColorRain(value); break;
+      case "wind": value = data.wind; color = getColorRain(value); break;
+      case "windGust": value = data.windGust; color = getColorRain(value); break;
+      case "windGustMax": value = data.windGustHigh; color = getColorRain(value); break;
       default: value = null; color = null;
     }
   }
 
-  // Se il marker non esiste, crealo
-  if (!markers[id]) {
-    // Se non c'è valore, creiamo un marker trasparente piccolo
-    const markerIcon = value != null ? L.divIcon({
-      className: '',
-      html: `<div class="circle-label" style="background-color:${color}; border:2px solid white;">${value.toFixed(1)}</div>`,
-      iconSize: [32, 32],
-      iconAnchor: [16, 16]
-    }) : L.divIcon({
-      className: '',
-      html: `<div style="width:1px; height:1px;"></div>`,
-      iconSize: [1, 1],
-      iconAnchor: [0, 0]
-    });
-
-    const marker = L.marker([data.lat, data.lon], { icon: markerIcon }).addTo(map);
-    markers[id] = marker;
-  } else {
-    // Aggiorna solo l'icona se c'è un valore
-    if (value != null) {
-      const icon = L.divIcon({
+  // Crea o aggiorna marker
+  const icon = value != null
+    ? L.divIcon({
         className: '',
         html: `<div class="circle-label" style="background-color:${color}; border:2px solid white;">${value.toFixed(1)}</div>`,
         iconSize: [32, 32],
         iconAnchor: [16, 16]
+      })
+    : L.divIcon({
+        className: '',
+        html: `<div class="circle-label" style="background-color:#808080; width: 12px; height: 12px; border-radius: 50%;"></div>`,
+        iconSize: [12, 12],
+        iconAnchor: [6, 6]
       });
-      markers[id].setIcon(icon);
-    }
+
+  if (!markers[id]) {
+    markers[id] = L.marker([data.lat, data.lon], { icon }).addTo(map);
+  } else {
+    markers[id].setIcon(icon);
   }
 
-  // Aggiorna popup sempre
+  // Popup aggiornato
   const meta = getStationMeta(id);
   const stationSource = meta.source;
   const stationName = meta.name;
 
-  let popupContent = `<b>Stazione:</b> ${stationName}<br>`;
-  popupContent += `<b>Fonte:</b> ${stationSource}<br>`;
-  if (type.startsWith("current") || type.startsWith("max") || type.startsWith("min")) {
-    popupContent += `🌡️ Attuale: ${data.temp != null ? data.temp.toFixed(1) : "N/D"}°C<br>`;
-    popupContent += `🔺 Max: ${data.tempHigh != null ? data.tempHigh.toFixed(1) : "N/D"}°C<br>`;
-    popupContent += `🔻 Min: ${data.tempLow != null ? data.tempLow.toFixed(1) : "N/D"}°C<br>`;
-  } else if (type.startsWith("dew")) {
-    popupContent += `🌡️ Attuale: ${data.dewp != null ? data.dewp.toFixed(1) : "N/D"}°C<br>`;
-  } else if (type.startsWith("hum")) {
-    popupContent += `💧 Attuale: ${data.hum != null ? data.hum.toFixed(1) : "N/D"}%<br>`;
-  } else if (type.startsWith("rain")) {
-    popupContent += `🌧️ Pioggia giorno: ${data.rainDaily != null ? data.rainDaily.toFixed(1) : "N/D"} mm<br>`;
-    popupContent += `💦 Rain rate: ${data.rainRate != null ? data.rainRate.toFixed(1) : "N/D"} mm/h<br>`;
-  } else if (type.startsWith("wind")) {
-    popupContent += `💨 Velocità attuale: ${data.wind != null ? data.wind.toFixed(1) : "N/D"} km/h<br>`;
-  }
-
-  const gaugesUrl = 'gauges.html?station=' + encodeURIComponent(id)
-                  + '&source=' + encodeURIComponent(stationSource)
-                  + '&name=' + encodeURIComponent(stationName);
-popupContent += `<br><button type="button" onclick="window.open('${gaugesUrl}', 'gaugesWindow')">📊 Gauges</button>`;
- 
-  markers[id].setPopupContent(popupContent);
-
-  // Aggiorna posizione
-  if (data.lat != null && data.lon != null) {
-    markers[id].setLatLng([data.lat, data.lon]);
-  }
+// costruiamo il popup
+let popupContent = `<b>Stazione:</b> ${stationName}<br>`;
+popupContent += `<b>Fonte:</b> ${stationSource}<br>`;
+if (type.startsWith("current") || type.startsWith("max") || type.startsWith("min")) {
+  popupContent += `🌡️ Attuale: ${data.temp != null ? data.temp.toFixed(1) : "N/D"}°C<br>`;
+  popupContent += `🔺 Max: ${data.tempHigh != null ? data.tempHigh.toFixed(1) : "N/D"}°C<br>`;
+  popupContent += `🔻 Min: ${data.tempLow != null ? data.tempLow.toFixed(1) : "N/D"}°C<br>`;
+} else if (type.startsWith("dew")) {
+  popupContent += `🌡️ Attuale: ${data.dewp != null ? data.dewp.toFixed(1) : "N/D"}°C<br>`;
+} else if (type.startsWith("hum")) {
+  popupContent += `💧 Attuale: ${data.hum != null ? data.hum.toFixed(1) : "N/D"}%<br>`;
+} else if (type.startsWith("rain")) {
+  popupContent += `🌧️ Pioggia giorno: ${data.rainDaily != null ? data.rainDaily.toFixed(1) : "N/D"} mm<br>`;
+  popupContent += `💦 Rain rate: ${data.rainRate != null ? data.rainRate.toFixed(1) : "N/D"} mm/h<br>`;
+} else if (type.startsWith("wind")) {
+  popupContent += `💨 Velocità attuale: ${data.wind != null ? data.wind.toFixed(1) : "N/D"} km/h<br>`;
 }
 
+if (value == null) popupContent += "⚠️ Offline<br>";
 
+// conversione del timestamp in ora di Roma
+let timeStr = "N/D";
+if (data.time) {
+  const utcTime = new Date(data.time);
+  const options = { timeZone: "Europe/Rome", hour12: false };
+  const formatterDate = new Intl.DateTimeFormat("it-IT", { ...options, year: "numeric", month: "2-digit", day: "2-digit" });
+  const formatterTime = new Intl.DateTimeFormat("it-IT", { ...options, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+
+  const [day, month, year] = formatterDate.format(utcTime).split("/");
+  const [hours, minutes, seconds] = formatterTime.format(utcTime).split(":");
+
+  timeStr = `${day}/${month}/${year} - ${hours}:${minutes}:${seconds}`;
+}
+
+popupContent += `⏰ Ultimo aggiornamento: ${timeStr}`;
+
+
+
+const gaugesUrl = `gauges.html?station=${encodeURIComponent(id)}&source=${encodeURIComponent(stationSource)}&name=${encodeURIComponent(stationName)}`;
+popupContent += `<button type="button" onclick="window.open('${gaugesUrl}', 'gaugesWindow')">📊 Gauges</button>`;
+
+markers[id].setPopupContent(popupContent);
+
+
+  // Aggiorna posizione
+  if (data.lat && data.lon) markers[id].setLatLng([data.lat, data.lon]);
+}
+
+// ----- Gauges -----
 function openGauges(stationId) {
-  // Apre gauges.html passando la stazione selezionata
   window.open(`gauges.html?station=${stationId}`, "_blank", "width=420,height=600");
 }
 
+// ----- Filtro Marker -----
 function filterMarkersBySource() {
   const checked = Array.from(document.querySelectorAll('.sourceFilter:checked')).map(cb => cb.value);
-
   Object.keys(markers).forEach(id => {
     const meta = getStationMeta(id);
     if (!meta) return;
@@ -1789,7 +1446,6 @@ function filterMarkersBySource() {
   });
 }
 
-// Event listener per tutti i checkbox
 document.querySelectorAll('.sourceFilter').forEach(cb => {
   cb.addEventListener('change', filterMarkersBySource);
 });
@@ -1797,125 +1453,135 @@ document.querySelectorAll('.sourceFilter').forEach(cb => {
 
 
 
-async function fetchLimet(id) {
-  const st = stationsLimet[id];
-  if (!st) return;
-
+async function fetchLimet() {
   try {
-  const response = await fetch(
-    "https://api.allorigins.win/get?url=" +
-    encodeURIComponent(`https://retelimet.centrometeoligure.it/stazioni/${st.link2}/data/cu/realtimegauges.txt`)
-  );
+    const url = "https://api-stazioni-meteo.vercel.app/limet.json";
+    const res = await fetch(url);
+    const text = await res.text();
 
-  const result = await response.json();
-  const data = JSON.parse(result.contents); // parse del JSON
+    const lines = text.trim().split("\n");
+    if (lines.length < 2) return;
 
-  // Dati principali
-  const temp      = parseFloat(data.temp.replace(",", ".")) || 0;
-  const tempLow   = parseFloat(data.tempTL.replace(",", ".")) || 0;
-  const tempHigh  = parseFloat(data.tempTH.replace(",", ".")) || 0;
-  const dewp      = parseFloat(data.dew.replace(",", ".")) || 0;
-  const dewpHigh      = parseFloat(data.dewpointTH.replace(",", ".")) || 0;
-  const dewpLow      = parseFloat(data.dewpointTL.replace(",", ".")) || 0;
-  const heat     = parseFloat(data.heatindex.replace(",", ".")) || 0;
-  const heatHigh      = parseFloat(data.heatindexTH.replace(",", ".")) || 0;
-  const heatLow    = parseFloat(data.tempTL.replace(",", ".")) || 0;
-  const rainDaily = parseFloat(data.rfall.replace(",", ".")) || 0;
-  const rainRate  = parseFloat(data.rrate.replace(",", ".")) || 0;
-  const wind   = parseFloat(data.wspeed.replace(",", ".")) || 0;
-  const windGust     = parseFloat(data.wgust.replace(",", ".")) || 0;
-  const windGustHigh  = parseFloat(data.wgustTM.replace(",", ".")) || 0;
-  const windDir    = parseFloat(data.bearing.replace(",", ".")) || 0;
-  const hum       = parseFloat(data.hum.replace(",", ".")) || 0;
-  const humHigh    = parseFloat(data.humTH.replace(",", ".")) || 0;
-  const humLow    = parseFloat(data.humTL.replace(",", ".")) || 0;
+    // prima riga: timestamp originale ISO
+    const timestampObj = JSON.parse(lines[0]);
+    const originalTimestamp = timestampObj.timestamp;
 
-  // Aggiorna i dati nel tuo oggetto
-  latestData[id] = {
-    temp,
-    tempHigh,
-    tempLow,
-    dewp,
-    dewpHigh,
-    dewpLow,
-    rainDaily,
-    rainRate,
-    wind,
-    windGust,
-    windDir,
-    hum,
-    humHigh,
-    humLow,
-    lat: st.lat,
-    lon: st.lon
-  };
+    // parse JSON di ciascuna riga (ignora la prima)
+    const dataLines = lines.slice(1).map(line => JSON.parse(line));
 
-  updateMarker(id);
+    // fetch parallelo per tutte le stazioni
+    const fetches = dataLines.map(async stationData => {
+      const id = stationData.N.replace(/\s+/g, "_");
+      const lat = parseFloat(stationData.LAT ?? stationsLIMET[stationData.N]?.lat ?? 0);
+      const lon = parseFloat(stationData.LON ?? stationsLIMET[stationData.N]?.lon ?? 0);
 
-} catch (err) {
-  console.error(`Errore fetch LIMET ${id}:`, err);
-}
+      const temp = stationData.T != null ? parseFloat(stationData.T) : null;
+      const tempHigh = stationData.TH != null ? parseFloat(stationData.TH) : null;
+      const tempLow = stationData.TL != null ? parseFloat(stationData.TL) : null;
+
+      const hum = stationData.H != null ? parseFloat(stationData.H) : null;
+      const humHigh = stationData.HH != null ? parseFloat(stationData.HH) : null;
+      const humLow = stationData.HL != null ? parseFloat(stationData.HL) : null;
+
+      const dewp = stationData.D != null ? parseFloat(stationData.D) : null;
+      const wind = stationData.V != null ? parseFloat(stationData.V) : null;
+      const windGust = stationData.G != null ? parseFloat(stationData.G) : null;
+      const rainDaily = stationData.R != null ? parseFloat(stationData.R) : null;
+      const rainRate = stationData.RR != null ? parseFloat(stationData.RR) : null;
+
+      latestData[id] = {
+        temp, tempHigh, tempLow,
+        hum, humHigh, humLow,
+        dewp,
+        wind, windGust,
+        rainDaily, rainRate,
+        lat, lon,
+        isInactive: temp == null && hum == null && wind == null && rainDaily == null,
+        time: originalTimestamp
+      };
+
+      // salva la stazione
+      stationsLimet[id] = { lat, lon };
+
+      // crea marker se non esiste
+      if (!markers[id]) createMarker(id, lat, lon);
+
+      // aggiorna marker
+      updateMarker(id);
+    });
+
+    // aspetta che tutte le stazioni siano processate
+    await Promise.all(fetches);
+
+  } catch (err) {
+    console.error("Errore fetch LIMET:", err);
+  }
 }
 
 
 
 async function fetch3R() {
   try {
-    // URL stazioni 3R con proxy
-    const urlStations = "https://corsproxy.io/?" + 
-      encodeURIComponent("https://www.meteo3r.it/dati/mappe/misure.geojson");
+    const url = "https://api-stazioni-meteo.vercel.app/meteo3r.json";
+    const res = await fetch(url);
+    const text = await res.text(); // leggere tutto come testo
 
-    const resStations = await fetch(urlStations);
-    const dataText = await resStations.json();
-    const data = JSON.parse(dataText.contents);
+    const lines = text.trim().split("\n");
+    if (lines.length < 2) return;
 
-    if (!data.features || !Array.isArray(data.features)) {
-      console.warn("Risposta stazioni 3R inattesa:", data);
-      return;
-    }
+    // prima riga: timestamp originale ISO
+    const timestampObj = JSON.parse(lines[0]);
+    const originalTimestamp = timestampObj.timestamp;
 
-    data.features.forEach(st => {
-      const id = st.properties.IDRETE_CODSTAZ;
-      // filtro solo PIE e VDA
-      if (!id.startsWith("PIE") && !id.startsWith("VDA")) return;
+    // parse JSON di ciascuna riga (ignora la prima)
+    const dataLines = lines.slice(1).map(line => JSON.parse(line));
 
-      const lat = parseFloat(st.geometry.coordinates[1]);
-      const lon = parseFloat(st.geometry.coordinates[0]);
+    dataLines.forEach(stationData => {
+      const id = stationData.N.replace(/\s+/g, "_"); // id basato sul nome
+      const lat = parseFloat(stationData.LAT);
+      const lon = parseFloat(stationData.LON);
 
-      const temp = st.properties.T !== "" ? parseFloat(st.properties.T) : null;
-      const wind = st.properties.VV !== "" ? parseFloat(st.properties.VV) : null;
-      const windDir = st.properties.DD !== "" ? parseFloat(st.properties.DD) : null;
-      const rainDaily = st.properties.P_24H !== "" ? parseFloat(st.properties.P_24H) : null;
+      const temp = stationData.T != null ? parseFloat(stationData.T) : null;
+      const tempHigh = stationData.TH != null ? parseFloat(stationData.TH) : null;
+      const tempLow = stationData.TL != null ? parseFloat(stationData.TL) : null;
 
-      // salva dati in latestData
+      const hum = stationData.H != null ? parseFloat(stationData.H) : null;
+      const humHigh = stationData.HH != null ? parseFloat(stationData.HH) : null;
+      const humLow = stationData.HL != null ? parseFloat(stationData.HL) : null;
+
+      const dewp = stationData.D != null ? parseFloat(stationData.D) : null;
+      const wind = stationData.V != null ? parseFloat(stationData.V) : null;
+      const windGust = stationData.G != null ? parseFloat(stationData.G) : null;
+      const rainDaily = stationData.R != null ? parseFloat(stationData.R) : null;
+      const rainRate = stationData.RR != null ? parseFloat(stationData.RR) : null;
+
       latestData[id] = {
-        temp,
-        wind,
-        windDir,
-        rainDaily,
-        lat,
-        lon,
-        isInactive: temp == null && wind == null && windDir == null && rainDaily == null
+        temp, tempHigh, tempLow,
+        hum, humHigh, humLow,
+        dewp,
+        wind, windGust,
+        rainDaily, rainRate,
+        lat, lon,
+        isInactive: temp == null && hum == null && wind == null && rainDaily == null,
+        time: originalTimestamp // <-- salvo il timestamp originale ISO
       };
 
-      // salva la stazione in stations3R
+      // salva la stazione
       stations3R[id] = { lat, lon };
 
       // crea marker se non esiste
-      if (!markers[id]) {
-        createMarker(id, lat, lon);
-      }
+      if (!markers[id]) createMarker(id, lat, lon);
 
       // aggiorna marker
       updateMarker(id);
     });
 
-    console.log("Dati 3R aggiornati:", latestData);
-
   } catch (err) {
-    console.error("Errore fetch dati 3R:", err);
+    console.error("Errore fetch 3R:", err);
   }
 }
+
+
 
 
 
@@ -1974,13 +1640,17 @@ async function fetch3R() {
     const res = await fetch(url);
     const text = await res.text(); // leggere tutto come testo
 
-    // dividi per linea e ignora la prima riga (timestamp)
-    const lines = text.trim().split("\n").slice(1);
+    const lines = text.trim().split("\n");
+    if (lines.length < 2) return;
 
-    // parse JSON di ciascuna riga
-    const data = lines.map(line => JSON.parse(line));
+    // prima riga: timestamp originale ISO
+    const timestampObj = JSON.parse(lines[0]);
+    const originalTimestamp = timestampObj.timestamp;
 
-    data.forEach(stationData => {
+    // parse JSON di ciascuna riga (ignora la prima)
+    const dataLines = lines.slice(1).map(line => JSON.parse(line));
+
+    dataLines.forEach(stationData => {
       const id = stationData.N.replace(/\s+/g, "_"); // id basato sul nome
       const lat = parseFloat(stationData.LAT);
       const lon = parseFloat(stationData.LON);
@@ -1994,34 +1664,90 @@ async function fetch3R() {
       const humLow = stationData.HL != null ? parseFloat(stationData.HL) : null;
 
       const dewp = stationData.D != null ? parseFloat(stationData.D) : null;
-      const dewpHigh = null; // non presente nei dati
-      const dewpLow = null; // non presente nei dati
-
       const wind = stationData.V != null ? parseFloat(stationData.V) : null;
       const windGust = stationData.G != null ? parseFloat(stationData.G) : null;
-      const windDir = null; // non presente nei dati
-      const windDirMax = null; // non presente nei dati
-
       const rainDaily = stationData.R != null ? parseFloat(stationData.R) : null;
       const rainRate = stationData.RR != null ? parseFloat(stationData.RR) : null;
 
       latestData[id] = {
         temp, tempHigh, tempLow,
         hum, humHigh, humLow,
-        dewp, dewpHigh, dewpLow,
-        wind, windGust, windDir, windDirMax,
+        dewp,
+        wind, windGust,
         rainDaily, rainRate,
         lat, lon,
-        isInactive: temp == null && hum == null && wind == null && rainDaily == null
+        isInactive: temp == null && hum == null && wind == null && rainDaily == null,
+        time: originalTimestamp // <-- salvo il timestamp originale ISO
       };
 
       // salva la stazione
       stationsOMIRL[id] = { lat, lon };
 
       // crea marker se non esiste
-      if (!markers[id]) {
-        createMarker(id, lat, lon);
-      }
+      if (!markers[id]) createMarker(id, lat, lon);
+
+      // aggiorna marker
+      updateMarker(id);
+    });
+
+  } catch (err) {
+    console.error("Errore fetch OMIRL:", err);
+  }
+}
+
+
+
+async function fetchCML() {
+  try {
+    const url = "https://api-stazioni-meteo.vercel.app/cml.json";
+    const res = await fetch(url);
+    const text = await res.text(); // leggere tutto come testo
+
+    const lines = text.trim().split("\n");
+    if (lines.length < 2) return;
+
+    // prima riga: timestamp originale ISO
+    const timestampObj = JSON.parse(lines[0]);
+    const originalTimestamp = timestampObj.timestamp;
+
+    // parse JSON di ciascuna riga (ignora la prima)
+    const dataLines = lines.slice(1).map(line => JSON.parse(line));
+
+    dataLines.forEach(stationData => {
+      const id = stationData.N.replace(/\s+/g, "_"); // id basato sul nome
+      const lat = parseFloat(stationData.LAT);
+      const lon = parseFloat(stationData.LON);
+
+      const temp = stationData.T != null ? parseFloat(stationData.T) : null;
+      const tempHigh = stationData.TH != null ? parseFloat(stationData.TH) : null;
+      const tempLow = stationData.TL != null ? parseFloat(stationData.TL) : null;
+
+      const hum = stationData.H != null ? parseFloat(stationData.H) : null;
+      const humHigh = stationData.HH != null ? parseFloat(stationData.HH) : null;
+      const humLow = stationData.HL != null ? parseFloat(stationData.HL) : null;
+
+      const dewp = stationData.D != null ? parseFloat(stationData.D) : null;
+      const wind = stationData.V != null ? parseFloat(stationData.V) : null;
+      const windGust = stationData.G != null ? parseFloat(stationData.G) : null;
+      const rainDaily = stationData.R != null ? parseFloat(stationData.R) : null;
+      const rainRate = stationData.RR != null ? parseFloat(stationData.RR) : null;
+
+      latestData[id] = {
+        temp, tempHigh, tempLow,
+        hum, humHigh, humLow,
+        dewp,
+        wind, windGust,
+        rainDaily, rainRate,
+        lat, lon,
+        isInactive: temp == null && hum == null && wind == null && rainDaily == null,
+        time: originalTimestamp // <-- salvo il timestamp originale ISO
+      };
+
+      // salva la stazione
+      stationsCML[id] = { lat, lon };
+
+      // crea marker se non esiste
+      if (!markers[id]) createMarker(id, lat, lon);
 
       // aggiorna marker
       updateMarker(id);
@@ -2031,13 +1757,73 @@ async function fetch3R() {
     console.error("Errore fetch CML:", err);
   }
 }
-
-
-
-
-async function fetchCML() {
+async function fetchDMA() {
   try {
-    const url = "https://api-stazioni-meteo.vercel.app/cml.json";
+    const url = "https://api-stazioni-meteo.vercel.app/datimeteoasti.json";
+    const res = await fetch(url);
+    const text = await res.text(); // leggere tutto come testo
+
+    const lines = text.trim().split("\n");
+    if (lines.length < 2) return;
+
+    // prima riga: timestamp originale ISO
+    const timestampObj = JSON.parse(lines[0]);
+    const originalTimestamp = timestampObj.timestamp;
+
+    // parse JSON di ciascuna riga (ignora la prima)
+    const dataLines = lines.slice(1).map(line => JSON.parse(line));
+
+    dataLines.forEach(stationData => {
+      const id = stationData.N.replace(/\s+/g, "_"); // id basato sul nome
+      const lat = parseFloat(stationData.LAT);
+      const lon = parseFloat(stationData.LON);
+
+      const temp = stationData.T != null ? parseFloat(stationData.T) : null;
+      const tempHigh = stationData.TH != null ? parseFloat(stationData.TH) : null;
+      const tempLow = stationData.TL != null ? parseFloat(stationData.TL) : null;
+
+      const hum = stationData.H != null ? parseFloat(stationData.H) : null;
+      const humHigh = stationData.HH != null ? parseFloat(stationData.HH) : null;
+      const humLow = stationData.HL != null ? parseFloat(stationData.HL) : null;
+
+      const dewp = stationData.D != null ? parseFloat(stationData.D) : null;
+      const wind = stationData.V != null ? parseFloat(stationData.V) : null;
+      const windGust = stationData.G != null ? parseFloat(stationData.G) : null;
+      const rainDaily = stationData.R != null ? parseFloat(stationData.R) : null;
+      const rainRate = stationData.RR != null ? parseFloat(stationData.RR) : null;
+
+      latestData[id] = {
+        temp, tempHigh, tempLow,
+        hum, humHigh, humLow,
+        dewp,
+        wind, windGust,
+        rainDaily, rainRate,
+        lat, lon,
+        isInactive: temp == null && hum == null && wind == null && rainDaily == null,
+        time: originalTimestamp // <-- salvo il timestamp originale ISO
+      };
+
+      // salva la stazione
+      stationsDMA[id] = { lat, lon };
+
+      // crea marker se non esiste
+      if (!markers[id]) createMarker(id, lat, lon);
+
+      // aggiorna marker
+      updateMarker(id);
+    });
+
+  } catch (err) {
+    console.error("Errore fetch DMA:", err);
+  }
+}
+
+
+const stationsTorinoMeteo = {};
+
+async function fetchTorinoMeteo() {
+  try {
+    const url = "https://api-stazioni-meteo.vercel.app/torinometeo.json";
     const res = await fetch(url);
     const text = await res.text(); // leggere tutto come testo
 
@@ -2083,7 +1869,7 @@ async function fetchCML() {
       };
 
       // salva la stazione
-      stationsCML[id] = { lat, lon };
+      stationsTorinoMeteo[id] = { lat, lon };
 
       // crea marker se non esiste
       if (!markers[id]) {
@@ -2095,82 +1881,9 @@ async function fetchCML() {
     });
 
   } catch (err) {
-    console.error("Errore fetch CML:", err);
-  }
-}
-
-
-
-const stationsTorinoMeteo = {};
-
-async function fetchTorinoMeteo() {
-  try {
-    const url = 
-      "https://www.torinometeo.org/api/v1/realtime/data/?format=json"
-    ;
-
-    const res = await fetch(url);
-    const data = await res.json();
-
-    if (!Array.isArray(data)) {
-      console.warn("Risposta TorinoMeteo inattesa:", data);
-      return;
-    }
-
-    data.forEach(stationData => {
-  const st = stationData.station;
-  const id = st.slug;
-  const lat = parseFloat(st.lat);
-  const lon = parseFloat(st.lng);
-
-  const temp = stationData.temperature != null ? parseFloat(stationData.temperature) : null;
-  const tempHigh = stationData.temperature_max != null ? parseFloat(stationData.temperature_max) : null;
-  const tempLow = stationData.temperature_min != null ? parseFloat(stationData.temperature_min) : null;
-
-  const hum = stationData.relative_humidity != null ? parseFloat(stationData.relative_humidity) : null;
-  const humHigh = stationData.relative_humidity_max != null ? parseFloat(stationData.relative_humidity_max) : null;
-  const humLow = stationData.relative_humidity_min != null ? parseFloat(stationData.relative_humidity_min) : null;
-
-  const dewp = stationData.dewpoint != null ? parseFloat(stationData.dewpoint) : null;
-  const dewpHigh = stationData.dewpoint_max != null ? parseFloat(stationData.dewpoint_max) : null;
-  const dewpLow = stationData.dewpoint_min != null ? parseFloat(stationData.dewpoint_min) : null;
-
-  const wind = stationData.wind_strength != null ? parseFloat(stationData.wind_strength) : null;
-  const windGust = stationData.wind_strength_max != null ? parseFloat(stationData.wind_strength_max) : null;
-  const windDir = stationData.wind_dir != null ? parseFloat(stationData.wind_dir) : null;
-  const windDirMax = stationData.wind_dir_max != null ? parseFloat(stationData.wind_dir_max) : null;
-
-  const rainDaily = stationData.rain != null ? parseFloat(stationData.rain) : null; // totale caduto
-  const rainRate = stationData.rain_rate != null ? parseFloat(stationData.rain_rate) : null; // intensità
-
-  latestData[id] = {
-    temp, tempHigh, tempLow,
-    hum, humHigh, humLow,
-    dewp, dewpHigh, dewpLow,
-    wind, windGust, windDir, 
-    rainDaily, rainRate,
-    lat, lon,
-    isInactive: temp == null && hum == null && wind == null && rain == null
-  };
-
-  // salva la stazione
-  stationsTorinoMeteo[id] = { lat, lon };
-
-  // crea marker se non esiste
-  if (!markers[id]) {
-    createMarker(id, lat, lon);
-  }
-
-  // aggiorna marker
-  updateMarker(id);
-});
-
-
-  } catch (err) {
     console.error("Errore fetch TorinoMeteo:", err);
   }
 }
-
 
 
 
@@ -2332,36 +2045,7 @@ async function fetchStations3(id) {
     console.error(`Errore fetch stations3 ${id}:`, err);
   }
 }
-async function fetchDMA(id) {
-  try {
-    const url = "https://script.google.com/macros/s/AKfycbyNgmMhhvfxCkY1e6cYtXcxue5Zb5xBzq0JWv_fDzac-sO6Jrv7w_9js7mmw5VAJfv7cA/exec";
-    const res = await fetch(url);
-    const data = await res.json();
 
-    // Prende la temperatura dal JSON usando il nome minuscolo
-    const key = id.toLowerCase();
-    if (data[key]) {
-      const temp = data[key].temp;
-      const dewp = data[key].dewp;
-      const heat = data[key].heat;
-      const hum = data[key].hum;
-      const wind = data[key].wind;
-      const windGust = data[key].gust;
-      const rainDaily = data[key].rain;
-      const rainRate = data[key].rainrate;
-      const lat = stationsDMA[key].lat;
-      const lon = stationsDMA[key].lon;
-
-      latestData[id] = { temp, dewp, heat, hum, wind, windGust, rainDaily, rainRate, lat, lon };
-      if (typeof updateMarker === "function") updateMarker(id);
-    } else {
-      console.warn(`Nessun dato trovato per la stazione: ${id}`);
-    }
-
-  } catch(err) {
-    console.error(`Errore fetch dati ${id}:`, err);
-  }
-}
 async function fetchMeteoTortona(id) {
   const st = stationsMeteoTortona[id];
   try {
@@ -2532,10 +2216,10 @@ Object.keys(stationsBest).forEach(id => createMarker(id));
 Object.keys(stations).forEach(id => fetchPws(id));
 fetchCML(); // fetch unico per tutte le stazioni CML
 fetchOMIRL();
-scheduleLimetFetch();
+fetchLimet();
 fetch3R();
 fetchTorinoMeteo();
-Object.keys(stationsDMA).forEach(id => fetchDMA(id));
+fetchDMA();
 Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id));
 Object.keys(stations1).forEach(id => fetchStations1(id));
 Object.keys(stations2).forEach(id => fetchStations2(id));
@@ -2549,12 +2233,12 @@ setInterval(() => { fetchCML(); }, 30000);
 setInterval(() => { fetchOMIRL(); }, 30000);
 setInterval(() => { fetchTorinoMeteo(); }, 60000);
 setInterval(() => { fetch3R(); }, 150000);
+setInterval(() => { fetchLimet(); }, 30000);
+setInterval(() => { fetchDMA(); }, 150000);
 setInterval(() => { Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id)); }, 30000);
-setInterval(() => { Object.keys(stationsDMA).forEach(id => fetchDMA(id)); }, 150000);
 setInterval(() => { Object.keys(stations1).forEach(id => fetchStations1(id)); }, 15000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations2(id)); }, 135000);
 setInterval(() => { Object.keys(stations2).forEach(id => fetchStations3(id)); }, 15000);
-scheduleLimetFetch();
 setInterval(() => {Object.keys(stationsBest).forEach(id => fetchPws(id));}, 5000);
 
     // Cambia tipo di temperatura
