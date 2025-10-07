@@ -194,7 +194,7 @@
             font-size: 1.125rem; /* text-lg per i valori numerici nel record */
             font-weight: 900;
         }
-        @media (max-width: 639px) {
+@media (max-width: 639px) {
   .grid-container {
     grid-template-columns: 1fr !important; /* ogni card prende tutta la larghezza */
     grid-auto-rows: auto;
@@ -206,11 +206,7 @@
     width: 100%;
   }
 
-  /* Solo per la card della temperatura: espandila */
-  #temp-value,
-  #temp-minmax-horizontal {
-    width: 100%;
-  }
+
 
   /* Metti un po' di spazio tra le card piccole */
   .gauge-card:not(#temp-value):not(#temp-minmax-horizontal) {
@@ -966,8 +962,7 @@ window.addEventListener('resize', () => {
         </h1>
         
         <!-- Contenitore Griglia (4 Colonne) -->
-        <div class="grid grid-container gap-4 auto-rows-[6.5rem] transition-all duration-300
-            grid-cols-1 md:grid-cols-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 transition-all duration-300 auto-rows-auto">
 
 
             <!-- Card A1 (1x2): TEMPERATURA ATTUALE (GRANDE) -->
