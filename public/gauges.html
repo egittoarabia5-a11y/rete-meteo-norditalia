@@ -195,6 +195,12 @@
             font-weight: 900;
         }
 @media (max-width: 767px) {
+  .grid-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  grid-auto-rows: 6.5rem;
+}
 
   .gauge-card {
     flex-direction: column !important; /* logo sopra, valori sotto */
