@@ -194,32 +194,29 @@
             font-size: 1.125rem; /* text-lg per i valori numerici nel record */
             font-weight: 900;
         }
+/* ===== Mobile (<768px) ===== */
 @media (max-width: 767px) {
   .grid-container {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  grid-auto-rows: 6.5rem;
-}
+    grid-template-columns: 1fr; /* 1 colonna sola */
+    grid-auto-rows: auto; /* altezza automatica per contenuto */
+  }
 
   .gauge-card {
-    flex-direction: column !important; /* logo sopra, valori sotto */
-    align-items: flex-start;
-    width: 100%;
+    grid-column: 1 / -1 !important; /* ogni card occupa tutta la larghezza */
+    grid-row: auto !important;       /* altezza automatica */
   }
 
-  /* Solo per la card della temperatura: espandila */
-  #temp-value,
-  #temp-minmax-horizontal {
-    width: 100%;
+  /* Espandiamo la temperatura in alto */
+  #gauge-temp {
+    grid-row: auto !important;
+    grid-column: 1 / -1 !important;
   }
 
-  /* Metti un po' di spazio tra le card piccole */
-  .gauge-card:not(#temp-value):not(#temp-minmax-horizontal) {
-    margin-top: 0.2rem;
+  /* Piccole card sotto */
+  .gauge-card:not(#gauge-temp) {
+    margin-top: 0.5rem;
   }
 }
-
     </style>
     <script>
         let tempChartInstance = null;
@@ -972,7 +969,7 @@ window.addEventListener('resize', () => {
 
 
             <!-- Card A1 (1x2): TEMPERATURA ATTUALE (GRANDE) -->
-            <div class="gauge-card col-span-1 row-span-2 p-4 flex flex-col justify-between">
+            <div id="gauge-temp" class="gauge-card col-span-2 row-span-2 md:col-span-1 md:row-span-2 p-4 flex flex-col justify-start">
                 <p class="text-sm font-bold text-gray-800 mb-2">Temperatura</p>
                 
                 <div class="flex items-center justify-start flex-grow">
