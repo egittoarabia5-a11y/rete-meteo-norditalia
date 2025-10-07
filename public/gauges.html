@@ -194,7 +194,7 @@
             font-size: 1.125rem; /* text-lg per i valori numerici nel record */
             font-weight: 900;
         }
-@media (max-width: 639px) {
+@media (max-width: 767px) {
   .grid-container {
     grid-template-columns: 1fr !important; /* ogni card prende tutta la larghezza */
     grid-auto-rows: auto;
@@ -206,7 +206,11 @@
     width: 100%;
   }
 
-
+  /* Solo per la card della temperatura: espandila */
+  #temp-value,
+  #temp-minmax-horizontal {
+    width: 100%;
+  }
 
   /* Metti un po' di spazio tra le card piccole */
   .gauge-card:not(#temp-value):not(#temp-minmax-horizontal) {
