@@ -194,31 +194,29 @@
             font-size: 1.125rem; /* text-lg per i valori numerici nel record */
             font-weight: 900;
         }
-/* Default: lascia tutto come desktop */
-.gauge-card {
-  display: flex;
-  flex-direction: row; /* desktop originale */
-  justify-content: space-between;
-}
-
-/* Solo su schermi piccoli (<640px) */
-@media (max-width: 639px) {
+        @media (max-width: 639px) {
   .grid-container {
-    grid-template-columns: 1fr !important; /* una card per riga */
+    grid-template-columns: 1fr !important; /* ogni card prende tutta la larghezza */
     grid-auto-rows: auto;
   }
 
   .gauge-card {
     flex-direction: column !important; /* logo sopra, valori sotto */
     align-items: flex-start;
+    width: 100%;
   }
 
-  .gauge-card .flex-col {
+  /* Solo per la card della temperatura: espandila */
+  #temp-value,
+  #temp-minmax-horizontal {
+    width: 100%;
+  }
+
+  /* Metti un po' di spazio tra le card piccole */
+  .gauge-card:not(#temp-value):not(#temp-minmax-horizontal) {
     margin-top: 0.5rem;
-    margin-left: 0;
   }
 }
-
 
     </style>
     <script>
