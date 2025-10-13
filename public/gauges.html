@@ -387,15 +387,74 @@
       titleEl.textContent = `ERRORE: Dati WU non caricati (${station})`;
     }
   };
+  const updateOmirlData = async () => {
+  try {
+    const res = await fetch("https://api-stazioni-meteo.vercel.app/omirl.json");
+    if (!res.ok) throw new Error("Errore nel caricamento dati OMIRL");
 
-  // Esegui funzione corretta
-  if (stationSource.toLowerCase() === "limet") {
-    updateLimetData();
-    setInterval(updateLimetData, 10000);
-  } else if (stationSource.toLowerCase() === "wunderground") {
-    updateWUData();
-    setInterval(updateWUData, 10000);
+    const text = await res.text();
+    const lines = text.trim().split("\n").map(l => JSON.parse(l));
+    const timestamp = lines[0].timestamp;
+    const data = lines.find(d => d.N?.toLowerCase() === station.toLowerCase() || d.S === "0");
+
+    if (!data) {
+      titleEl.textContent = `ERRORE: Dati OMIRL non trovati (${station})`;
+      return;
+    }
+
+    titleEl.textContent = data.N || station;
+
+    // TEMPERATURA PRINCIPALE
+    const temperatura = data.T;
+    const tMin = data.TL;
+    const tMax = data.TH;
+
+    const tempEl = document.getElementById("temp-value");
+    tempEl.textContent = formatValue(temperatura) + "°";
+    tempEl.className = "main-value-lg";
+
+    const tempMinMaxEl = document.getElementById("temp-minmax-horizontal");
+    tempMinMaxEl.innerHTML = `
+      <span style="font-weight: normal; color: black;">Max: </span>
+      <span class="max-value" style="font-weight: bold; color: red;">${formatValue(tMax)}°</span>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <span style="font-weight: normal; color: black;">Min: </span>
+      <span class="min-value" style="font-weight: bold; color: blue;">${formatValue(tMin)}°</span>
+    `;
+
+    // ALTRI VALORI SMALL CON MIN/MAX
+    setMainSmWithMinMax("dewpoint-value", "dewpoint-minmax", data.D ?? 0, data.DL ?? 0, data.DH ?? 0, "°");
+    setMainSmWithMinMax("umidity-value", "umidity-minmax", data.H, data.HL ?? data.H, data.HH ?? data.H, "%");
+    setMainSmWithMinMax("wind-value", "wind-minmax", data.V, data.V, data.G ?? data.V, " km/h");
+    setMainSmWithMinMax("rainrate-value", "rainrate-minmax", data.RR, data.RR, data.RR, " mm/h");
+    setMainSmWithMinMax("raintotal-value", "raintotal-minmax", data.R, data.R, data.R, " mm");
+    setMainSmWithMinMax("heatindex-value", "heatindex-minmax", 0, 0, 0, "°");
+    setMainSmWithMinMax("radsol-value", "radsol-minmax", 0, 0, 0, " W/m²");
+    setMainSmWithMinMax("uv-value", "uv-minmax", 0, 0, 0, " UV");
+    setMainSmWithMinMax("850hpa-value", "850hpa-minmax", 0, 0, 0, "°");
+    setMainSmWithMinMax("pressione-value", "pressione-minmax", 0, 0, 0, " hPa");
+
+    document.getElementById("metadata-status").textContent = "Online";
+    document.getElementById("metadata-timestamp").textContent =
+      new Date(timestamp).toLocaleString("it-IT");
+
+  } catch (err) {
+    console.error("Errore caricamento dati OMIRL:", err);
+    titleEl.textContent = `ERRORE: Dati OMIRL non caricati (${station})`;
   }
+};
+
+if (stationSource.toLowerCase() === "limet") {
+  updateLimetData();
+  setInterval(updateLimetData, 10000);
+} else if (stationSource.toLowerCase() === "wunderground") {
+  updateWUData();
+  setInterval(updateWUData, 10000);
+} else if (stationSource.toLowerCase() === "omirl") {
+  updateOmirlData();
+  setInterval(updateOmirlData, 10000);
+}
+
 });
 
 
