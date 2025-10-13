@@ -395,22 +395,46 @@
     const text = await res.text();
     const lines = text.trim().split("\n").map(l => JSON.parse(l));
     const timestamp = lines[0].timestamp;
-    const data = lines.find(d => d.N?.toLowerCase() === station.toLowerCase() || d.S === "0");
+
+    // Trova la stazione per nome (case insensitive)
+    const data = lines.find(d => d.N && d.N.toLowerCase() === station.toLowerCase());
 
     if (!data) {
       titleEl.textContent = `ERRORE: Dati OMIRL non trovati (${station})`;
       return;
     }
 
-    titleEl.textContent = data.N || station;
+    titleEl.textContent = data.N; // Mostra nome completo tipo "Fiorino"
 
-    // TEMPERATURA PRINCIPALE
-    const temperatura = data.T;
+    const T = data.T; // Temperatura
+    const H = data.H; // Umidità relativa %
+
+    // Calcolo Dew Point (Magnus formula)
+    let dewPoint = null;
+    if (T != null && H != null) {
+      const a = 17.27;
+      const b = 237.7;
+      const alpha = ((a * T) / (b + T)) + Math.log(H / 100);
+      dewPoint = (b * alpha) / (a - alpha);
+    }
+
+    // Calcolo Heat Index (solo se T >= 27°C e H >= 40%)
+    let heatIndex = T;
+    if (T != null && H != null) {
+      const tF = T * 9/5 + 32; // Converti in Fahrenheit
+      heatIndex = -42.379 + 2.04901523*tF + 10.14333127*H
+                  - 0.22475541*tF*H - 6.83783e-3*tF*tF
+                  - 5.481717e-2*H*H + 1.22874e-3*tF*tF*H
+                  + 8.5282e-4*tF*H*H - 1.99e-6*tF*tF*H*H;
+      heatIndex = (heatIndex - 32) * 5/9; // Ritorna in °C
+    }
+
     const tMin = data.TL;
     const tMax = data.TH;
 
+    // Aggiorna temperatura principale
     const tempEl = document.getElementById("temp-value");
-    tempEl.textContent = formatValue(temperatura) + "°";
+    tempEl.textContent = formatValue(T) + "°";
     tempEl.className = "main-value-lg";
 
     const tempMinMaxEl = document.getElementById("temp-minmax-horizontal");
@@ -422,13 +446,13 @@
       <span class="min-value" style="font-weight: bold; color: blue;">${formatValue(tMin)}°</span>
     `;
 
-    // ALTRI VALORI SMALL CON MIN/MAX
-    setMainSmWithMinMax("dewpoint-value", "dewpoint-minmax", data.D ?? 0, data.DL ?? 0, data.DH ?? 0, "°");
-    setMainSmWithMinMax("umidity-value", "umidity-minmax", data.H, data.HL ?? data.H, data.HH ?? data.H, "%");
-    setMainSmWithMinMax("wind-value", "wind-minmax", data.V, data.V, data.G ?? data.V, " km/h");
-    setMainSmWithMinMax("rainrate-value", "rainrate-minmax", data.RR, data.RR, data.RR, " mm/h");
-    setMainSmWithMinMax("raintotal-value", "raintotal-minmax", data.R, data.R, data.R, " mm");
-    setMainSmWithMinMax("heatindex-value", "heatindex-minmax", 0, 0, 0, "°");
+    // Aggiorna valori small con min/max
+    setMainSmWithMinMax("dewpoint-value", "dewpoint-minmax", dewPoint ?? 0, dewPoint ?? 0, dewPoint ?? 0, "°");
+    setMainSmWithMinMax("umidity-value", "umidity-minmax", H ?? 0, data.HL ?? H ?? 0, data.HH ?? H ?? 0, "%");
+    setMainSmWithMinMax("wind-value", "wind-minmax", data.V ?? 0, data.V ?? 0, data.G ?? data.V ?? 0, " km/h");
+    setMainSmWithMinMax("rainrate-value", "rainrate-minmax", data.RR ?? 0, data.RR ?? 0, data.RR ?? 0, " mm/h");
+    setMainSmWithMinMax("raintotal-value", "raintotal-minmax", data.R ?? 0, data.R ?? 0, data.R ?? 0, " mm");
+    setMainSmWithMinMax("heatindex-value", "heatindex-minmax", heatIndex ?? 0, heatIndex ?? 0, heatIndex ?? 0, "°");
     setMainSmWithMinMax("radsol-value", "radsol-minmax", 0, 0, 0, " W/m²");
     setMainSmWithMinMax("uv-value", "uv-minmax", 0, 0, 0, " UV");
     setMainSmWithMinMax("850hpa-value", "850hpa-minmax", 0, 0, 0, "°");
@@ -443,6 +467,7 @@
     titleEl.textContent = `ERRORE: Dati OMIRL non caricati (${station})`;
   }
 };
+
 
 if (stationSource.toLowerCase() === "limet") {
   updateLimetData();
