@@ -75,6 +75,7 @@
     <label><input type="checkbox" class="sourceFilter" value="3R" > Meteo3R</label><br>
     <label><input type="checkbox" class="sourceFilter" value="Wunderground"> Wunderground</label><br>
     <label><input type="checkbox" class="sourceFilter" value="CentroMeteoLombardo"> CML</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="NetAtmo"> NetAtmo</label><br>
     <label><input type="checkbox" class="sourceFilter" value="DatiMeteoAsti"> DMA</label><br>
     <label><input type="checkbox" class="sourceFilter" value="OMIRL"> OMIRL</label>
   </div>
@@ -267,7 +268,8 @@
   ICALOS1: { api: "ICALOS1" },
   ICAMOG7: { api: "ICAMOG7", nome: "Camogli" },
   ICAMPO57: { api: "ICAMPO57" },
-  ICARAS4: { api: "ICARAS4", nome: "Carasco" },
+  ICARAS1: { api: "ICARAS1", nome: "Rivarola" },
+  ICARAS4: { api: "ICARAS4", nome: "Carasco Loreto" },
   ICARBO36: { api: "ICARBO36" },
   ICARIG15: { api: "ICARIG15" },
   ICARMA33: { api: "ICARMA33", nome: "Carmagnola" },
@@ -293,16 +295,19 @@
   ICHERA3: { api: "ICHERA3", nome: "Cherasco" },
   ICHERA4: { api: "ICHERA4", nome: "Cherasco" },
   ICHERA5: { api: "ICHERA5", nome: "Cherasco" },
-  ICHIAV1: { api: "ICHIAV1", nome: "Chiavari" },
-  ICHIAV4: { api: "ICHIAV4", nome: "Chiavari" },
+  ICHIAV1: { api: "ICHIAV1", nome: "Chiavari Caperana" },
+  ICHIAV4: { api: "ICHIAV4", nome: "Chiavari Viale A.E.Devoto" },
   ICHIAV7: { api: "ICHIAV7", nome: "Chiavari" },
+  ICHIAV11: { api: "ICHIAV11", nome: "Chiavari Ri Alto" },
   ICHIAV12: { api: "ICHIAV12", nome: "Chiavari" },
+  ICHIAV14: { api: "ICHIAV14", nome: "Chiavari Corso C.Colombo" },
   ICHIUS13: { api: "ICHIUS13", nome: "Chiusa di Pesio" },
   ICHIUS15: { api: "ICHIUS15", nome: "Chiusa di Pesio" },
   ICICAG1: { api: "ICICAG1", nome: "Cicagna" },
   ICOGOL7: { api: "ICOGOL7", nome: "Cogoleto" },
   ICOGOL47: { api: "ICOGOL47", nome: "Cogoleto" },
   ICOGOL52: { api: "ICOGOL52", nome: "Cogoleto" },
+  ICOGOR6: { api: "ICOGOR6", nome: "San Salvatore" },
   ICORTE57: { api: "ICORTE57", nome: "Cortemilia" },
   ICREMO15: { api: "ICREMO15", nome: "Cremolino" },
   ICROCE7: { api: "ICROCE7", nome: "Crocefieschi" },
@@ -469,11 +474,17 @@
   IPONZO9: { api: "IPONZO9", nome: "Ponzone" },
   IPMVILLA8: { api: "IPMVILLA8" },
   IPRASC3: { api: "IPRASC3", nome: "Prasco" },
-  IRAPAL8: { api: "IRAPAL8", nome: "Rapallo" },
+  IRAPAL3: { api: "IRAPAL3", nome: "Rapallo Sant'Agostino" },
+  IRAPAL8: { api: "IRAPAL8", nome: "Rapallo Stazione" },
   IRAPAL15: { api: "IRAPAL15", nome: "Rapallo" },
+  IRAPAL21: { api: "IRAPAL21", nome: "Rapallo San Massimo" },
   IRAPAL26: { api: "IRAPAL26", nome: "Rapallo" },
+  IRAPAL28: { api: "IRAPAL28", nome: "Rapallo Golf" },
   IRAPAL29: { api: "IRAPAL29", nome: "Rapallo" },
+  IRAPAL30: { api: "IRAPAL30", nome: "Rapallo Via Betti" },
   IRAPAL33: { api: "IRAPAL33", nome: "Rapallo" },
+  IRAPAL34: { api: "IRAPAL34", nome: "Rapallo Salita S.Agostino" },
+  IRECCO4: { api: "IRECCO4", nome: "Recco Uscita A12" },
   IRIALT2: { api: "IRIALT2" },
   IRICCD2: { api: "IRICCD2", nome: "Riccò del Golfo" },
   IRIVAP3: { api: "IRIVAP3" },
@@ -505,6 +516,7 @@
   ISANTA1316: { api: "ISANTA1316" },
   ISANTA1419: { api: "ISANTA1419" },
   ISANTA1669: { api: "ISANTA1669" },
+  ISANTA2003: { api: "ISANTA2003", nome: "Santa Margherita Ligure Crosa dell'Oro" },
   ISANTE63: { api: "ISANTE63" },
   ISANTO233: { api: "ISANTO233" },
   ISANTO347: { api: "ISANTO347" },
@@ -576,6 +588,7 @@
   IVOLVE3: { api: "IVOLVE3" },
   IVIGON12: { api: "IVIGON12" },
   IVIRLE1: { api: "IVIRLE1" },
+  IZOAGL7: { api: "IZOAGL7", nome: "Sant'Ambrogio della Costa" },
   IGENOA3101: { api: "IGENOA3101" },
   IGENOA2763: { api: "IGENOA2763" },
   ILIGURIA67: { api: "ILIGURIA67" },
@@ -1136,7 +1149,11 @@
   IACQUI20: { api: "IACQUI20" },
   ISAREZ2: { api: "ISAREZ2" },
   IGENOVA3078: { api: "IGENOA3078" },
+  ISESTR22: { api: "ISESTR22", nome: "Sestri L. Santa Sabina" },
+  ISESTR34: { api: "ISESTR34", nome: "Sestri L. San Bernardo" },
+  ISESTR34: { api: "ISESTR34", nome: "Sestri L. San Bernardo" },
 };
+const stationsNetAtmo = {};
 const stations3R = {};
 const stationsLimet = {};
 
@@ -1261,13 +1278,14 @@ function getColorWindDir(deg) {
 // ----- Cerca meta della stazione -----
 function getStationMeta(id) {
   const maps = {
-    stations, stationsLimet, stations3R, stationsTorinoMeteo,
+    stations, stationsLimet, stations3R, stationsTorinoMeteo,stationsNetAtmo,
     stationsOMIRL, stationsCML, stationsDMA, stationsMeteoTortona,
     stations1, stations2, stations3, stationsBest
   };
 
   const defaultSource = {
     stations: 'Wunderground',
+    stationsNetAtmo: 'NetAtmo',
     stationsLimet: 'LIMET',
     stations3R: '3R',
     stationsTorinoMeteo: 'TorinoMeteo',
@@ -1604,7 +1622,66 @@ async function fetch3R() {
 }
 
 
+async function fetchNetAtmo() {
+  try {
+    const url = "https://api-stazioni-meteo.vercel.app/netatmoLiguria.json";
+    const res = await fetch(url);
+    const text = await res.text(); // leggere tutto come testo
 
+    const lines = text.trim().split("\n");
+    if (lines.length < 2) return;
+
+    // prima riga: timestamp originale ISO
+    const timestampObj = JSON.parse(lines[0]);
+    const originalTimestamp = timestampObj.timestamp;
+
+    // parse JSON di ciascuna riga (ignora la prima)
+    const dataLines = lines.slice(1).map(line => JSON.parse(line));
+
+    dataLines.forEach(stationData => {
+      const id = stationData.N.replace(/\s+/g, "_"); // id basato sul nome
+      const lat = parseFloat(stationData.LAT);
+      const lon = parseFloat(stationData.LON);
+
+      const temp = stationData.T != null ? parseFloat(stationData.T) : null;
+      const tempHigh = stationData.TH != null ? parseFloat(stationData.TH) : null;
+      const tempLow = stationData.TL != null ? parseFloat(stationData.TL) : null;
+
+      const hum = stationData.H != null ? parseFloat(stationData.H) : null;
+      const humHigh = stationData.HH != null ? parseFloat(stationData.HH) : null;
+      const humLow = stationData.HL != null ? parseFloat(stationData.HL) : null;
+
+      const dewp = stationData.D != null ? parseFloat(stationData.D) : null;
+      const wind = stationData.V != null ? parseFloat(stationData.V) : null;
+      const windGust = stationData.G != null ? parseFloat(stationData.G) : null;
+      const rainDaily = stationData.R != null ? parseFloat(stationData.R) : null;
+      const rainRate = stationData.RR != null ? parseFloat(stationData.RR) : null;
+
+      latestData[id] = {
+        temp, tempHigh, tempLow,
+        hum, humHigh, humLow,
+        dewp,
+        wind, windGust,
+        rainDaily, rainRate,
+        lat, lon,
+        isInactive: temp == null && hum == null && wind == null && rainDaily == null,
+        time: originalTimestamp // <-- salvo il timestamp originale ISO
+      };
+
+      // salva la stazione
+      stationsNetAtmo[id] = { lat, lon };
+
+      // crea marker se non esiste
+      if (!markers[id]) createMarker(id, lat, lon);
+
+      // aggiorna marker
+      updateMarker(id);
+    });
+
+  } catch (err) {
+    console.error("Errore fetch NetAtmo:", err);
+  }
+}
 
 
 
@@ -2227,6 +2304,7 @@ Object.keys(stationsTorinoMeteo).forEach(id => createMarker(id));
 Object.keys(stationsCML).forEach(id => createMarker(id));
 Object.keys(stationsOMIRL).forEach(id => createMarker(id));
 Object.keys(stations3R).forEach(id => createMarker(id));
+Object.keys(stationsNetAtmo).forEach(id => createMarker(id));
 Object.keys(stationsMeteoTortona).forEach(id => createMarker(id));
 Object.keys(stationsDMA).forEach(id => createMarker(id));
 Object.keys(stations1).forEach(id => createMarker(id));
@@ -2240,6 +2318,7 @@ fetchCML(); // fetch unico per tutte le stazioni CML
 fetchOMIRL();
 fetchLimet();
 fetch3R();
+fetchNetAtmo();
 fetchTorinoMeteo();
 fetchDMA();
 Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id));
@@ -2254,6 +2333,7 @@ setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 60000)
 setInterval(() => { fetchCML(); }, 30000);
 setInterval(() => { fetchOMIRL(); }, 30000);
 setInterval(() => { fetchTorinoMeteo(); }, 60000);
+setInterval(() => { fetchNetAtmo(); }, 60000);
 setInterval(() => { fetch3R(); }, 150000);
 setInterval(() => { fetchLimet(); }, 30000);
 setInterval(() => { fetchDMA(); }, 150000);
@@ -2267,6 +2347,7 @@ setInterval(() => {Object.keys(stationsBest).forEach(id => fetchPws(id));}, 5000
     document.getElementById("tempSelect").addEventListener("change", () => {
   Object.keys(stations).forEach(id => updateMarker(id));
   Object.keys(stationsTorinoMeteo).forEach(id => updateMarker(id));
+  Object.keys(stationsNetAtmo).forEach(id => updateMarker(id));
   Object.keys(stationsCML).forEach(id => updateMarker(id));
   Object.keys(stationsOMIRL).forEach(id => updateMarker(id));
   Object.keys(stations3R).forEach(id => updateMarker(id));

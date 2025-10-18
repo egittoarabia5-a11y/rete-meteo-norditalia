@@ -396,15 +396,19 @@
     const lines = text.trim().split("\n").map(l => JSON.parse(l));
     const timestamp = lines[0].timestamp;
 
+    // Trasforma underscore in spazi nella variabile station
+    const stationName = station.replace(/_/g, " ").toLowerCase();
+
     // Trova la stazione per nome (case insensitive)
-    const data = lines.find(d => d.N && d.N.toLowerCase() === station.toLowerCase());
+    const data = lines.find(d => d.N && d.N.toLowerCase() === stationName);
 
     if (!data) {
-      titleEl.textContent = `ERRORE: Dati OMIRL non trovati (${station})`;
+      titleEl.textContent = `ERRORE: Dati OMIRL non trovati (${station.replace(/_/g, " ")})`;
       return;
     }
 
-    titleEl.textContent = data.N; // Mostra nome completo tipo "Fiorino"
+    // Mostra il nome corretto con spazi
+    titleEl.textContent = data.N.replace(/_/g, " ");
 
     const T = data.T; // Temperatura
     const H = data.H; // Umidità relativa %
@@ -464,9 +468,10 @@
 
   } catch (err) {
     console.error("Errore caricamento dati OMIRL:", err);
-    titleEl.textContent = `ERRORE: Dati OMIRL non caricati (${station})`;
+    titleEl.textContent = `ERRORE: Dati OMIRL non caricati (${station.replace(/_/g, " ")})`;
   }
 };
+
 
 
 if (stationSource.toLowerCase() === "limet") {
