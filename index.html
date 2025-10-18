@@ -75,8 +75,8 @@
     <label><input type="checkbox" class="sourceFilter" value="3R" > Meteo3R</label><br>
     <label><input type="checkbox" class="sourceFilter" value="Wunderground"> Wunderground</label><br>
     <label><input type="checkbox" class="sourceFilter" value="CentroMeteoLombardo"> CML</label><br>
-    <label><input type="checkbox" class="sourceFilter" value="NetAtmo"> NetAtmo</label><br>
     <label><input type="checkbox" class="sourceFilter" value="DatiMeteoAsti"> DMA</label><br>
+    <label><input type="checkbox" class="sourceFilter" value="NetAtmo"> NetAtmo</label><br>
     <label><input type="checkbox" class="sourceFilter" value="OMIRL"> OMIRL</label>
   </div>
   
@@ -1278,16 +1278,16 @@ function getColorWindDir(deg) {
 // ----- Cerca meta della stazione -----
 function getStationMeta(id) {
   const maps = {
-    stations, stationsLimet, stations3R, stationsTorinoMeteo,stationsNetAtmo,
+    stations, stationsLimet, stations3R, stationsTorinoMeteo, stationsNetAtmo,
     stationsOMIRL, stationsCML, stationsDMA, stationsMeteoTortona,
     stations1, stations2, stations3, stationsBest
   };
 
   const defaultSource = {
     stations: 'Wunderground',
-    stationsNetAtmo: 'NetAtmo',
     stationsLimet: 'LIMET',
     stations3R: '3R',
+    stationsNetAtmo: 'NetAtmo',
     stationsTorinoMeteo: 'TorinoMeteo',
     stationsOMIRL: 'OMIRL',
     stationsCML: 'CentroMeteoLombardo',
@@ -1621,7 +1621,6 @@ async function fetch3R() {
   }
 }
 
-
 async function fetchNetAtmo() {
   try {
     const url = "https://api-stazioni-meteo.vercel.app/netatmoLiguria.json";
@@ -1682,6 +1681,7 @@ async function fetchNetAtmo() {
     console.error("Errore fetch NetAtmo:", err);
   }
 }
+
 
 
 
@@ -2302,9 +2302,9 @@ function schedule3RFetch() {
 Object.keys(stations).forEach(id => createMarker(id));
 Object.keys(stationsTorinoMeteo).forEach(id => createMarker(id));
 Object.keys(stationsCML).forEach(id => createMarker(id));
+Object.keys(stationsNetAtmo).forEach(id => createMarker(id));
 Object.keys(stationsOMIRL).forEach(id => createMarker(id));
 Object.keys(stations3R).forEach(id => createMarker(id));
-Object.keys(stationsNetAtmo).forEach(id => createMarker(id));
 Object.keys(stationsMeteoTortona).forEach(id => createMarker(id));
 Object.keys(stationsDMA).forEach(id => createMarker(id));
 Object.keys(stations1).forEach(id => createMarker(id));
@@ -2316,9 +2316,9 @@ Object.keys(stationsBest).forEach(id => createMarker(id));
 Object.keys(stations).forEach(id => fetchPws(id));
 fetchCML(); // fetch unico per tutte le stazioni CML
 fetchOMIRL();
+fetchNetAtmo();
 fetchLimet();
 fetch3R();
-fetchNetAtmo();
 fetchTorinoMeteo();
 fetchDMA();
 Object.keys(stationsMeteoTortona).forEach(id => fetchMeteoTortona(id));
@@ -2332,8 +2332,8 @@ Object.keys(stationsBest).forEach(id => fetchPws(id));
 setInterval(() => { Object.keys(stations).forEach(id => fetchPws(id)); }, 60000);
 setInterval(() => { fetchCML(); }, 30000);
 setInterval(() => { fetchOMIRL(); }, 30000);
-setInterval(() => { fetchTorinoMeteo(); }, 60000);
 setInterval(() => { fetchNetAtmo(); }, 60000);
+setInterval(() => { fetchTorinoMeteo(); }, 60000);
 setInterval(() => { fetch3R(); }, 150000);
 setInterval(() => { fetchLimet(); }, 30000);
 setInterval(() => { fetchDMA(); }, 150000);
@@ -2346,8 +2346,8 @@ setInterval(() => {Object.keys(stationsBest).forEach(id => fetchPws(id));}, 5000
     // Cambia tipo di temperatura
     document.getElementById("tempSelect").addEventListener("change", () => {
   Object.keys(stations).forEach(id => updateMarker(id));
-  Object.keys(stationsTorinoMeteo).forEach(id => updateMarker(id));
   Object.keys(stationsNetAtmo).forEach(id => updateMarker(id));
+  Object.keys(stationsTorinoMeteo).forEach(id => updateMarker(id));
   Object.keys(stationsCML).forEach(id => updateMarker(id));
   Object.keys(stationsOMIRL).forEach(id => updateMarker(id));
   Object.keys(stations3R).forEach(id => updateMarker(id));
